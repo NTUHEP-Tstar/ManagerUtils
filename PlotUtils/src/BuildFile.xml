@@ -1,0 +1,7 @@
+<use name="roofit"/> <!--- For Graphics related libraries --->
+
+<flags CXXFLAGS="-g"/>
+
+<export>
+   <lib name="1"/>
+</export>
