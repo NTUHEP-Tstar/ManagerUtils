@@ -13,7 +13,7 @@
 namespace mgr
 {
 
-class Named
+class Named // Only virtual for the sake of Inheritance Do not overload
 {
 public:
 
@@ -21,12 +21,12 @@ public:
    virtual ~Named ();
 
    // Basic access functions
-   inline const std::string& Name() const { return _name; }
-   inline const std::string& LatexName() const { return _latex_name; }
-   std::string RootTitle() const;
+   virtual const std::string& Name() const { return _name; }
+   virtual const std::string& LatexName() const { return _latex_name; }
+   virtual std::string RootTitle() const;
 
    // Setting functions
-   void SetLatexName( const std::string& x );
+   virtual void SetLatexName( const std::string& x );
 
 protected:
    static std::string ConvertToRootFlavour( const std::string& );

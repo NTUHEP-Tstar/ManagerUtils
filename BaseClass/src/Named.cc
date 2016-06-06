@@ -53,9 +53,8 @@ string Named::ConvertToRootFlavour( const string& x )
 {
    string ans = x;
    for( auto& c : ans ){
-      if( c == '\\' ){
-         c = '#';
-      }
+      if( c == '\\' ){ c = '#'; }
+      if( c == '$' ){ c = ' '; }
    }
    return ans;
 }

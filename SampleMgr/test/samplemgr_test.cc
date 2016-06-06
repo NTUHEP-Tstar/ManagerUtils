@@ -5,39 +5,52 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#include "TstarAnalysis/Utils/interface/SampleMgr.hh"
+#include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
 #include <iostream>
 
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
 using namespace std;
+using namespace mgr;
 
 int main(int argc, char* argv[]) {
-   cout << "Hello world!" << endl;
+   cout << "=====[UNIT TESTING FROM SAMPLEMGR CLASS]=====" << endl;
 
-   cout << "Reading Json file" << endl;
-   SampleMgr::LoadJsonFile( "sample.json" );
-   SampleMgr mysample( "Single_T" );
+   SampleMgr::InitStaticFromFile( "./sample_static.json" );
+   SampleMgr::SetFilePrefix( "./" );
 
-   fwlite::Handle<std::vector<pat::Jet>> Jets;
+   cout << "=====[STATIC VARIABLE TEST]=====" << endl;
+   cout << SampleMgr::TotalLuminosity() << endl;
+   cout << SampleMgr::FilePrefix() << endl;
+   cout << SampleMgr::BeforeCutLabel() << endl;
+   cout << SampleMgr::AfterCutLabel() << endl;
 
-   cout << mysample.KFactor().CentralValue() << endl;
+   cout << "=====[FIRST INSTANCE TEST]=====" << endl;
+   SampleMgr mysample( "TTJets");
+   mysample.InitFromFile( "./SampleJson_1.json" );
+
+
+   cout << mysample.LatexName() << endl;
+   cout << mysample.RootTitle() << endl;
+   cout << mysample.CrossSection().LatexFormat() << endl;
+   cout << mysample.KFactor().LatexFormat() << endl;
    cout << mysample.EventsInFile() << endl;
-   cout << mysample.WeightedEventsInFile() << endl;
    cout << mysample.ExpectedYield() << endl;
    cout << mysample.GetSampleWeight() << endl;
+
+   cout << "=====[EVENT LOOP TEST]=====" << endl;
    int i = 0;
-   cout << "entering main loop" << endl;
+   fwlite::Handle<std::vector<pat::Jet>> Jets;
    for( mysample.Event().toBegin() ; !mysample.Event().atEnd() ; ++mysample.Event() , ++i ){
-      if( i > 1 ){break;}
-      cout << "Event" << i << endl;
+      if( i > 10 ){break;}
+      cout << "[Event] " << i << endl;
       Jets.getByLabel( mysample.Event() , "skimmedPatJets" );
       for( const auto& jet : *Jets.product() ){
-         cout << jet.pt() << endl;
+         cout << jet.pt() << " " << flush;
       }
+      cout << endl;
    }
-
 
    return 0;
 }

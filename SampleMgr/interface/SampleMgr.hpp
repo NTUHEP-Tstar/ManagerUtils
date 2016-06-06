@@ -24,49 +24,54 @@
 namespace mgr
 {
 
-class SampleMgr: public Named
+class SampleMgr: public virtual Named
 {
 
 public:
-   SampleMgr( const std::string& ); // Declaring Name only
-   SampleMgr( const std::string&, const std::string& file_name ); //Initialize from file
+   SampleMgr( const std::string& );
+   SampleMgr( const std::string&, const std::string& );
+   SampleMgr( const std::string&, const ConfigReader& );
    virtual ~SampleMgr ();
-
-   // Explicitly removing copy constructor
    SampleMgr( const SampleMgr& ) = delete ;
    SampleMgr& operator=(const SampleMgr&) = delete ;
+
+   // Inititializing function
+   static void InitStaticFromFile( const std::string& file );
+   static void InitStaticFromReader( const ConfigReader& );
+   void InitFromFile( const std::string& filename );
+   void InitFromReader( const ConfigReader& );
 
    // Static Variables
    static double TotalLuminosity()        { return _luminocity ;  }
    static const std::string& FilePrefix() { return _file_prefix; }
    static const std::string& BeforeCutLabel() { return _before_cut_label; }
    static const std::string& AfterCutLabel()  { return _after_cut_label; }
-   void SetTotalLuminosity( const double x  ) { _luminocity = x; }
-   void SetFilePrefix( const std::string& x ) { _file_prefix = x; }
-   void SetBeforeCutLabel( const std::string& x ) { _before_cut_label = x; }
-   void SetAfterCutLabel( const std::string& x )  { _after_cut_label  = x; }
+   static void SetTotalLuminosity( const double x  ) { _luminocity = x; }
+   static void SetFilePrefix( const std::string& x ) { _file_prefix = x; }
+   static void SetBeforeCutLabel( const std::string& x ) { _before_cut_label = x; }
+   static void SetAfterCutLabel( const std::string& x )  { _after_cut_label  = x; }
 
    // Access members
-   const Parameter&  CrossSection()        const { return _cross_section; }
-   const Parameter&  KFactor()             const { return _k_factor; }
-   const Parameter&  SelectionEfficiency() const { return _selection_eff;}
-   const std::vector<std::string>& FileList() const { return _file_list; }
+   virtual const Parameter&  CrossSection()        const { return _cross_section; }
+   virtual const Parameter&  KFactor()             const { return _k_factor; }
+   virtual const Parameter&  SelectionEfficiency() const { return _selection_eff;}
+   virtual const std::vector<std::string>& FileList() const { return _file_list; }
 
    // Manual setting function
-   void SetCrossSection       ( const Parameter& x ) { _cross_section = x; }
-   void SetKFactor            ( const Parameter& x ) { _k_factor      = x; }
-   void SetSelectionEfficiency( const Parameter& x ) { _selection_eff = x; }
-   std::vector<std::string>& FileList() { return _file_list; }
+   virtual void SetCrossSection       ( const Parameter& x ) { _cross_section = x; }
+   virtual void SetKFactor            ( const Parameter& x ) { _k_factor      = x; }
+   virtual void SetSelectionEfficiency( const Parameter& x ) { _selection_eff = x; }
+   virtual std::vector<std::string>& FileList() { return _file_list; }
 
    // fwlite::interaction
-   fwlite::ChainEvent& Event();
-   void      ForceNewEvent(); // Force refresh in case of new file
+   virtual fwlite::ChainEvent& Event();
+   virtual void      ForceNewEvent(); // Force refresh in case of new file
 
    // Extended Variables
-   bool      IsRealData()    const ;
-   size_t    EventsInFile()  const ;
-   Parameter ExpectedYield() const;
-   Parameter GetSampleWeight() ;
+   virtual bool      IsRealData()    const ;
+   virtual size_t    EventsInFile()  const ;
+   virtual Parameter ExpectedYield() const;
+   virtual Parameter GetSampleWeight() ;
 
 private:
    static double       _luminocity;
@@ -80,10 +85,10 @@ private:
 
    fwlite::ChainEvent*  _event_ptr;
 
-   Parameter make_selecection_eff() const ;
-   uint64_t  count_original_events() const;
-   uint64_t  count_selected_events() const;
-   uint64_t  count_event( const std::string& ) const ;
+   virtual Parameter make_selecection_eff() const ;
+   virtual uint64_t  count_original_events() const;
+   virtual uint64_t  count_selected_events() const;
+   virtual uint64_t  count_event( const std::string& ) const ;
 };
 
 

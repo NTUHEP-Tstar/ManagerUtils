@@ -67,6 +67,11 @@ vector<double> ConfigReader::GetStaticDoubleList( const string& tag ) const
    return get_double_list( _ptree, tag );
 }
 
+bool ConfigReader::HasStaticTag( const string& tag ) const
+{
+   return has_tag( _ptree, tag );
+}
+
 //------------------------------------------------------------------------------
 //  Instance variable access
 //------------------------------------------------------------------------------
@@ -94,6 +99,31 @@ vector<double> ConfigReader::GetDoubleList( const string& inst_tag, const string
    return get_double_list( _ptree.get_child(inst_tag), tag );
 }
 
+bool ConfigReader::HasTag( const string& inst_tag, const string& tag ) const
+{
+   return has_tag( _ptree.get_child(inst_tag), tag );
+}
+
+//------------------------------------------------------------------------------
+//   Instance detection
+//------------------------------------------------------------------------------
+bool ConfigReader::HasInstance( const string& inst_tag ) const
+{
+   return HasStaticTag( inst_tag );
+}
+
+vector<string> ConfigReader::GetInstanceList() const
+{
+   vector<string> ans;
+   for( const auto& it: _ptree ){
+      string tag = it.first ;
+      if( tag != "___Comment___" ){
+         ans.push_back( tag );
+      }
+   }
+   return ans;
+}
+
 
 //------------------------------------------------------------------------------
 //   Helper Private functions
@@ -108,6 +138,12 @@ void ConfigReader::print_sub_tree( const ptree& tree, unsigned print_level )
       print_sub_tree(it.second, print_level + 1 );
     }
 }
+
+bool ConfigReader::has_tag( const ptree& tree, const string& tag )
+{
+   return ( tree.find(tag) != tree.not_found() );
+}
+
 
 string ConfigReader::get_string( const ptree& tree, const string& tag )
 {

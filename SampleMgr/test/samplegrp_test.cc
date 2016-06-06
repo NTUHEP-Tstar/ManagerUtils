@@ -5,22 +5,61 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#include "TstarAnalysis/Utils/interface/SampleGroup.hh"
+
+#include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
+#include "ManagerUtils/SampleMgr/interface/SampleGroup.hpp"
 #include <iostream>
 
 using namespace std;
+using namespace mgr;
 
-int main(int argc, char* argv[]) {
+void DumpInfo( const SampleGroup& );
 
-   SampleGroup::LoadJsonFile( "sample.json" );
-   SampleGroup all("All");
-   SampleGroup bg("Background");
-   SampleGroup ttjets("TTJets");
+int main(int argc, char* argv[])
+{
+   cout << "=====[UNIT TESTING FOR SAMPLEGROUP CLASS]=====" << endl;
 
-   cout << ttjets.ExpectedYield() << endl;
-   cout << bg.ExpectedYield() << endl;
-   for( const auto& sample : bg.SampleList() ){
-      cout << sample.ExpectedYield() << endl;
-   }
+   ConfigReader cfg( "./group.json" );
+
+   cout << "=====[SUBSET GROUP TESTING]=====" << endl;
+
+   SampleMgr::InitStaticFromFile("./sample_static.json");
+   SampleMgr::SetFilePrefix("./");
+
+   SampleGroup  subset( "SubSetInFile" );
+   subset.InitFromReader( cfg );
+   DumpInfo( subset );
+
+   SampleGroup subset_default( "SubSetInFile_WithDefault" );
+   subset_default.InitFromReader( cfg );
+   DumpInfo( subset_default );
+
+   cout << "=====[FILE BASED GROUP TESTING]=====" << endl;
+   SampleGroup  whole_file( "AllGroupsInFiles", cfg );
+   DumpInfo( whole_file );
+
+   cout << "=====[SINGLE SAMPLE TESTING]=====" << endl;
+   SampleGroup single_in_file( "TTJets2" );
+   single_in_file.InitFromReader( cfg );
+   DumpInfo( single_in_file );
+
+   cout << "=====[SINGLE SAMPLE TESTING]=====" << endl;
+   SampleGroup single_default( "TTJets" );
+   single_default.InitFromReader( cfg );
+   DumpInfo( single_default );
+
+
+
    return 0;
+}
+
+
+void DumpInfo( const SampleGroup& x )
+{
+   cout << x.Name() << " " << x.LatexName() << endl;
+   for( const auto& sample : x.SampleList() ){
+      cout << "   > "
+           << sample->Name() << " " << sample->LatexName()
+           << sample->EventsInFile() << endl;
+   }
 }

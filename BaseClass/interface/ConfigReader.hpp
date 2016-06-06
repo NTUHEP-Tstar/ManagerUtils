@@ -36,6 +36,7 @@ public:
    Parameter    GetStaticParameter( const std::string& tag ) const;
    std::vector<std::string> GetStaticStringList( const std::string& tag ) const;
    std::vector<double>      GetStaticDoubleList( const std::string& tag ) const;
+   bool HasStaticTag( const std::string& tag ) const ;
 
    // Instance variable Access
    Parameter   GetParameter( const std::string& inst_tag, const std::string& tag ) const;
@@ -43,6 +44,11 @@ public:
    double      GetDouble( const std::string& inst_tag, const std::string& tag ) const;
    std::vector<std::string> GetStringList( const std::string& inst_tag, const std::string& tag ) const;
    std::vector<double>      GetDoubleList( const std::string& inst_tag, const std::string& tag ) const;
+   bool HasTag( const std::string& inst_tag, const std::string& tag ) const;
+
+   // Instance detection list
+   bool HasInstance( const std::string& ) const;
+   std::vector<std::string> GetInstanceList() const;
 
    // Debugging methods
    void DumpTree() const;
@@ -52,6 +58,7 @@ private:
 
    // Helper member functions
    static void print_sub_tree( const boost::property_tree::ptree& tree, unsigned print_level );
+   static bool has_tag( const boost::property_tree::ptree& tree, const std::string& tag );
    static std::string get_string( const boost::property_tree::ptree& tree, const std::string& tag );
    static double      get_double( const boost::property_tree::ptree& tree, const std::string& tag );
    static Parameter   get_parameter( const boost::property_tree::ptree& tree, const std::string& tag );

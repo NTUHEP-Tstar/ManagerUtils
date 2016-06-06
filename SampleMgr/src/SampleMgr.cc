@@ -19,7 +19,7 @@ using namespace std;
 using namespace mgr;
 
 //------------------------------------------------------------------------------
-//   Constructor and desctructor
+//   Constructor/destructor and Initializers
 //------------------------------------------------------------------------------
 double SampleMgr::_luminocity = 0 ;
 string SampleMgr::_file_prefix = "./";
@@ -32,19 +32,40 @@ SampleMgr::SampleMgr( const string& name ):
 {
 }
 
-SampleMgr::SampleMgr( const string& name , const std::string& config_file ):
+SampleMgr::SampleMgr( const string& name, const string& file_name ):
+   Named( name ),
+   _event_ptr(NULL)
+{
+   InitFromFile( file_name );
+}
+
+SampleMgr::SampleMgr( const string& name, const ConfigReader& cfg ):
    Named(name),
    _event_ptr(NULL)
 {
-   ConfigReader cfg( config_file );
+   InitFromReader(cfg);
+}
 
-   // Setting static variables
+void SampleMgr::InitStaticFromFile( const string& file_name )
+{
+   InitStaticFromReader( ConfigReader(file_name) );
+}
+
+void SampleMgr::InitStaticFromReader( const ConfigReader& cfg )
+{
    SetTotalLuminosity( cfg.GetStaticDouble("Total Luminosity") );
    SetFilePrefix(      cfg.GetStaticString("File Prefix") );
    SetBeforeCutLabel(  cfg.GetStaticString("Before Cut Label") );
    SetAfterCutLabel(   cfg.GetStaticString("After Cut Label") );
+}
 
-   // Setting instance variables
+void SampleMgr::InitFromFile( const string& file_name )
+{
+   InitFromReader( ConfigReader(file_name) );
+}
+
+void SampleMgr::InitFromReader( const ConfigReader& cfg )
+{
    SetLatexName(    cfg.GetString(     Name(), "Latex Name"    ) );
    _cross_section = cfg.GetParameter(  Name(), "Cross Section" );
    _k_factor      = cfg.GetParameter(  Name(), "K Factor"      );
@@ -52,8 +73,8 @@ SampleMgr::SampleMgr( const string& name , const std::string& config_file ):
 
    ForceNewEvent();
    _selection_eff = make_selecection_eff();
-
 }
+
 
 SampleMgr::~SampleMgr()
 {

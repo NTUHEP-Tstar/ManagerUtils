@@ -8,19 +8,30 @@
 #ifndef MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
 #define MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
 
+#include "ManagerUtils/BaseClass/interface/Named.hpp"
+#include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
+
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
+
 #include <vector>
 #include <string>
 
 namespace mgr
 {
 
-class SampleGroup : public Named {
+class SampleGroup : public virtual Named {
 public:
    SampleGroup( const std::string& ); // Init name only
-   SampleGroup( const std::string&, const std::string& ); // Init from config file
+   SampleGroup( const std::string&, const std::string& ); // Initing from file
+   SampleGroup( const std::string&, const ConfigReader& );
    virtual ~SampleGroup();
+   SampleGroup( const SampleGroup& ) = delete ;
+   SampleGroup& operator=( const SampleGroup& ) = delete;
+
+   // Initializing from file;
+   void InitFromFile( const std::string& );
+   virtual void InitFromReader( const ConfigReader& ); // Virtual so users could add more variables if wanted
 
    // Access single object
    SampleMgr*       Sample()       { return _samplelist.front(); }
@@ -34,7 +45,7 @@ public:
    Parameter ExpectedYield() const;
 
 private:
-   std::vector<SampleMgr*> _samplelist;
+   std::vector<SampleMgr*>             _samplelist;
 };
 
 }

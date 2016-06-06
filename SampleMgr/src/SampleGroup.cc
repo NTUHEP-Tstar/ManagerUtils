@@ -1,4 +1,4 @@
-/*******************************************************************************
+/********************************************************************************
  *
  *  Filename    : SampleGroup.cc
  *  Description : Implementation for sample grouping class
@@ -15,7 +15,7 @@ using namespace std;
 using namespace mgr;
 
 //------------------------------------------------------------------------------
-//   Constructors
+//   Constructors/destructor and Initializer
 //------------------------------------------------------------------------------
 SampleGroup::SampleGroup( const string& name ):
    Named( name )
@@ -25,16 +25,53 @@ SampleGroup::SampleGroup( const string& name ):
 SampleGroup::SampleGroup( const string& name, const string& file_name ):
    Named(name)
 {
-   ConfigReader cfg( file_name );
-   SetLatexName( cfg.GetString( Name(), "Latex Name") );
-   const string sample_file = cfg.GetStaticString( "Sample Config File" );
-   try{
-      const auto& sample_name_list  = cfg.GetStringList( Name(), "Sample List" );
-      for( const auto& sample_name : sample_name_list ){
-         _samplelist.push_back( new SampleMgr(sample_name, sample_file ));
+   InitFromFile( file_name );
+}
+
+SampleGroup::SampleGroup( const string& name, const ConfigReader& cfg ):
+   Named(name)
+{
+   InitFromReader( cfg );
+}
+
+
+void SampleGroup::InitFromFile( const string& file_name )
+{
+   InitFromReader( ConfigReader(file_name) );
+}
+
+void SampleGroup::InitFromReader( const ConfigReader& cfg )
+{
+   if( !cfg.HasInstance( Name() ) ) { // Not found in config file, assuming it is single sample in default
+      ConfigReader sample_cfg( cfg.GetStaticString("Default Json") );
+      SampleList().push_back( new SampleMgr( Name() , sample_cfg ) );
+      SetLatexName( SampleList().back()->LatexName() );
+   } else if( cfg.HasTag( Name(), "Sample List" ) ){
+      string latex_name = cfg.GetString( Name(), "Latex Name" );
+      string sample_json_file = "";
+      if( cfg.HasTag( Name() , "Subset Json") ){
+         sample_json_file = cfg.GetString( Name() , "Subset Json" );
+      } else {
+         sample_json_file = cfg.GetStaticString( "Default Json" );
       }
-   } catch( exception& e ){
-      _samplelist.push_back( new SampleMgr(Name(), sample_file) );
+      ConfigReader sample_cfg( sample_json_file );
+      SetLatexName( latex_name );
+      const vector<string> sample_name_list = cfg.GetStringList( Name(), "Sample List" );
+      for( const auto& sample_name : sample_name_list ){
+         SampleList().push_back( new SampleMgr( sample_name, sample_cfg ) );
+      }
+   } else if( cfg.HasTag( Name(), "File List") ){
+      string latex_name = cfg.GetString( Name() , "Latex Name" );
+      for( const auto& json_file : cfg.GetStringList( Name(), "File List") ){
+         ConfigReader sample_cfg( json_file );
+         for( const auto& sample_tag : sample_cfg.GetInstanceList() ){
+            SampleList().push_back( new SampleMgr( sample_tag , sample_cfg ) );
+         }
+      }
+   } else if( cfg.HasTag( Name(), "Single Sample") ){
+      ConfigReader sample_cfg( cfg.GetString( Name(), "Single Sample") );
+      SampleList().push_back( new SampleMgr( Name(), sample_cfg ) );
+      SetLatexName( SampleList().back()->LatexName() );
    }
 }
 

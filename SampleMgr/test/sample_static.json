@@ -1,0 +1,10 @@
+{
+   "___Comment___" : """-----------------------------------------
+      Static settings for a all sample configs
+   -----------------------------------------------------------""",
+
+   "Total Luminosity" : 1000,
+   "Before Cut Label" : "beforeAny",
+   "After Cut Label" : "afterBaseLine",
+   "File Prefix" : "/dummy/prefix/to/be/overridden"
+}

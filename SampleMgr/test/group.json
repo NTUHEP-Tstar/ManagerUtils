@@ -1,10 +1,33 @@
 {
-   "MyGroup": {
-      "Latex Name": "Group Latex Name",
-      "Sample Json": "sample.json",
-      "Samples":[
+   "Default Json": "SampleJson_1.json",
+
+   "SubSetInFile": {
+      "Latex Name": "Sub Set of groups in a single file",
+      "Subset Json": "SampleJson_1.json",
+      "Sample List":[
          "TTJets",
          "Single_T"
       ]
+   },
+
+   "SubSetInFile_WithDefault": {
+      "Latex Name": "Sub Set of groups in a single file, Using Default ",
+      "Sample List":[
+         "TTJets",
+         "Single_T"
+      ]
+   },
+
+
+   "AllGroupsInFiles" : {
+      "Latex Name" : "Include all groups in one are a single file",
+      "File List": [
+         "SampleJson_1.json",
+         "SampleJson_2.json"
+      ]
+   },
+
+   "TTJets2" : {
+      "Single Sample":  "SampleJson_2.json"
    }
 }
