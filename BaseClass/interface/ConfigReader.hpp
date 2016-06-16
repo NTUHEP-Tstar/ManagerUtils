@@ -53,6 +53,9 @@ public:
    // Debugging methods
    void DumpTree() const;
 
+   // Generic return
+   const boost::property_tree::ptree& ConfigTree() const { return _ptree; }
+
 private:
    boost::property_tree::ptree _ptree;
 

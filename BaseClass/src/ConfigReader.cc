@@ -117,7 +117,7 @@ vector<string> ConfigReader::GetInstanceList() const
    vector<string> ans;
    for( const auto& it: _ptree ){
       string tag = it.first ;
-      if( tag != "___Comment___" ){
+      if( tag.front() != '_' ){
          ans.push_back( tag );
       }
    }
