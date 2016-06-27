@@ -18,6 +18,7 @@ using namespace mgr;
 HistMgr::HistMgr( const string& name ):
    Named(name)
 {
+   define_hist();
 }
 
 HistMgr::~HistMgr()

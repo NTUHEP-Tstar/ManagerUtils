@@ -41,8 +41,10 @@ public:
    std::vector<SampleMgr*>&       SampleList()      { return _samplelist; }
    const std::vector<SampleMgr*>& SampleList() const {return _samplelist; }
 
+   // Summary objects
    unsigned  EventsInFile() const;
    Parameter ExpectedYield() const;
+   Parameter TotalCrossSection() const;
 
 private:
    std::vector<SampleMgr*>             _samplelist;

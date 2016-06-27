@@ -28,18 +28,17 @@ public:
    HistMgr( const HistMgr& )  = delete;
    HistMgr& operator=( const HistMgr& ) = delete;
 
-
-   virtual TH1D* Hist( const std::string& );
-   virtual const TH1D* Hist( const std::string& ) const ;
-   virtual std::vector<std::string> AvailableHistList() const;
-   virtual void Scale( const double );
-   virtual void SetColor( const Color_t );
-   virtual void SetLineColor( const Color_t );
-   virtual void SetFillColor( const Color_t );
-   virtual void SetFillStyle( const Style_t );
+   TH1D* Hist( const std::string& );
+   const TH1D* Hist( const std::string& ) const ;
+   std::vector<std::string> AvailableHistList() const;
+   void Scale( const double );
+   void SetColor( const Color_t );
+   void SetLineColor( const Color_t );
+   void SetFillColor( const Color_t );
+   void SetFillStyle( const Style_t );
 
 protected:
-   virtual void AddHist(
+   void AddHist(
       const std::string& name,
       const std::string& x_label,
       const std::string& x_unit,
@@ -49,6 +48,7 @@ protected:
    );
 
 private:
+   virtual void define_hist(){}  //Virtual function for overloading
    std::vector<TH1D*>  _hist_list;
 };
 

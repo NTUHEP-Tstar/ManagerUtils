@@ -12,6 +12,17 @@
 namespace plt
 {
 
+TPaveText* NewTextBox( const float x_min, const float y_min, const float x_max, const float y_max)
+{
+   TPaveText* ans = new TPaveText(x_min,y_min,x_max,y_max);
+
+   ans->SetTextFont(FONT_TYPE);
+   ans->SetTextSize(AXIS_TITLE_FONT_SIZE);
+   ans->SetFillColor(kWhite);
+
+   return ans;
+}
+
 TLegend* NewLegend( const float x_min, const float y_min, const float x_max, const float y_max )
 {
    TLegend* ans = new TLegend( x_min, y_min, x_max, y_max );
@@ -33,11 +44,11 @@ void DrawCMSLabel( int tag )
    tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
 
    tl.SetTextAlign( BOTTOM_LEFT );
-   tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX + 0.01 , "#bf{CMS}");
+   tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX + 0.05 , "#bf{CMS}");
    if( tag == PRELIMINARY ){
-      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.01 , "#it{Preliminary}");
+      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.05 , "#it{Preliminary}");
    } else if ( tag == SIMULATION ){
-      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.01 , "#it{Simulation}");
+      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.05 , "#it{Simulation}");
    }
 }
 
@@ -52,7 +63,7 @@ void DrawLuminosity(double luminosity)
    sprintf( buffer, "%.2lffb^{-1} (%d TeV)" , luminosity/1000. , 13 );
 
    tl.SetTextAlign( BOTTOM_RIGHT );
-   tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.01, buffer );
+   tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.05, buffer );
 }
 
 

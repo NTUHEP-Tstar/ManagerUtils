@@ -72,6 +72,7 @@ public:
    virtual size_t    EventsInFile()  const ;
    virtual Parameter ExpectedYield() const;
    virtual Parameter GetSampleWeight() ;
+   virtual uint64_t  OriginalEventCount() const { return count_original_events(); } 
 
 private:
    static double       _luminocity;

@@ -30,7 +30,7 @@ public:
    inline operator double() const{ return _centralValue; }
 
    // Basic access functions
-   inline double CentralValue() const { return _centralValue; }
+   inline double CentralValue()  const { return _centralValue; }
    inline double AbsUpperError() const { return _error_up; }
    inline double AbsLowerError() const { return _error_down; }
    inline double RelUpperError() const { return _error_up/_centralValue; }

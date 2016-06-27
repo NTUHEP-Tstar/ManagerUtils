@@ -21,6 +21,7 @@
 #include "TLatex.h"
 #include "TLine.h"
 #include "TGraph.h"
+#include "TPaveText.h"
 
 namespace plt
 {
@@ -29,6 +30,7 @@ namespace plt
 //   Class specific functions : see src/Common.cc for implementation
 //------------------------------------------------------------------------------
 TLegend* NewLegend( const float, const float, const float = PLOT_X_MAX , const float= PLOT_Y_MAX);
+TPaveText* NewTextBox( const float, const float, const float, const float );
 void DrawCMSLabel( int tag = PRELIMINARY );
 void DrawLuminosity( double luminosity );
 

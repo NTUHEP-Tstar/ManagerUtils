@@ -67,6 +67,7 @@ void SampleGroup::InitFromReader( const ConfigReader& cfg )
       }
    } else if( cfg.HasTag( Name(), "File List") ){
       string latex_name = cfg.GetString( Name() , "Latex Name" );
+      SetLatexName(latex_name);
       for( const auto& json_file : cfg.GetStringList( Name(), "File List") ){
          ConfigReader sample_cfg( sample_cfg_prefix + json_file );
          for( const auto& sample_tag : sample_cfg.GetInstanceList() ){
@@ -85,6 +86,9 @@ SampleGroup::~SampleGroup()
    for( auto& sample : _samplelist ) { delete sample; }
 }
 
+//------------------------------------------------------------------------------
+//   Summary Methods
+//------------------------------------------------------------------------------
 unsigned SampleGroup::EventsInFile() const
 {
    unsigned ans = 0;
@@ -99,6 +103,15 @@ Parameter SampleGroup::ExpectedYield() const
    Parameter ans(0,0,0);
    for( const auto& sample : _samplelist ){
       ans += sample->ExpectedYield();
+   }
+   return ans;
+}
+
+Parameter SampleGroup::TotalCrossSection() const
+{
+   Parameter ans(0,0,0);
+   for( const auto& sample : SampleList() ){
+      ans += sample->CrossSection();
    }
    return ans;
 }
