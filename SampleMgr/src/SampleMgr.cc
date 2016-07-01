@@ -157,10 +157,12 @@ uint64_t SampleMgr::count_event( const string& name ) const
    for( const auto& file_name : _file_list ){
       const string file_path = _file_prefix + file_name;
       fwlite::Run run( TFile::Open(file_path.c_str()) );
-      positive_count.getByLabel( run , name.c_str() , "positiveEvents" );
-      negative_count.getByLabel( run , name.c_str() , "negativeEvents" );
-      count += positive_count->value;
-      count -= negative_count->value;
+      for( run.toBegin() ; !run.atEnd() ; ++run ){
+         positive_count.getByLabel( run , name.c_str() , "positiveEvents" );
+         negative_count.getByLabel( run , name.c_str() , "negativeEvents" );
+         count += positive_count->value;
+         count -= negative_count->value;
+      }
    }
    return count;
 }
