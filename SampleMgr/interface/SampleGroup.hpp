@@ -29,9 +29,13 @@ public:
    SampleGroup( const SampleGroup& ) = delete ;
    SampleGroup& operator=( const SampleGroup& ) = delete;
 
+   // Static function
+   static void SetSampleCfgPrefix( const std::string& x ) { _sample_cfg_prefix = x; }
+   static const std::string& SampleCfgPrefix() { return _sample_cfg_prefix; }
+
    // Initializing from file;
    void InitFromFile( const std::string& );
-   virtual void InitFromReader( const ConfigReader& ); // Virtual so users could add more variables if wanted
+   void InitFromReader( const ConfigReader& ); // Virtual so users could add more variables if wanted
 
    // Access single object
    SampleMgr*       Sample()       { return _samplelist.front(); }
@@ -47,7 +51,8 @@ public:
    Parameter TotalCrossSection() const;
 
 private:
-   std::vector<SampleMgr*>             _samplelist;
+   std::vector<SampleMgr*>  _samplelist;
+   static std::string       _sample_cfg_prefix;
 };
 
 }

@@ -15,6 +15,11 @@ using namespace std;
 using namespace mgr;
 
 //------------------------------------------------------------------------------
+//   Setting static variables
+//------------------------------------------------------------------------------
+string SampleGroup::_sample_cfg_prefix = "./";
+
+//------------------------------------------------------------------------------
 //   Constructors/destructor and Initializer
 //------------------------------------------------------------------------------
 SampleGroup::SampleGroup( const string& name ):
@@ -42,22 +47,21 @@ void SampleGroup::InitFromFile( const string& file_name )
 
 void SampleGroup::InitFromReader( const ConfigReader& cfg )
 {
-   string sample_cfg_prefix = "./";
    if( cfg.HasStaticTag("Sample Config Prefix") ){
-      sample_cfg_prefix = cfg.GetStaticString("Sample Config Prefix");
+      _sample_cfg_prefix = cfg.GetStaticString("Sample Config Prefix");
    }
 
    if( !cfg.HasInstance( Name() ) ) { // Not found in config file, assuming it is single sample in default
-      ConfigReader sample_cfg( sample_cfg_prefix + cfg.GetStaticString("Default Json") );
+      ConfigReader sample_cfg( SampleCfgPrefix() + cfg.GetStaticString("Default Json") );
       SampleList().push_back( new SampleMgr( Name() , sample_cfg ) );
       SetLatexName( SampleList().back()->LatexName() );
    } else if( cfg.HasTag( Name(), "Sample List" ) ){
       string latex_name = cfg.GetString( Name(), "Latex Name" );
       string sample_json_file = "";
       if( cfg.HasTag( Name() , "Subset Json") ){
-         sample_json_file = sample_cfg_prefix + cfg.GetString( Name() , "Subset Json" );
+         sample_json_file = SampleCfgPrefix() + cfg.GetString( Name() , "Subset Json" );
       } else {
-         sample_json_file = sample_cfg_prefix + cfg.GetStaticString( "Default Json" );
+         sample_json_file = SampleCfgPrefix() + cfg.GetStaticString( "Default Json" );
       }
       ConfigReader sample_cfg( sample_json_file );
       SetLatexName( latex_name );
@@ -69,13 +73,13 @@ void SampleGroup::InitFromReader( const ConfigReader& cfg )
       string latex_name = cfg.GetString( Name() , "Latex Name" );
       SetLatexName(latex_name);
       for( const auto& json_file : cfg.GetStringList( Name(), "File List") ){
-         ConfigReader sample_cfg( sample_cfg_prefix + json_file );
+         ConfigReader sample_cfg( SampleCfgPrefix() + json_file );
          for( const auto& sample_tag : sample_cfg.GetInstanceList() ){
             SampleList().push_back( new SampleMgr( sample_tag , sample_cfg ) );
          }
       }
    } else if( cfg.HasTag( Name(), "Single Sample") ){
-      ConfigReader sample_cfg( sample_cfg_prefix + cfg.GetString( Name(), "Single Sample") );
+      ConfigReader sample_cfg( SampleCfgPrefix() + cfg.GetString( Name(), "Single Sample") );
       SampleList().push_back( new SampleMgr( Name(), sample_cfg ) );
       SetLatexName( SampleList().back()->LatexName() );
    }

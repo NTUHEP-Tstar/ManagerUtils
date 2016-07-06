@@ -80,7 +80,9 @@ string Parameter::LatexFormat( int precision ) const
 string Parameter::DataCardFormat() const
 {
    char buffer[1024];
-   if( _error_up == _error_down ){
+   if( _centralValue == 0 && _error_up == 0 && _error_down == 0 ){
+      return "--"; // special case for null parameter
+   } else if( _error_up == _error_down ){
       sprintf( buffer, "%lg" , 1.+RelAvgError() );
    } else {
       sprintf( buffer, "%lg/%lg" , 1.+RelUpperError() , 1.-RelLowerError() );

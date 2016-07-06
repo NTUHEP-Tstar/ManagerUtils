@@ -6,10 +6,10 @@
 
    "TTJets" : {
       "Latex Name": "t \\bar{t} + Jets ",
-      "Cross Section":   [ 831.76, 19.77,-29.20, 58.24 ,-57.51],
-      "K Factor":        [1.0],
+      "Cross Section": [ 831.76, 19.77,-29.20, 58.24 ,-57.51],
+      "K Factor":  [1.0],
       "EDM Files" : [
-         "edmOut.root"
+         "*.root"
       ]
    },
    "Single_T" : {

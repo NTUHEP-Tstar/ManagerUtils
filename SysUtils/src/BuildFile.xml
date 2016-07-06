@@ -1,3 +1,6 @@
+<use name="boost"/>
+<use name="ManagerUtils/BaseClass"/>
+
 <flags CXXFLAGS="-g" />
 
 <export>

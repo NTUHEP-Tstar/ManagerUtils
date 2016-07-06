@@ -8,10 +8,6 @@
 #ifndef __SYSTEM_UTILS_HH__
 #define __SYSTEM_UTILS_HH__
 
-#include <string>
-extern std::string GetCMDOutput( const std::string& x );
-extern int  HasProcess( const std::string& x, const std::string& exclude="" );
-extern void WaitProcess( const std::string& process_tag , const std::string& exclude="" );
 
 // Getting current time functions
 extern std::string CurrentDateTime();

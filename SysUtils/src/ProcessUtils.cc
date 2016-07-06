@@ -5,8 +5,10 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#include "ManagerUtils/SysUtils/interface/SystemUtils.hh"
+#include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
+#include "ManagerUtils/SysUtils/interface/TimeUtils.hpp"
 
+#include <thread>
 #include <string>
 #include <stdlib.h>
 #include <memory>
@@ -16,6 +18,8 @@
 using namespace std;
 
 #define MAX_BUFFER 65536
+
+unsigned NumOfThreads() { return std::thread::hardware_concurrency(); }
 
 string GetCMDOutput( const string& cmd )
 {
@@ -35,11 +39,11 @@ string GetCMDOutput( const string& cmd )
 int HasProcess( const string& x , const string& exclude )
 {
    string cmd = "ps aux | grep ^${USER}";
+   cmd += " | grep " + x ;
    cmd += " | grep --invert-match grep ";
    if( exclude != "" ) {
       cmd += "| grep --invert-match  " + exclude ;
    }
-   cmd += " | grep " + x ;
    cmd += " | wc --lines";
 
    string ans = GetCMDOutput(cmd);
@@ -60,18 +64,4 @@ void WaitProcess( const string& x , const string& exclude)
    }
    printf("All Done!\n");
    fflush(stdout);
-}
-
-
-
-string CurrentDateTime()
-{
-   // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-   // for more information about date/time format
-   time_t     now = time(0);
-   struct tm  tstruct;
-   char       buf[80];
-   tstruct = *localtime(&now);
-   strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-   return buf;
 }

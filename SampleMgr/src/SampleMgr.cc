@@ -6,6 +6,7 @@
  *
 *******************************************************************************/
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
+#include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 
 #include "DataFormats/FWLite/interface/Run.h"
 #include "DataFormats/FWLite/interface/Handle.h"
@@ -54,7 +55,9 @@ void SampleMgr::InitStaticFromFile( const string& file_name )
 void SampleMgr::InitStaticFromReader( const ConfigReader& cfg )
 {
    SetTotalLuminosity( cfg.GetStaticDouble("Total Luminosity") );
-   SetFilePrefix(      cfg.GetStaticString("File Prefix") );
+   if( cfg.HasStaticTag("File Prefix") ){
+      SetFilePrefix( cfg.GetStaticString("File Prefix") );
+   }
    SetBeforeCutLabel(  cfg.GetStaticString("Before Cut Label") );
    SetAfterCutLabel(   cfg.GetStaticString("After Cut Label") );
 }
@@ -93,9 +96,12 @@ fwlite::ChainEvent& SampleMgr::Event()
 void SampleMgr::ForceNewEvent()
 {
    if( _event_ptr != NULL )  { delete _event_ptr; }
+
    vector<string> full_file_list ;
    for( const auto& file_name : _file_list ){
-      full_file_list.push_back( FilePrefix() + file_name );
+      for( const auto& file : Glob( FilePrefix() + file_name ) ) {
+         full_file_list.push_back( file );
+      }
    }
    _event_ptr = new fwlite::ChainEvent( full_file_list );
 }
@@ -105,7 +111,13 @@ void SampleMgr::ForceNewEvent()
 //------------------------------------------------------------------------------
 bool SampleMgr::IsRealData() const
 {
-   if( _event_ptr ) { return _event_ptr->isRealData(); }
+   if( _event_ptr ) {
+      if( _event_ptr->size() ){ // Special case for files with no events!
+         return _event_ptr->isRealData();
+      } else {
+         return false;
+      }
+   }
    return false;
 }
 
@@ -155,13 +167,14 @@ uint64_t SampleMgr::count_event( const string& name ) const
    uint64_t count = 0 ;
 
    for( const auto& file_name : _file_list ){
-      const string file_path = _file_prefix + file_name;
-      fwlite::Run run( TFile::Open(file_path.c_str()) );
-      for( run.toBegin() ; !run.atEnd() ; ++run ){
-         positive_count.getByLabel( run , name.c_str() , "positiveEvents" );
-         negative_count.getByLabel( run , name.c_str() , "negativeEvents" );
-         count += positive_count->value;
-         count -= negative_count->value;
+      for( const auto& file_path : Glob(_file_prefix + file_name ) ) {
+         fwlite::Run run( TFile::Open(file_path.c_str()) );
+         for( run.toBegin() ; !run.atEnd() ; ++run ){
+            positive_count.getByLabel( run , name.c_str() , "positiveEvents" );
+            negative_count.getByLabel( run , name.c_str() , "negativeEvents" );
+            count += positive_count->value;
+            count -= negative_count->value;
+         }
       }
    }
    return count;
