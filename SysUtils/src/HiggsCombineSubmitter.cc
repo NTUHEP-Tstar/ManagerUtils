@@ -84,6 +84,7 @@ string HiggsCombineSubmitter::MakeScripts( const CombineRequest& x )  const
    );
    fprintf( script_file, "exit $result\n");
    fclose( script_file );
+   system( "sleep 1" );
    system( ("chmod +x "+script_name).c_str() );
    return script_name;
 }
@@ -94,7 +95,7 @@ vector<int> HiggsCombineSubmitter::SubmitParallel( const vector<CombineRequest>&
    vector<thread> thread_list;
    for( const auto& req : list ){ // Naively generating new thread for all processes
       cout << "Creating thread for" << req.card_file << "..."  << endl;
-      thread_list.push_back( thread( &HiggsCombineSubmitter::SubmitDataCard ,this, req ));
+      thread_list.push_back( thread( &HiggsCombineSubmitter::SubmitDataCard, this, req ));
    }
    for( auto& thd : thread_list ){ thd.join(); }
    return ans; // Indiviual run results are not availiable.. yet
