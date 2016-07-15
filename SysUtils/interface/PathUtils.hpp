@@ -13,11 +13,14 @@
 #include <vector>
 #include <string>
 
+//------------------------------------------------------------------------------
+//   Path related functions
+//------------------------------------------------------------------------------
 extern std::string  GetEnv( const std::string& );
 extern std::string  ConvertToAbsPath( const std::string& );
-
 extern std::string  CMSSWSrc();
-
 extern std::vector<std::string> Glob( const std::string& );
+
+
 
 #endif /* end of include guard: MANAGERUTILS_SYSUTILS_PATHUTILS */

@@ -6,9 +6,8 @@
  *
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/HiggsCombineSubmitter.hpp"
-
+#include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
-#include "ManagerUtils/SysUtils/interface/FilenameMgr.hpp"
 #include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
 
 #include <boost/filesystem.hpp>
@@ -148,14 +147,14 @@ CombineRequest::CombineRequest(
    const std::string& _additional_options,
    const std::string& _log_file
 ):
-   card_file(FilenameMgr::ConvertToAbsPath(_card_file)),
-   output_file(FilenameMgr::ConvertToAbsPath(_output_file)),
+   card_file( ConvertToAbsPath(_card_file)),
+   output_file( ConvertToAbsPath(_output_file)),
    mass_point(_mass_point),
    combine_method(_combine_method),
    additional_options(_additional_options)
 {
    if( _log_file != "stdout" ){
-      log_file = FilenameMgr::ConvertToAbsPath(_log_file);
+      log_file = ConvertToAbsPath(_log_file);
    } else {
       log_file = _log_file;
    }

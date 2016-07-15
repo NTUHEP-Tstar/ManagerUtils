@@ -12,6 +12,9 @@
 
 using namespace std;
 
+//------------------------------------------------------------------------------
+//   Path related functions
+//------------------------------------------------------------------------------
 string GetEnv( const std::string& x )
 {
    return getenv( x.c_str() );
@@ -33,6 +36,21 @@ string ConvertToAbsPath( const std::string& path )
 string CMSSWSrc()
 {
    return GetEnv("CMSSW_BASE") + "/src/";
+}
+
+string PackagePath( const std::string& x )
+{
+   return CMSSWSrc() + x + "/";
+}
+
+string SubPackagePath( const std::string& x, const std::string& y )
+{
+   return PackagePath(x) + y + "/";
+}
+
+string SubPackageResultsPath( const std::string& x, const std::string& y )
+{
+   return SubPackagePath(x,y) + "results/";
 }
 
 vector<string> Glob( const string& path )

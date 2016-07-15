@@ -1,0 +1,4 @@
+<use name="boost_python"/>
+<use name="ManagerUtils/SysUtils"/>
+<library name="PathUtils"    file="PathUtils_Boost.cc"/>
+<library name="ProcessUtils" file="ProcessUtils_Boost.cc"/>
