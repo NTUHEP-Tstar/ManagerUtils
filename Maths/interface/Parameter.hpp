@@ -11,6 +11,7 @@
 #define MANAGERUTILS_MATHS_PARAMETER_HPP
 
 #include <string>
+#include <RooRealVar.h>
 
 class Parameter {
 public:
@@ -22,6 +23,7 @@ public:
       const double error_up ,
       const double error_down );
    Parameter( const Parameter& );
+   Parameter( const RooRealVar& );
 
    virtual ~Parameter ();
 
@@ -33,6 +35,7 @@ public:
    inline double CentralValue()  const { return _centralValue; }
    inline double AbsUpperError() const { return _error_up; }
    inline double AbsLowerError() const { return _error_down; }
+   inline double AbsAvgError()   const { return (_error_up+_error_down) / 2 ; }
    inline double RelUpperError() const { return _error_up/_centralValue; }
    inline double RelLowerError() const { return _error_down/_centralValue; }
    inline double RelAvgError()   const { return (RelUpperError()+RelLowerError()) /2.; }

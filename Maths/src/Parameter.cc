@@ -45,6 +45,14 @@ Parameter::Parameter( const Parameter& x )
    *this = x;
 }
 
+Parameter::Parameter( const RooRealVar& x ):
+   _centralValue( x.getVal() ),
+   _error_up( x.getErrorHi() ),
+   _error_down( x.getErrorLo() )
+{
+
+}
+
 Parameter::~Parameter(){}
 
 //------------------------------------------------------------------------------
