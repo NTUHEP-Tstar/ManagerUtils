@@ -8,6 +8,7 @@
 #include "ManagerUtils/SysUtils/interface/OptsNamer.hpp"
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace mgr;
@@ -44,8 +45,31 @@ int  OptsNamer::LoadOptions( const opt::options_description& desc, int argc, cha
       cerr << desc << endl;
       return PARSE_HELP;
    }
+
    return PARSE_SUCESS;
 }
+
+//------------------------------------------------------------------------------
+//   Basic access options to input options
+//------------------------------------------------------------------------------
+bool   OptsNamer::HasOption( const std::string& opt ) const
+{ return _map.count( opt ); }
+
+
+string OptsNamer::InputStr( const std::string& opt ) const
+{
+   string ans ; // Specialization that forces conversion
+   try { return _map[opt].as<string>(); } catch(std::exception e){}
+   try { return  boost::lexical_cast<string>(_map[opt].as<int>());    } catch(std::exception e){}
+   try { return  boost::lexical_cast<string>(_map[opt].as<double>()); } catch(std::exception e){}
+   throw std::invalid_argument("Cannot convert options!");
+   return ans;
+}
+
+double OptsNamer::InputDou( const std::string& opt ) const
+{ return _map[opt].as<double>(); }
+int    OptsNamer::InputInt( const std::string& opt ) const
+{ return _map[opt].as<int>(); }
 
 //------------------------------------------------------------------------------
 //   Translation functions

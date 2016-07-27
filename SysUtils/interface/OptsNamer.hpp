@@ -43,6 +43,12 @@ public:
    void LoadJsonFile( const std::string& filename );
    int  LoadOptions( const boost::program_options::options_description& optdesc, int argc, char* argv[] );
 
+   // Basic access functions to option input
+   bool        HasOption( const std::string& opt ) const ;
+   std::string InputStr ( const std::string& opt ) const ;
+   double      InputDou ( const std::string& opt ) const ;
+   int         InputInt ( const std::string& opt ) const ;
+
    std::string GetInput( const std::string& category ) const ;
    std::string GetExtName( const std::string& category,  const std::string& exttag ) const;
 
@@ -55,8 +61,8 @@ public:
    const boost::property_tree::ptree&           GetTree()const { return _tree; }
 
 private:
-   boost::property_tree::ptree    _tree;
-   boost::program_options::variables_map       _map;
+   boost::property_tree::ptree              _tree;
+   boost::program_options::variables_map    _map;
 };
 
 }
