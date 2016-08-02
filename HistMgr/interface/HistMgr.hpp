@@ -50,6 +50,7 @@ protected:
 private:
    virtual void define_hist(){}  //Virtual function for overloading
    std::vector<TH1D*>  _hist_list;
+
 };
 
 }

@@ -1,0 +1,15 @@
+imax 1
+jmax *
+kmax *
+----------------------------------------
+         bin MuonSignal
+ observation 4364
+----------------------------------------
+         bin      MuonSignal      MuonSignal
+     process             sig              bg
+     process              -1               1
+        rate             40.          4340.1
+----------------------------------------
+    Lumi lnN            1.05            1.05
+ sig_unc lnN       1.02/0.98              --
+  bg_unc lnN              --      1.015/0.98
