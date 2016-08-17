@@ -119,3 +119,28 @@ Parameter SampleGroup::TotalCrossSection() const
    }
    return ans;
 }
+
+Parameter SampleGroup::AvgSelectionEfficiency() const
+{
+   if( Sample()->IsRealData() ){
+      double pass = 0 ;
+      double orig = 0 ;
+      for( const auto& sample: SampleList() ){
+         pass += sample->EventsInFile() ;
+         orig += sample->OriginalEventCount();
+      }
+      const double cen = pass / orig ;
+      const double err = sqrt( cen * (1-cen ) / (orig -1) );
+      return Parameter( cen, err, err );
+
+   } else {
+      Parameter ans(0,0,0);
+      double total_cx = 0.;
+      for( const auto& sample : SampleList() ){
+         ans      += sample->CrossSection() * sample->KFactor() * sample->SelectionEfficiency();
+         total_cx += sample->CrossSection() * sample->KFactor() ;
+      }
+      ans /= total_cx;
+      return ans;
+   }
+}

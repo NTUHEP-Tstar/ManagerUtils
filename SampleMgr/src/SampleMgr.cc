@@ -93,7 +93,13 @@ fwlite::ChainEvent& SampleMgr::Event()
    return *_event_ptr;
 }
 
-void SampleMgr::ForceNewEvent()
+fwlite::ChainEvent& SampleMgr::Event() const
+{
+   if( _event_ptr == NULL ) { ForceNewEvent(); }
+   return *_event_ptr;
+}
+
+void SampleMgr::ForceNewEvent() const 
 {
    if( _event_ptr != NULL )  { delete _event_ptr; }
 
@@ -111,20 +117,16 @@ void SampleMgr::ForceNewEvent()
 //------------------------------------------------------------------------------
 bool SampleMgr::IsRealData() const
 {
-   if( _event_ptr ) {
-      if( _event_ptr->size() ){ // Special case for files with no events!
-         return _event_ptr->isRealData();
-      } else {
-         return false;
-      }
+   if(Event().size()){
+      return Event().isRealData();
+   } else {
+      return false;
    }
-   return false;
 }
 
 size_t SampleMgr::EventsInFile() const
 {
-   if( _event_ptr ) { return _event_ptr->size(); }
-   return 0;
+   return Event().size();
 }
 
 Parameter SampleMgr::ExpectedYield() const

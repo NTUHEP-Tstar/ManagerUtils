@@ -44,10 +44,13 @@ public:
    Parameter& operator+=( const Parameter& );
    Parameter& operator*=( const Parameter& );
    Parameter& operator*=( const double );
+   Parameter& operator/=( const double );
    Parameter operator+( const Parameter& ) const ;
    Parameter operator*( const Parameter& ) const ;
    Parameter operator*( const double )     const ;
+   Parameter operator/( const double )     const ;
    friend Parameter operator*( const double, const Parameter& );
+   friend Parameter operator/( const double, const Parameter& );
 
    // Outputting :: See src.Parameter_Formatting.cc
    std::string LatexFormat( int = -1 ) const;

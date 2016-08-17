@@ -65,14 +65,15 @@ public:
 
    // fwlite::interaction
    virtual fwlite::ChainEvent& Event();
-   virtual void      ForceNewEvent(); // Force refresh in case of new file
+   virtual fwlite::ChainEvent& Event() const ;
+   virtual void      ForceNewEvent() const ; // Force refresh in case of new file
 
    // Extended Variables
    virtual bool      IsRealData()    const ;
    virtual size_t    EventsInFile()  const ;
    virtual Parameter ExpectedYield() const;
    virtual Parameter GetSampleWeight() ;
-   virtual uint64_t  OriginalEventCount() const { return count_original_events(); } 
+   virtual uint64_t  OriginalEventCount() const { return count_original_events(); }
 
 private:
    static double       _luminocity;
@@ -84,7 +85,7 @@ private:
    Parameter           _selection_eff;
    std::vector<std::string> _file_list;
 
-   fwlite::ChainEvent*  _event_ptr;
+   mutable fwlite::ChainEvent*  _event_ptr;
 
    virtual Parameter make_selecection_eff() const ;
    virtual uint64_t  count_original_events() const;

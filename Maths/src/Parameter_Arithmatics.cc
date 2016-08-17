@@ -43,6 +43,14 @@ Parameter& Parameter::operator*=( const double x )
    return *this;
 }
 
+Parameter& Parameter::operator/=( const double x )
+{
+   _centralValue /= x;
+   _error_up /= fabs(x);
+   _error_down /= fabs(x);
+   return *this;
+}
+
 //------------------------------------------------------------------------------
 //   Extended functions
 //------------------------------------------------------------------------------
@@ -67,7 +75,23 @@ Parameter Parameter::operator*( const double x ) const
    return ans;
 }
 
+Parameter Parameter::operator/( const double x ) const
+{
+   Parameter ans(*this);
+   ans /= x ;
+   return ans;
+}
+
 Parameter operator*( const double y , const Parameter& x )
 {
    return x * y ;
+}
+
+
+Parameter operator/( const double y, const Parameter& x )
+{
+   const double centralValue = y / x._centralValue;
+   const double err_up       = centralValue * x.RelUpperError();
+   const double err_dw       = centralValue * x.RelLowerError();
+   return Parameter( centralValue, err_up, err_dw ); 
 }

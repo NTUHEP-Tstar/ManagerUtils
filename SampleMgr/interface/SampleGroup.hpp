@@ -49,6 +49,7 @@ public:
    unsigned  EventsInFile() const;
    Parameter ExpectedYield() const;
    Parameter TotalCrossSection() const;
+   Parameter AvgSelectionEfficiency() const;
 
 private:
    std::vector<SampleMgr*>  _samplelist;
