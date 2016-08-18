@@ -52,9 +52,9 @@ public:
    static void SetAfterCutLabel( const std::string& x )  { _after_cut_label  = x; }
 
    // Access members
-   virtual const Parameter&  CrossSection()        const { return _cross_section; }
-   virtual const Parameter&  KFactor()             const { return _k_factor; }
-   virtual const Parameter&  SelectionEfficiency() const { return _selection_eff;}
+   virtual const Parameter&  CrossSection()           const { return _cross_section; }
+   virtual const Parameter&  KFactor()                const { return _k_factor; }
+   virtual const Parameter&  SelectionEfficiency()    const { return _selection_eff;}
    virtual const std::vector<std::string>& FileList() const { return _file_list; }
 
    // Manual setting function
@@ -73,6 +73,7 @@ public:
    virtual size_t    EventsInFile()  const ;
    virtual Parameter ExpectedYield() const;
    virtual Parameter GetSampleWeight() ;
+   virtual uint64_t  SelectedEventCount() const { return count_selected_events(); }
    virtual uint64_t  OriginalEventCount() const { return count_original_events(); }
 
 private:
