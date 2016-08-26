@@ -127,7 +127,7 @@ Parameter SampleGroup::AvgSelectionEfficiency() const
       double orig = 0 ;
       for( const auto& sample: SampleList() ){
          pass += sample->EventsInFile() ;
-         orig += sample->OriginalEventCount();
+         orig += sample->EventsInFile() / sample->SelectionEfficiency().CentralValue();
       }
       const double cen = pass / orig ;
       const double err = sqrt( cen * (1-cen ) / (orig -1) );

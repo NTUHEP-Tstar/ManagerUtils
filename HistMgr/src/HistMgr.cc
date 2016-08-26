@@ -8,7 +8,7 @@
 #include "ManagerUtils/HistMgr/interface/HistMgr.hpp"
 
 #include <cstdlib>
-
+#include <iostream>
 using namespace std;
 using namespace mgr;
 
@@ -23,7 +23,7 @@ HistMgr::HistMgr( const string& name ):
 
 HistMgr::~HistMgr()
 {
-   for( auto& hist : _hist_list ){ delete hist; }
+   for( auto& histpair : HistMap() ){ delete histpair.second; }
 }
 
 //------------------------------------------------------------------------------
@@ -31,31 +31,19 @@ HistMgr::~HistMgr()
 //------------------------------------------------------------------------------
 TH1D* HistMgr::Hist( const string& hist_name )
 {
-   for( auto& hist : _hist_list ){
-      if( Name()+hist_name == hist->GetName() ){
-         return hist;
-      }
-   }
-   return NULL;
+   return HistMap().at( hist_name );
 }
 
 const TH1D* HistMgr::Hist( const string& hist_name ) const
 {
-   for( auto& hist : _hist_list ){
-      if( Name()+hist_name == hist->GetName() ){
-         return hist;
-      }
-   }
-   return NULL;
+   return HistMap().at( hist_name );
 }
 
 vector<string> HistMgr::AvailableHistList() const
 {
    vector<string> ans;
-   for( const auto& hist : _hist_list ){
-      string name = hist->GetName();
-      name.erase( 0 , Name().length() );
-      ans.push_back( name );
+   for( const auto& histpair : HistMap() ){
+      ans.push_back( histpair.first );
    }
    return ans;
 }
@@ -88,7 +76,7 @@ void HistMgr::AddHist(
    TH1D* hist = new TH1D( hist_name.c_str(), hist_title.c_str(), bin_size, x_lower, x_upper );
    hist->SetStats(0);
 
-   _hist_list.push_back( hist );
+   _histmap[label] = hist ;
 }
 
 
@@ -97,7 +85,8 @@ void HistMgr::AddHist(
 //------------------------------------------------------------------------------
 void HistMgr::Scale( const double x )
 {
-   for( auto hist: _hist_list ){
+   for( auto histpair: HistMap() ){
+      auto& hist = histpair.second;
       for( int i = 0 ; i < hist->GetSize() ; ++i ){
          double bincontent = hist->GetBinContent(i);
          double binerror   = hist->GetBinError(i);
@@ -117,21 +106,21 @@ void HistMgr::SetColor( const Color_t x )
 
 void HistMgr::SetLineColor( const Color_t x )
 {
-   for( auto hist : _hist_list ){
-      hist->SetLineColor( x );
+   for( auto histpair : HistMap() ){
+      histpair.second->SetLineColor( x );
    }
 }
 
 void HistMgr::SetFillColor( const Color_t x )
 {
-   for( auto hist : _hist_list ){
-      hist->SetFillColor( x );
+   for( auto histpair : HistMap() ){
+      histpair.second->SetFillColor( x );
    }
 }
 
 void HistMgr::SetFillStyle( const Style_t x )
 {
-   for( auto hist : _hist_list ){
-      hist->SetFillStyle( x );
+   for( auto histpair : HistMap() ){
+      histpair.second->SetFillStyle( x );
    }
 }

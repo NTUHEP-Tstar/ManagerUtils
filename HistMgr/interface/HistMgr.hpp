@@ -12,7 +12,7 @@
 
 #include "TH1D.h"
 
-#include <vector>
+#include <map>
 #include <string>
 
 
@@ -30,6 +30,10 @@ public:
 
    TH1D* Hist( const std::string& );
    const TH1D* Hist( const std::string& ) const ;
+
+   std::map<std::string, TH1D*>& HistMap()             { return _histmap ; }
+   const std::map<std::string, TH1D*>& HistMap() const { return _histmap ; }
+
    std::vector<std::string> AvailableHistList() const;
    void Scale( const double );
    void SetColor( const Color_t );
@@ -49,8 +53,7 @@ protected:
 
 private:
    virtual void define_hist(){}  //Virtual function for overloading
-   std::vector<TH1D*>  _hist_list;
-
+   std::map<std::string, TH1D*>  _histmap;
 };
 
 }
