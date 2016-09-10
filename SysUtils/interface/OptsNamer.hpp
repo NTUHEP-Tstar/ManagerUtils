@@ -57,7 +57,7 @@ public:
       const std::string& instance,
       const std::string& tag ) const ;
 
-   const boost::program_options::variables_map& GetMap()  const { return _map;  }
+   const boost::program_options::variables_map& GetMap() const { return _map;  }
    const boost::property_tree::ptree&           GetTree()const { return _tree; }
 
 private:

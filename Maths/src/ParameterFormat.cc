@@ -13,48 +13,59 @@
 
 using namespace std;
 
-string FloatingPoint( const Parameter& x,  int precision )
+string FloatingPoint( double x, const int precision )
 {
-   char central_format[64];
-   char error_format[64];
-   char full_format[64];
+   char buffer[100];
+   char retstr[1024];
+   unsigned  index ;
+   if( precision < 0 ){
+      // if request indefinite precision, try 8 and strip trailing zeros
+      sprintf( buffer , "%%.8lf" );
+   } else {
+      sprintf( buffer , "%%.%df" , precision );
+   }
+
+   sprintf( retstr, buffer , x );
+
+   if( precision < 0 ){
+      index  = strlen( retstr )-1 ;
+      while( retstr[index] == '0'  ){
+         retstr[index] ='\0' ; // wiping to end of string character
+         if( index == 0 ){ break; }
+         --index;
+      }
+      if( retstr[index] == '.' ){
+         retstr[index] ='\0';
+      }
+   }
+   return retstr;
+}
+
+string FloatingPoint( const Parameter& x,  const int precision )
+{
    char full_string[256];
 
-   const double cen = x.CentralValue();
-   const double up  = x.AbsUpperError();
-   const double lo  = x.AbsLowerError();
-
-   if( precision >= 0 ){
-      sprintf( central_format, "%%.%dlf" , precision );
-      sprintf( error_format  , "%%.%dlf" , precision+1 );
-   } else {
-      sprintf( central_format, "%%lg" );
-      sprintf( error_format  , "%%lg" );
-   }
+   const string cen = precision >=0 ? FloatingPoint( x.CentralValue()  , precision     ) : FloatingPoint( x.CentralValue()  , -1 );
+   const string up  = precision >=0 ? FloatingPoint( x.AbsUpperError() , precision+1   ) : FloatingPoint( x.AbsUpperError() , -1 );
+   const string lo  = precision >=0 ? FloatingPoint( x.AbsLowerError() , precision+1   ) : FloatingPoint( x.AbsLowerError() , -1 );
 
    if( up == lo ){
       if( up == 0. ){
-         sprintf( full_format, "%s" , central_format );
-         sprintf( full_string, full_format, cen  );
+         sprintf( full_string, "$%s$", cen.c_str()  );
       } else {
-         sprintf( full_format, "%s\\pm%s" , central_format, error_format );
-         sprintf( full_string, full_format, cen, up  );
+         sprintf( full_string, "$%s\\pm%s$" , cen.c_str(), up.c_str()  );
       }
    } else {
-      sprintf( full_format, "%s^{%s}_{%s}", central_format, error_format, error_format );
-      sprintf( full_string, full_format , cen, up, lo );
+      sprintf( full_string, "$%s^{+%s}_{-%s}$", cen.c_str(), up.c_str(), lo.c_str()  );
    }
    return full_string;
 }
 
-string Scientific( const Parameter& x, unsigned precision )
+string Scientific( const Parameter& x, const unsigned precision )
 {
-   char central_format[64];
-   char error_format  [64];
-   char base_format   [64];
    char base_string   [256];
    char full_string   [256];
-   int  exponent = 0 ;
+   int  exponent       = 0 ;
 
    double cen = x.CentralValue()  ;
    double up  = x.AbsUpperError() ;
@@ -72,27 +83,24 @@ string Scientific( const Parameter& x, unsigned precision )
       lo  *= 10 ;
    }
 
-   sprintf( central_format, "%%.%dlf" , precision );
-   sprintf( error_format  , "%%.%dlf" , precision+1 );
+   const string censtr = FloatingPoint( cen , precision );
+   const string upstr  = FloatingPoint( up  , precision +1 );
+   const string lostr  = FloatingPoint( lo  , precision +1 );
 
-   // Printing base part to string
    if( up == lo ){
       if( up == 0 ){
-         sprintf( base_format, "%s" , central_format );
-         sprintf( base_string, base_format , cen );
+         sprintf( base_string, "%s" , censtr.c_str() );
       } else {
-         sprintf( base_format, "%s\\pm%s" , central_format, error_format );
-         sprintf( base_string, base_format, cen, up );
+         sprintf( base_string, "%s\\pm%s", censtr.c_str(), upstr.c_str() );
       }
    } else {
-      sprintf( base_format, "%s^{%s}_{%s}", central_format, error_format, error_format );
-      sprintf( base_string, base_format   , cen, up , lo );
+      sprintf( base_string, "%s^{+%s}_{-%s}", censtr.c_str(), upstr.c_str() , lostr.c_str() );
    }
 
    if( exponent == 0 ){
       sprintf( full_string, "$%s$", base_string );
    } else {
-      if( up == lo ){ // Special base for symmetric errors
+      if( up == lo ){ // Special case for symmetric errors
          sprintf( full_string, "$(%s) \\times 10^{%d}$", base_string, exponent );
       } else {
          sprintf( full_string, "$%s \\times 10^{%d}$", base_string, exponent );

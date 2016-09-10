@@ -1,15 +1,17 @@
 /*******************************************************************************
  *
- *  Filename    : SystemUtils.hh
- *  Description : System interaction utiliy functions
+ *  Filename    : TimeUtils.hpp
+ *  Description : System time display functions
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#ifndef __SYSTEM_UTILS_HH__
-#define __SYSTEM_UTILS_HH__
+#ifndef MANAGERUTILS_SYSUTILS_TIMEUTILS_HPP
+#define MANAGERUTILS_SYSUTILS_TIMEUTILS_HPP
 
-
-// Getting current time functions
+//------------------------------------------------------------------------------
+//   ** CurrentDateTime
+//   Get a string representing the current time and date
+//------------------------------------------------------------------------------
 extern std::string CurrentDateTime();
 
 #endif /* end of include guard: __SYSTEM_UTILS_HH__ */

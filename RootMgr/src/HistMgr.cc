@@ -5,7 +5,7 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#include "ManagerUtils/HistMgr/interface/HistMgr.hpp"
+#include "ManagerUtils/RootMgr/interface/HistMgr.hpp"
 
 #include <cstdlib>
 #include <iostream>
@@ -18,31 +18,37 @@ using namespace mgr;
 HistMgr::HistMgr( const string& name ):
    Named(name)
 {
-   define_hist();
 }
 
 HistMgr::~HistMgr()
 {
-   for( auto& histpair : HistMap() ){ delete histpair.second; }
 }
 
 //------------------------------------------------------------------------------
 //   Getting Histograms
 //------------------------------------------------------------------------------
-TH1D* HistMgr::Hist( const string& hist_name )
+TH1D* HistMgr::Hist( const string& name )
 {
-   return HistMap().at( hist_name );
+   if( _histmap.count(name) ){
+      return _histmap.at(name).get();
+   } else {
+      return NULL;
+   }
 }
 
-const TH1D* HistMgr::Hist( const string& hist_name ) const
+const TH1D* HistMgr::Hist( const string& name ) const
 {
-   return HistMap().at( hist_name );
+   if( _histmap.count(name) ){
+      return _histmap.at(name).get();
+   } else {
+      return NULL;
+   }
 }
 
 vector<string> HistMgr::AvailableHistList() const
 {
    vector<string> ans;
-   for( const auto& histpair : HistMap() ){
+   for( const auto& histpair : _histmap ){
       ans.push_back( histpair.first );
    }
    return ans;
@@ -60,12 +66,31 @@ void HistMgr::AddHist(
       const double   x_upper
 ) {
    char y_title[1024];
+   const double bin_width = (x_upper - x_lower) / bin_size ;
+   if( fabs(bin_width - 1 ) < 0.005 ){
+      if( x_unit != ""){
+         sprintf(
+            y_title, "Yield [1/(%s)]",
+            x_unit.c_str()
+         );
+      } else {
+         sprintf( y_title , "Yield");
+      }
 
-   sprintf(
-      y_title, "Yield [1/%.2lf %s]",
-      (x_upper - x_lower)/bin_size,
-      x_unit.c_str()
-   );
+   } else {
+      if( x_unit != "" ){
+         sprintf(
+            y_title, "Yield [1/%.2lf(%s)]",
+            (x_upper - x_lower)/bin_size,
+            x_unit.c_str()
+         );
+      } else{
+         sprintf(
+            y_title, "Yield [1/%.2lf]",
+            (x_upper - x_lower)/bin_size
+         );
+      }
+   }
 
    string x_title = x_label;
    if( x_unit != "" ){
@@ -73,10 +98,10 @@ void HistMgr::AddHist(
    }
    const string hist_name = Name() + label ;
    const string hist_title = label +";" + x_title + ";" + y_title ;
-   TH1D* hist = new TH1D( hist_name.c_str(), hist_title.c_str(), bin_size, x_lower, x_upper );
+   TH1D* hist = new TH1D( hist_name.c_str(), "", bin_size, x_lower, x_upper );
    hist->SetStats(0);
 
-   _histmap[label] = hist ;
+   _histmap[label] = std::unique_ptr<TH1D>(hist) ;
 }
 
 
@@ -85,7 +110,7 @@ void HistMgr::AddHist(
 //------------------------------------------------------------------------------
 void HistMgr::Scale( const double x )
 {
-   for( auto histpair: HistMap() ){
+   for( auto& histpair: _histmap ){
       auto& hist = histpair.second;
       for( int i = 0 ; i < hist->GetSize() ; ++i ){
          double bincontent = hist->GetBinContent(i);
@@ -106,21 +131,21 @@ void HistMgr::SetColor( const Color_t x )
 
 void HistMgr::SetLineColor( const Color_t x )
 {
-   for( auto histpair : HistMap() ){
+   for( auto& histpair : _histmap ){
       histpair.second->SetLineColor( x );
    }
 }
 
 void HistMgr::SetFillColor( const Color_t x )
 {
-   for( auto histpair : HistMap() ){
+   for( auto& histpair : _histmap ){
       histpair.second->SetFillColor( x );
    }
 }
 
 void HistMgr::SetFillStyle( const Style_t x )
 {
-   for( auto histpair : HistMap() ){
+   for( auto& histpair : _histmap ){
       histpair.second->SetFillStyle( x );
    }
 }

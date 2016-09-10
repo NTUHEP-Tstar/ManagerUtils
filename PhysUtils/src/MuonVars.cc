@@ -26,3 +26,16 @@ double MuPfIso( const pat::Muon& mu )
 
    return (chghad+std::max(0.0,neuhad+pho-0.5*pu))/pt;
 }
+
+
+//------------------------------------------------------------------------------
+//   Muon Track Islation,
+//  https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideMuonIdRun2#Muon_Trigger
+//------------------------------------------------------------------------------
+
+extern const double MUTRACKISO_TIGHT = 0.05;
+extern const double MUTRACKISO_LOOSE = 0.10;
+double MuTrackIso( const pat::Muon& mu )
+{
+   return mu.isolationR03().sumPt / mu.pt();
+}

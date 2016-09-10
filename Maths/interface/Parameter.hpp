@@ -52,10 +52,6 @@ public:
    friend Parameter operator*( const double, const Parameter& );
    friend Parameter operator/( const double, const Parameter& );
 
-   // Outputting :: See src.Parameter_Formatting.cc
-   std::string LatexFormat( int = -1 ) const;
-   std::string DataCardFormat() const;
-
 private:
    double _centralValue;
    double _error_up;

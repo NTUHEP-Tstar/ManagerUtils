@@ -5,8 +5,8 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#ifndef MANAGERUTILS_HISTMGR_HISTMGR_HPP
-#define MANAGERUTILS_HISTMGR_HISTMGR_HPP
+#ifndef MANAGERUTILS_ROOTMGR_HISTMGR_HPP
+#define MANAGERUTILS_ROOTMGR_HISTMGR_HPP
 
 #include "ManagerUtils/BaseClass/interface/Named.hpp"
 
@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
 
 namespace mgr {
@@ -28,15 +29,12 @@ public:
    HistMgr( const HistMgr& )  = delete;
    HistMgr& operator=( const HistMgr& ) = delete;
 
-   TH1D* Hist( const std::string& );
+   TH1D*       Hist( const std::string& );
    const TH1D* Hist( const std::string& ) const ;
 
-   std::map<std::string, TH1D*>& HistMap()             { return _histmap ; }
-   const std::map<std::string, TH1D*>& HistMap() const { return _histmap ; }
-
    std::vector<std::string> AvailableHistList() const;
-   void Scale( const double );
-   void SetColor( const Color_t );
+   void Scale       ( const double );
+   void SetColor    ( const Color_t );
    void SetLineColor( const Color_t );
    void SetFillColor( const Color_t );
    void SetFillStyle( const Style_t );
@@ -52,8 +50,7 @@ protected:
    );
 
 private:
-   virtual void define_hist(){}  //Virtual function for overloading
-   std::map<std::string, TH1D*>  _histmap;
+   std::map<std::string, std::unique_ptr<TH1D> >  _histmap;
 };
 
 }

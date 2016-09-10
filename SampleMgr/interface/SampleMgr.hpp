@@ -84,4 +84,4 @@ private:
 
 
 }
-#endif /* end of include guard: __SAMPLE_MGR_HH__ */
+#endif /* end of include guard */

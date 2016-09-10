@@ -23,8 +23,6 @@ int main(int argc, char* argv[]) {
    cout << "=====[STATIC VARIABLE TEST]=====" << endl;
    cout << SampleMgr::TotalLuminosity() << endl;
    cout << SampleMgr::FilePrefix() << endl;
-   cout << SampleMgr::BeforeCutLabel() << endl;
-   cout << SampleMgr::AfterCutLabel() << endl;
 
    cout << "=====[FIRST INSTANCE TEST]=====" << endl;
    SampleMgr mysample( "TTJets");
@@ -33,11 +31,8 @@ int main(int argc, char* argv[]) {
 
    cout << mysample.LatexName() << endl;
    cout << mysample.RootTitle() << endl;
-   cout << mysample.CrossSection().LatexFormat() << endl;
-   cout << mysample.KFactor().LatexFormat() << endl;
    cout << mysample.EventsInFile() << endl;
    cout << mysample.ExpectedYield() << endl;
-   cout << mysample.GetSampleWeight() << endl;
 
    cout << "=====[EVENT LOOP TEST]=====" << endl;
    int i = 0;

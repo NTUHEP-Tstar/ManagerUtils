@@ -17,7 +17,7 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
-//   Key Arithmatics
+//   Simple arithmatics 
 //------------------------------------------------------------------------------
 Parameter& Parameter::operator+=( const Parameter& x )
 {
@@ -93,5 +93,5 @@ Parameter operator/( const double y, const Parameter& x )
    const double centralValue = y / x._centralValue;
    const double err_up       = centralValue * x.RelUpperError();
    const double err_dw       = centralValue * x.RelLowerError();
-   return Parameter( centralValue, err_up, err_dw ); 
+   return Parameter( centralValue, err_up, err_dw );
 }

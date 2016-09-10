@@ -1,0 +1,13 @@
+# `RootMgr` package
+
+The strangest quirk of [ROOT](https://root.cern.ch/) object design is the association of a C string with a objects string memory position. While some might consider it handy, I find it irritating, as it makes declaring repeated structures trouble some. For example, I have two sample that both have a histogram for jet transverse momentum with identical settings. I cannot call both histograms "JetPt" and be done, instead I have to go throught the trouble of ensuring the two histograms have different string. While this design choice might make logical from a plotting view, I am of the opinion that this should be handled during the plotting process by the user and not during the declartion of the object. In any case, this feature of root is something we need to live with for the time being. The following classes allows for simple repeated structure declaration with the name of common root object, where the name changing is determined automatically. Notice that since this class is powered by out custom [`Named`](../BaseClass/doc/Named.md) class where uniqueness of the class name is not checked by the class, the user is still responesible for checking the naming of the super object is unique.
+
+For a more uniform coding style with ROOT objects, the manager classes will return pointers to the ROOT objects in question rather than a referece.
+
+Please be carefull with these classes, since these classes are only helper classes to make code more intuitive, not fool proof classes. Carefull naming is still important, just less of a hassel.
+
+## [`mgr::HistMgr`](./doc/HistMgr.md) Class
+Manager class for histograms. The histograms addition function is protected, so this class is meant to be inherited for produce a class with idential histogram lists. Currently only [1D histograms](https://root.cern.ch/doc/master/classTH1D.html) are supported.
+
+## [`mgr::RooFitMgr`](./doc/RooFitMgr.md) Class
+Manager class for RooFit objects [`RooRealVar`](https://root.cern.ch/doc/master/classRooRealVar.html), [`RooDataSet`](https://root.cern.ch/doc/master/classRooDataSet.html) and [`RooAbsPdf`](https://root.cern.ch/doc/master/classRooAbsPdf.html). Since the declaration of RooFit objects are typically more complicated, the `RooDataSet` and `RooAbsPdf` class allow for the addition of externally created objects via the `void AddDataSet( RooDataSet* )` function. Notice that after this operation, the class will assume onwership of the pointer! So do not attempt to delete the object pointer after this operation is called. It will automatically be handled by the manager class.

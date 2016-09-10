@@ -5,7 +5,7 @@
  *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
 *******************************************************************************/
-#include "TstarAnalysis/Utils/interface/Parameter.hh"
+#include "ManagerUtils/Maths/interface/Parameter.hpp"
 #include <iostream>
 
 using namespace std;
@@ -16,6 +16,6 @@ int main(int argc, char const *argv[]) {
    Parameter a(10,1,1);
    Parameter b(20,1,1);
    Parameter c = a * b ;
-   
+
    return 0;
 }

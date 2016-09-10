@@ -26,12 +26,10 @@ public:
 
 private:
 
-   // Data
    std::string _scram_arch;
    std::string _store_path;
    std::string _cmssw_version;
    std::string _higg_combine_version;
-
 
    // Helper functions
    void        init_higgs_dir()  const ;

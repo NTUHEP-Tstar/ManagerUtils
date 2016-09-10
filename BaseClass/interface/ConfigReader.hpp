@@ -40,8 +40,8 @@ public:
 
    // Instance variable Access
    Parameter   GetParameter( const std::string& inst_tag, const std::string& tag ) const;
-   std::string GetString( const std::string& inst_tag, const std::string& tag ) const;
-   double      GetDouble( const std::string& inst_tag, const std::string& tag ) const;
+   std::string GetString   ( const std::string& inst_tag, const std::string& tag ) const;
+   double      GetDouble   ( const std::string& inst_tag, const std::string& tag ) const;
    std::vector<std::string> GetStringList( const std::string& inst_tag, const std::string& tag ) const;
    std::vector<double>      GetDoubleList( const std::string& inst_tag, const std::string& tag ) const;
    bool HasTag( const std::string& inst_tag, const std::string& tag ) const;
@@ -61,9 +61,9 @@ private:
 
    // Helper member functions
    static void print_sub_tree( const boost::property_tree::ptree& tree, unsigned print_level );
-   static bool has_tag( const boost::property_tree::ptree& tree, const std::string& tag );
-   static std::string get_string( const boost::property_tree::ptree& tree, const std::string& tag );
-   static double      get_double( const boost::property_tree::ptree& tree, const std::string& tag );
+   static bool has_tag       ( const boost::property_tree::ptree& tree, const std::string& tag );
+   static std::string get_string   ( const boost::property_tree::ptree& tree, const std::string& tag );
+   static double      get_double   ( const boost::property_tree::ptree& tree, const std::string& tag );
    static Parameter   get_parameter( const boost::property_tree::ptree& tree, const std::string& tag );
    static std::vector<std::string> get_string_list( const boost::property_tree::ptree& tree, const std::string& tag );
    static std::vector<double>      get_double_list( const boost::property_tree::ptree& tree, const std::string& tag );

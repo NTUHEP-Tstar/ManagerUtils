@@ -57,4 +57,4 @@ private:
 };
 
 }
-#endif /* end of include guard: __SAMPLEGROUP_H__ */
+#endif /* end of include guard */

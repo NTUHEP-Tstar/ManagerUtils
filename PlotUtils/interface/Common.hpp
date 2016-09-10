@@ -11,9 +11,10 @@
 #ifndef MANAGERUTILS_PLOTUTILS_COMMON_HPP
 #define MANAGERUTILS_PLOTUTILS_COMMON_HPP
 
+//------------------------------------------------------------------------------
+//   Inclusion of common header files to be used
+//------------------------------------------------------------------------------
 #include "ManagerUtils/PlotUtils/interface/Constants.hpp"
-
-// Section including all common plotting libraries
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "THStack.h"
@@ -23,21 +24,41 @@
 #include "TGraph.h"
 #include "TPaveText.h"
 
+//------------------------------------------------------------------------------
+//   NOTE! Namespace plt!
+//------------------------------------------------------------------------------
+
 namespace plt
 {
 
 //------------------------------------------------------------------------------
-//   Class specific functions : see src/Common.cc for implementation
+//   * NewLegend
+//   Create new Tlegend instance with all the font/size settings done.
 //------------------------------------------------------------------------------
-TLegend* NewLegend( const float, const float, const float = PLOT_X_MAX , const float= PLOT_Y_MAX);
+TLegend*   NewLegend ( const float, const float, const float = PLOT_X_MAX , const float= PLOT_Y_MAX);
+
+//------------------------------------------------------------------------------
+//   ** NewTextBox
+//   Creating a new TextBox instance with all the font/sizing settings done.
+//------------------------------------------------------------------------------
 TPaveText* NewTextBox( const float, const float, const float, const float );
+
+//------------------------------------------------------------------------------
+//   ** DrawCMSLabel
+//   Drawing the CMS Preliminary/Simulation label on top left of canvas
+//------------------------------------------------------------------------------
 void DrawCMSLabel( int tag = PRELIMINARY );
+
+//------------------------------------------------------------------------------
+//   ** DrawLuminosity
+//   Drawing the energy scale and luminosity information on top right of canvas
+//------------------------------------------------------------------------------
 void DrawLuminosity( double luminosity );
 
 
-
 //------------------------------------------------------------------------------
-//   Template functions for general plotting
+//   ** DisableXAxis
+//   Remove X axis labels and title from a Plotting objects
 //------------------------------------------------------------------------------
 template<class T>
 void DisableXAxis( T* plot )
@@ -47,6 +68,11 @@ void DisableXAxis( T* plot )
 }
 
 
+//------------------------------------------------------------------------------
+//   ** SetAxis
+//   Setting the axis of a plotting object to the defualt settings found in
+//   Common.hpp
+//------------------------------------------------------------------------------
 template<class T>
 void SetAxis( T* plot )
 {
