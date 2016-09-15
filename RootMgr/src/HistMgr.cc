@@ -96,9 +96,9 @@ void HistMgr::AddHist(
    if( x_unit != "" ){
       x_title += " [" + x_unit + "]" ;
    }
-   const string hist_name = Name() + label ;
-   const string hist_title = label +";" + x_title + ";" + y_title ;
-   TH1D* hist = new TH1D( hist_name.c_str(), "", bin_size, x_lower, x_upper );
+   const string histname = Name() + label ;
+   const string histtitle = ";" + x_title + ";" + y_title ;
+   TH1D* hist = new TH1D( histname.c_str(), histtitle.c_str(), bin_size, x_lower, x_upper );
    hist->SetStats(0);
 
    _histmap[label] = std::unique_ptr<TH1D>(hist) ;
