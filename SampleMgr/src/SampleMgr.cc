@@ -158,3 +158,27 @@ SampleMgr::ExpectedYield() const
              KFactor();
    }
 }
+
+/*******************************************************************************
+*   Sample Cache varaible
+*******************************************************************************/
+bool
+SampleMgr::HasCacheDouble( const string& x ) const
+{
+   return _cachemap.count( x );
+}
+
+/******************************************************************************/
+
+void
+SampleMgr::AddCacheDouble( const string& key, const double x )
+{
+   _cachemap[key] = x ;
+}
+
+/******************************************************************************/
+
+double SampleMgr::GetCacheDouble( const string& key ) const 
+{
+   return _cachemap.at(key);
+}

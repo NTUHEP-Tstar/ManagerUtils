@@ -42,9 +42,10 @@ extern TPad* NewTopPad();
 extern TPad* NewBottomPad();
 
 /*******************************************************************************
-*   * GetYMax - getting y axis maximum (including error)
+*   * GetYMax - getting y axis maximum (including error) for a histogram
 *******************************************************************************/
-extern double GetYmax( const TH1D* );
+extern double GetYmax( const TH1* );
+extern double GetYmax( const std::vector<TH1*>& );
 
 // ------------------------------------------------------------------------------
 //   * NewLegend
@@ -82,8 +83,8 @@ extern double GetYmin( const TGraph* );
 *   ** GetYmax( const vector<TGraph*>& )
 *   ** GetYmin( const veoctr<TGraph*>& ) Getting ymax and ymin of multiple graphs
 *******************************************************************************/
-extern double GetYmax( const std::vector<TGraph*>&  );
-extern double GetYmin( const std::vector<TGraph*>&  );
+extern double GetYmax( const std::vector<const TGraph*>&  );
+extern double GetYmin( const std::vector<const TGraph*>&  );
 
 /********************************************************************************
 *   ** DisableXAxis

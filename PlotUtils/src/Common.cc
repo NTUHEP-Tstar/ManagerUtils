@@ -42,13 +42,23 @@ NewBottomPad()
 *   Getting histogram graphically maximum point
 *******************************************************************************/
 double
-GetYmax( const TH1D* hist )
+GetYmax( const TH1* hist )
 {
    double ans = 0;
-   for( int i = 0 ; i < hist->GetSize() ; ++i ){
+   for( int i = 1 ; i <= hist->GetNcells() ; ++i ){
       const double bincont = hist->GetBinContent(i);
       const double binerr  = hist->GetBinError(i);
       ans = std::max( ans, bincont + binerr );
+   }
+   return ans;
+}
+
+double
+GetYmax( const std::vector<TH1*>& histlist )
+{
+   double ans = 0 ;
+   for( const auto& hist : histlist ){
+      ans = std::max( ans , GetYmax(hist) );
    }
    return ans;
 }
@@ -150,7 +160,7 @@ double GetYmin( const TGraph* x )
 
 }
 
-double GetYmax( const std::vector<TGraph*>& list )
+double GetYmax( const std::vector<const TGraph*>& list )
 {
    double ans = - DBL_MAX;
    for( const auto& graph : list ){
@@ -159,7 +169,7 @@ double GetYmax( const std::vector<TGraph*>& list )
    return ans;
 }
 
-double GetYmin( const std::vector<TGraph*>& list )
+double GetYmin( const std::vector<const TGraph*>& list )
 {
    double ans = DBL_MAX;
    for( const auto& graph : list ){

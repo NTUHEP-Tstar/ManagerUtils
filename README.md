@@ -1,4 +1,4 @@
-# ManagerUtils
+# ManagerUtils {#mainpage}
 
 This is a collection of utility classes intended to inhance the analysis experience in CMSSW environment, with the main focus being on channel based analysis over multiple EDM files. See unit testing file for examples on how to use these classes or check out the.
 

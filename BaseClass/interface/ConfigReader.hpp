@@ -1,12 +1,11 @@
-/*******************************************************************************
+/***************************************************************************//**
  *
- *  Filename    : ConfigReader.hpp
- *  Description : Property Tree Configuration reader class powered by boost
- *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
+ *  \file ConfigReader.hpp
+ *  \author Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
  *
- *  This class takes Generic Property Tree files (json/xml) and Helps load it
- *  into class formats, with help function to translate tree entries into
- *  various data types
+ *  Property Tree Configuration reader class powered by boost
+ *
+ *  Some detailed discription
  *
 *******************************************************************************/
 #ifndef MANAGERUTILS_BASECLASS_CONFIGREADER_HPP
@@ -18,16 +17,18 @@
 
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
-/** @brief Brief  test 
- *
- * Detailed testing 
- *
- *
- */
 
 namespace mgr
 {
 
+/*!
+*  Brief, test
+*
+*  Detailed testing
+*  This class takes Generic Property Tree files (json/xml) and Helps load it
+*  into class formats, with help function to translate tree entries into
+*  various data types
+*/
 class ConfigReader
 {
 
@@ -64,7 +65,7 @@ public:
    const boost::property_tree::ptree& ConfigTree() const { return _ptree; }
 
 private:
-   boost::property_tree::ptree _ptree;
+   boost::property_tree::ptree _ptree; /*!< Detailed description after the member */
 
    // Helper member functions
    static void print_sub_tree( const boost::property_tree::ptree& tree, unsigned print_level );

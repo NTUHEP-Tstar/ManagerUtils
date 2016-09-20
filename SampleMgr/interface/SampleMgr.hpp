@@ -18,6 +18,7 @@
 
 #include "DataFormats/FWLite/interface/ChainEvent.h"
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -60,6 +61,11 @@ public:
    virtual void SetSelectionEfficiency( const Parameter& x ) { _selection_eff = x; }
    virtual std::vector<std::string>& FileList() { return _file_list; }
 
+   // sample wide variable caching
+   virtual bool HasCacheDouble( const std::string& ) const ;
+   virtual void AddCacheDouble( const std::string&, const double );
+   virtual double GetCacheDouble( const std::string& ) const ;
+
    // fwlite::interaction
    virtual fwlite::ChainEvent& Event();
    virtual fwlite::ChainEvent& Event() const ;
@@ -78,6 +84,7 @@ private:
    Parameter           _k_factor;
    Parameter           _selection_eff;
    std::vector<std::string> _file_list;
+   std::map<std::string, double> _cachemap;
 
    mutable fwlite::ChainEvent*  _event_ptr;
 };

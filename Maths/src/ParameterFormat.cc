@@ -84,18 +84,34 @@ Scientific( const Parameter& x, const unsigned precision )
    double up  = x.AbsUpperError();
    double lo  = x.AbsLowerError();
 
-   while( fabs( cen ) > 10 ){
-      exponent++;
-      cen /= 10;
-      up  /= 10;
-      lo  /= 10;
-   }
+   if( cen != 0 ){
+      while( fabs( cen ) > 10 ){
+         exponent++;
+         cen /= 10;
+         up  /= 10;
+         lo  /= 10;
+      }
 
-   while( fabs( cen ) < 1. ){
-      exponent--;
-      cen *= 10;
-      up  *= 10;
-      lo  *= 10;
+      while( fabs( cen ) < 1.  ){
+         exponent--;
+         cen *= 10;
+         up  *= 10;
+         lo  *= 10;
+      }
+   } else if( up != 0 || lo != 0 ){
+      while( fabs( lo ) > 1 && fabs(up) > 1 ){
+         exponent++;
+         cen /= 10;
+         up  /= 10;
+         lo  /= 10;
+      }
+
+      while( fabs( lo ) < 0.1  && fabs(up) < 0.1 ){
+         exponent--;
+         cen *= 10;
+         up  *= 10;
+         lo  *= 10;
+      }
    }
 
    const string censtr = FloatingPoint( cen, precision );
@@ -110,7 +126,7 @@ Scientific( const Parameter& x, const unsigned precision )
       }
    } else {
       sprintf( base_string, "%s^{+%s}_{-%s}", censtr.c_str(),
-         upstr.c_str(), lostr.c_str() );
+      upstr.c_str(), lostr.c_str() );
    }
 
    if( exponent == 0 ){
@@ -118,7 +134,7 @@ Scientific( const Parameter& x, const unsigned precision )
    } else {
       if( up == lo ){// Special case for symmetric errors
          sprintf( full_string, "$(%s) \\times 10^{%d}$", base_string,
-            exponent );
+         exponent );
       } else {
          sprintf( full_string, "$%s \\times 10^{%d}$", base_string, exponent );
       }
@@ -131,14 +147,14 @@ HiggsDataCard( const Parameter& x )
 {
    char buffer[1024];
    if( x.CentralValue() == 0 &&
-       x.AbsUpperError() == 0 &&
-       x.AbsLowerError() == 0 ){
+   x.AbsUpperError() == 0 &&
+   x.AbsLowerError() == 0 ){
       return "--";// special case for null parameter
    } else if( x.AbsUpperError() == x.AbsLowerError() ){
       sprintf( buffer, "%lg", 1.+x.RelAvgError() );
    } else {
       sprintf( buffer, "%lg/%lg", 1.+ x.RelUpperError(),
-         1.- x.RelLowerError() );
+      1.- x.RelLowerError() );
    }
    return buffer;
 }
