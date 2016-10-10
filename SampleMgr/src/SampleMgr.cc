@@ -178,7 +178,31 @@ SampleMgr::AddCacheDouble( const string& key, const double x )
 
 /******************************************************************************/
 
-double SampleMgr::GetCacheDouble( const string& key ) const 
+double SampleMgr::GetCacheDouble( const string& key ) const
 {
    return _cachemap.at(key);
+}
+
+/******************************************************************************/
+
+bool
+SampleMgr::HasCacheString( const string& x ) const
+{
+   return _stringcache.count(x);
+}
+
+/******************************************************************************/
+
+void
+SampleMgr::AddCacheString( const string& key, const string& x )
+{
+   _stringcache[key] = x ;
+}
+
+/******************************************************************************/
+
+string
+SampleMgr::GetCacheString( const string& key ) const
+{
+   return _stringcache.at(key);
 }

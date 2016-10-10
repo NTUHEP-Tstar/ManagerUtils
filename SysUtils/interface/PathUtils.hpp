@@ -25,6 +25,12 @@ extern std::string  GetEnv( const std::string& );
 //------------------------------------------------------------------------------
 extern std::string  ConvertToAbsPath( const std::string& );
 
+/*******************************************************************************
+*   * Basename
+*   * Stripping path to basename
+*******************************************************************************/
+extern std::string Basename( const std::string& );
+
 //------------------------------------------------------------------------------
 //   ** CMSSWSrc
 //   Returns the absolute patth of the CMSSW_X_Y_Z/src directory this program
@@ -37,6 +43,14 @@ extern std::string  CMSSWSrc();
 //   Return the globbing results by the input string query. Returns C++ strings
 //------------------------------------------------------------------------------
 extern std::vector<std::string> Glob( const std::string& );
+
+
+/*******************************************************************************
+*   ** RandomFileName
+*   Generating a random filename of length n, with extension if desired
+*******************************************************************************/
+extern std::string RandomFileName( const unsigned n , const std::string& ext ="");
+
 
 
 #endif /* end of include guard: MANAGERUTILS_SYSUTILS_PATHUTILS */

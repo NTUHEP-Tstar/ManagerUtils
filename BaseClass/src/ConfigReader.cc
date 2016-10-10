@@ -17,6 +17,20 @@ using namespace std;
 using namespace mgr;
 using boost::property_tree::ptree;
 
+/*******************************************************************************
+*   Helper functions
+*******************************************************************************/
+void mgr::PrintPTree( const ptree& tree, unsigned print_level )
+{
+   for( const auto& it : tree ){
+      for( unsigned i = 0 ; i < print_level ; ++ i) {
+         cout << "\t" << flush ;
+      }
+      std::cout << it.first << ": " << it.second.get_value<std::string>() << std::endl;
+      PrintPTree(it.second, print_level + 1 );
+    }
+}
+
 //------------------------------------------------------------------------------
 //   Constructor and destructor
 //------------------------------------------------------------------------------
@@ -38,7 +52,7 @@ ConfigReader::~ConfigReader(){}
 //------------------------------------------------------------------------------
 void ConfigReader::DumpTree() const
 {
-   print_sub_tree( _ptree , 0 );
+   mgr::PrintPTree( _ptree , 0 );
 }
 
 //------------------------------------------------------------------------------
@@ -126,18 +140,8 @@ vector<string> ConfigReader::GetInstanceList() const
 
 
 //------------------------------------------------------------------------------
-//   Helper Private functions
+//   Helper private functions
 //------------------------------------------------------------------------------
-void ConfigReader::print_sub_tree( const ptree& tree, unsigned print_level )
-{
-   for( const auto& it : tree ){
-      for( unsigned i = 0 ; i < print_level ; ++ i) {
-         cout << "\t" << flush ;
-      }
-      std::cout << it.first << ": " << it.second.get_value<std::string>() << std::endl;
-      print_sub_tree(it.second, print_level + 1 );
-    }
-}
 
 bool ConfigReader::has_tag( const ptree& tree, const string& tag )
 {

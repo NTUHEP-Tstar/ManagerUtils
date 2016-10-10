@@ -21,14 +21,8 @@
 namespace mgr
 {
 
-/*!
-*  Brief, test
-*
-*  Detailed testing
-*  This class takes Generic Property Tree files (json/xml) and Helps load it
-*  into class formats, with help function to translate tree entries into
-*  various data types
-*/
+extern void PrintPTree( const boost::property_tree::ptree&, unsigned level = 0 );
+
 class ConfigReader
 {
 
@@ -68,7 +62,6 @@ private:
    boost::property_tree::ptree _ptree; /*!< Detailed description after the member */
 
    // Helper member functions
-   static void print_sub_tree( const boost::property_tree::ptree& tree, unsigned print_level );
    static bool has_tag       ( const boost::property_tree::ptree& tree, const std::string& tag );
    static std::string get_string   ( const boost::property_tree::ptree& tree, const std::string& tag );
    static double      get_double   ( const boost::property_tree::ptree& tree, const std::string& tag );

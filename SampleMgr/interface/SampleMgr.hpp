@@ -65,6 +65,10 @@ public:
    virtual bool HasCacheDouble( const std::string& ) const ;
    virtual void AddCacheDouble( const std::string&, const double );
    virtual double GetCacheDouble( const std::string& ) const ;
+   virtual bool HasCacheString( const std::string& ) const ;
+   virtual void AddCacheString( const std::string&, const std::string& );
+   virtual std::string GetCacheString( const std::string& ) const ;
+
 
    // fwlite::interaction
    virtual fwlite::ChainEvent& Event();
@@ -84,8 +88,12 @@ private:
    Parameter           _k_factor;
    Parameter           _selection_eff;
    std::vector<std::string> _file_list;
-   std::map<std::string, double> _cachemap;
 
+   // Userdefined storage
+   std::map<std::string, double>      _cachemap;
+   std::map<std::string, std::string> _stringcache;
+
+   // FWLite interaction
    mutable fwlite::ChainEvent*  _event_ptr;
 };
 

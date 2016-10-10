@@ -58,7 +58,7 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
       const string jsonfile = cfg.GetStaticString( "Default Json" );
       const string fullpath = SampleCfgPrefix() + jsonfile;
       ConfigReader sample_cfg( fullpath );
-      
+
       SampleList().push_back( new SampleMgr( Name(), sample_cfg ) );
       SetLatexName( SampleList().back()->LatexName() );
       SetRootName( SampleList().back()->RootName() );
@@ -106,6 +106,29 @@ SampleGroup::~SampleGroup()
    for( auto& sample : _samplelist ){
       delete sample;
    }
+}
+
+/*******************************************************************************
+*   Sample Access functions
+*******************************************************************************/
+SampleMgr* SampleGroup::Sample( const std::string& name )
+{
+   for( auto& sample: SampleList() ){
+      if( sample->Name() == name ){
+         return sample;
+      }
+   }
+   return NULL;
+}
+
+const SampleMgr* SampleGroup::Sample( const std::string& name ) const
+{
+   for( const auto& sample : SampleList() ){
+      if( sample->Name() == name ){
+         return sample;
+      }
+   }
+   return NULL;
 }
 
 // ------------------------------------------------------------------------------

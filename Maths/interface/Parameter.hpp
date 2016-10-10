@@ -40,6 +40,9 @@ public:
    inline double RelLowerError() const { return _error_down/_centralValue; }
    inline double RelAvgError()   const { return (RelUpperError()+RelLowerError()) /2.; }
 
+   inline double UpperValue() const { return _centralValue + _error_up;}
+   inline double LowerValue() const { return _centralValue - _error_down; }
+
    // Error arithmatics :: See src/Parameter_Arithmatics.cc
    Parameter& operator+=( const Parameter& );
    Parameter& operator*=( const Parameter& );

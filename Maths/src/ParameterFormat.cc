@@ -99,14 +99,14 @@ Scientific( const Parameter& x, const unsigned precision )
          lo  *= 10;
       }
    } else if( up != 0 || lo != 0 ){
-      while( fabs( lo ) > 1 && fabs(up) > 1 ){
+      while( fabs( lo ) > 1 && fabs( up ) > 1 ){
          exponent++;
          cen /= 10;
          up  /= 10;
          lo  /= 10;
       }
 
-      while( fabs( lo ) < 0.1  && fabs(up) < 0.1 ){
+      while( fabs( lo ) < 0.1  && fabs( up ) < 0.1 ){
          exponent--;
          cen *= 10;
          up  *= 10;
@@ -125,18 +125,20 @@ Scientific( const Parameter& x, const unsigned precision )
          sprintf( base_string, "%s\\pm%s", censtr.c_str(), upstr.c_str() );
       }
    } else {
-      sprintf( base_string, "%s^{+%s}_{-%s}", censtr.c_str(),
-      upstr.c_str(), lostr.c_str() );
+      sprintf(
+         base_string, "%s^{+%s}_{-%s}", censtr.c_str(),
+         upstr.c_str(), lostr.c_str() );
    }
 
    if( exponent == 0 ){
       sprintf( full_string, "$%s$", base_string );
    } else {
-      if( up == lo ){// Special case for symmetric errors
-         sprintf( full_string, "$(%s) \\times 10^{%d}$", base_string,
-         exponent );
+      if( up == lo && up != 0){// Special case for symmetric errors
+         sprintf(
+            full_string, "$(%s)\\times10^{%d}$", base_string,
+            exponent );
       } else {
-         sprintf( full_string, "$%s \\times 10^{%d}$", base_string, exponent );
+         sprintf( full_string, "$%s\\times10^{%d}$", base_string, exponent );
       }
    }
    return full_string;
@@ -147,14 +149,14 @@ HiggsDataCard( const Parameter& x )
 {
    char buffer[1024];
    if( x.CentralValue() == 0 &&
-   x.AbsUpperError() == 0 &&
-   x.AbsLowerError() == 0 ){
+       x.AbsUpperError() == 0 &&
+       x.AbsLowerError() == 0 ){
       return "--";// special case for null parameter
    } else if( x.AbsUpperError() == x.AbsLowerError() ){
       sprintf( buffer, "%lg", 1.+x.RelAvgError() );
    } else {
       sprintf( buffer, "%lg/%lg", 1.+ x.RelUpperError(),
-      1.- x.RelLowerError() );
+         1.- x.RelLowerError() );
    }
    return buffer;
 }

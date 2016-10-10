@@ -41,6 +41,9 @@ public:
    SampleMgr*       Sample()       { return _samplelist.front(); }
    const SampleMgr* Sample() const { return _samplelist.front(); }
 
+   SampleMgr*       Sample( const std::string& );
+   const SampleMgr* Sample( const std::string& ) const;
+
    // Access list
    std::vector<SampleMgr*>&       SampleList()      { return _samplelist; }
    const std::vector<SampleMgr*>& SampleList() const {return _samplelist; }

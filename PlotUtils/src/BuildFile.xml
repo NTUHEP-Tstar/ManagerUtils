@@ -1,5 +1,5 @@
 <use name="roofit"/> <!--- For Graphics related libraries --->
-
+<use name="ManagerUtils/SysUtils"/>
 <flags CXXFLAGS="-g"/>
 
 <export>

@@ -22,14 +22,16 @@ OptsNamer::~OptsNamer(){}
 //------------------------------------------------------------------------------
 //   Loading functions
 //------------------------------------------------------------------------------
+void
 OptsNamer::LoadJsonFile( const string& filename )
 {
    read_json( filename, _tree );
 }
 
+void
 OptsNamer::LoadOptions( const variables_map& map )
 {
-   _map = map
+   _map = map;
 }
 
 //------------------------------------------------------------------------------
