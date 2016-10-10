@@ -40,6 +40,7 @@ SaveToPDF( TCanvas* c, const string& filename )
       );
 
    system( cmd );
+   system( ("rm "+ temppdf).c_str() );
 
    cout << "Saving Tcanvas " << c->GetName() << " to " << filename << endl;
 }
