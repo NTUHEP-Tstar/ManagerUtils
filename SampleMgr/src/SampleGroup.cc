@@ -59,7 +59,8 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
       const string fullpath = SampleCfgPrefix() + jsonfile;
       ConfigReader sample_cfg( fullpath );
 
-      SampleList().push_back( new SampleMgr( Name(), sample_cfg ) );
+      unique_ptr<SampleMgr> newmgr( new SampleMgr(Name(), sample_cfg ) );
+      SampleList().push_back( move(newmgr) );
       SetLatexName( SampleList().back()->LatexName() );
       SetRootName( SampleList().back()->RootName() );
    } else if( cfg.HasTag( Name(), "Sample List" ) ){
@@ -76,7 +77,7 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
       ConfigReader samplecfg( fullpath );
 
       for( const auto& name : cfg.GetStringList( Name(), "Sample List" ) ){
-         SampleList().push_back( new SampleMgr( name, samplecfg ) );
+         SampleList().push_back( unique_ptr<SampleMgr>( new SampleMgr( name, samplecfg ) ) );
       }
    } else if( cfg.HasTag( Name(), "File List" ) ){
       const string rootname  = cfg.GetString( Name(), "Root Name" );
@@ -88,14 +89,14 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
          ConfigReader samplecfg( SampleCfgPrefix() + json );
 
          for( const auto& sampletag : samplecfg.GetInstanceList() ){
-            SampleList().push_back( new SampleMgr( sampletag, samplecfg ) );
+            SampleList().push_back( unique_ptr<SampleMgr>( new SampleMgr( sampletag, samplecfg ) ) );
          }
       }
    } else if( cfg.HasTag( Name(), "Single Sample" ) ){
       const string jsonfile = cfg.GetString( Name(), "Single Sample" );
       const string fullpath = SampleCfgPrefix() + jsonfile;
       ConfigReader samplecfg( fullpath );
-      SampleList().push_back( new SampleMgr( Name(), samplecfg ) );
+      SampleList().push_back( unique_ptr<SampleMgr>(new SampleMgr( Name(), samplecfg )) );
       SetLatexName( SampleList().back()->LatexName() );
       SetRootName( SampleList().back()->RootName() );
    }
@@ -103,9 +104,6 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
 
 SampleGroup::~SampleGroup()
 {
-   for( auto& sample : _samplelist ){
-      delete sample;
-   }
 }
 
 /*******************************************************************************
@@ -115,7 +113,7 @@ SampleMgr* SampleGroup::Sample( const std::string& name )
 {
    for( auto& sample: SampleList() ){
       if( sample->Name() == name ){
-         return sample;
+         return sample.get();
       }
    }
    return NULL;
@@ -125,7 +123,7 @@ const SampleMgr* SampleGroup::Sample( const std::string& name ) const
 {
    for( const auto& sample : SampleList() ){
       if( sample->Name() == name ){
-         return sample;
+         return sample.get();
       }
    }
    return NULL;

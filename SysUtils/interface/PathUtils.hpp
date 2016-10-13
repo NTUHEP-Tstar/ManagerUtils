@@ -38,18 +38,19 @@ extern std::string Basename( const std::string& );
 //------------------------------------------------------------------------------
 extern std::string  CMSSWSrc();
 
-//------------------------------------------------------------------------------
-//   ** Glob
-//   Return the globbing results by the input string query. Returns C++ strings
-//------------------------------------------------------------------------------
+
+/*******************************************************************************
+*   Globbing related functions
+*******************************************************************************/
 extern std::vector<std::string> Glob( const std::string& );
 
 
 /*******************************************************************************
 *   ** RandomFileName
-*   Generating a random filename of length n, with extension if desired
+*   Generating a random filename of length n, with extension if desired, adding
+*   the hidden flag will add the prefix '.', enabled by default
 *******************************************************************************/
-extern std::string RandomFileName( const unsigned n , const std::string& ext ="");
+extern std::string RandomFileName( const unsigned n , const std::string& ext ="" , const bool hidden=true );
 
 
 

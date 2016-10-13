@@ -25,7 +25,6 @@ public:
    std::vector<int> SubmitParallel( const std::vector<CombineRequest>& ) const ;
 
 private:
-
    std::string _scram_arch;
    std::string _store_path;
    std::string _cmssw_version;

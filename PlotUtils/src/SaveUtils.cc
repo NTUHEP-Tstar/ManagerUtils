@@ -25,16 +25,26 @@ namespace plt {
 void
 SaveToPDF( TCanvas* c, const string& filename )
 {
-   // Command found at
-   // http://tex.stackexchange.com/questions/66522/xelatex-rotating-my-figures-in-beamer
-   const string temppdf = RandomFileName( 6, "pdf" ).c_str();
+   // Saving to a temporary file XXXXXX<filename>.pdf
+   // Forcing postfix to be '.pdf'
+   const string temppdf = RandomFileName(6,"",false) + "_" + Basename(filename) + ".pdf";
    char cmd[4096];
 
    c->SaveAs( temppdf.c_str() );
 
+   // Command found at
+   // http://tex.stackexchange.com/questions/66522/xelatex-rotating-my-figures-in-beamer
    sprintf(
       cmd,
-      "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=%s %s",
+      "gs"
+      "  -sDEVICE=pdfwrite"
+      "  -dCompatibilityLevel=1.4"
+      "  -dPDFSETTINGS=/screen"
+      "  -dNOPAUSE"
+      "  -dQUIET"
+      "  -dBATCH"
+      "  -sOutputFile=%s"
+      "  %s",
       filename.c_str(),
       temppdf.c_str()
       );

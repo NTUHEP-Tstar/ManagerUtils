@@ -21,21 +21,18 @@ double SampleMgr::_luminocity  = 0;
 string SampleMgr::_file_prefix = "./";
 
 SampleMgr::SampleMgr( const string& name ) :
-   Named( name ),
-   _event_ptr( NULL )
+   Named( name )
 {
 }
 
 SampleMgr::SampleMgr( const string& name, const string& file_name ) :
-   Named( name ),
-   _event_ptr( NULL )
+   Named( name )
 {
    InitFromFile( file_name );
 }
 
 SampleMgr::SampleMgr( const string& name, const ConfigReader& cfg ) :
-   Named( name ),
-   _event_ptr( NULL )
+   Named( name )
 {
    InitFromReader( cfg );
 }
@@ -84,7 +81,6 @@ SampleMgr::InitFromReader( const ConfigReader& cfg )
 
 SampleMgr::~SampleMgr()
 {
-   if( _event_ptr != NULL ){ delete _event_ptr; }
 }
 
 // ------------------------------------------------------------------------------
@@ -110,23 +106,21 @@ SampleMgr::GlobbedFileList() const
 fwlite::ChainEvent&
 SampleMgr::Event()
 {
-   if( _event_ptr == NULL ){ ForceNewEvent(); }
+   if( !_event_ptr ){ ForceNewEvent(); }
    return *_event_ptr;
 }
 
 fwlite::ChainEvent&
 SampleMgr::Event() const
 {
-   if( _event_ptr == NULL ){ ForceNewEvent(); }
+   if( ! _event_ptr ){ ForceNewEvent(); }
    return *_event_ptr;
 }
 
 void
 SampleMgr::ForceNewEvent() const
 {
-   if( _event_ptr != NULL ){ delete _event_ptr; }
-
-   _event_ptr = new fwlite::ChainEvent( GlobbedFileList() );
+   _event_ptr.reset( new fwlite::ChainEvent( GlobbedFileList() ) );
 }
 
 // ------------------------------------------------------------------------------

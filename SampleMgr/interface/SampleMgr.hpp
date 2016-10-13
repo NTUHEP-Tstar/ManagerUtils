@@ -21,6 +21,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace mgr
 {
@@ -94,7 +95,7 @@ private:
    std::map<std::string, std::string> _stringcache;
 
    // FWLite interaction
-   mutable fwlite::ChainEvent*  _event_ptr;
+   mutable std::unique_ptr<fwlite::ChainEvent>  _event_ptr;
 };
 
 

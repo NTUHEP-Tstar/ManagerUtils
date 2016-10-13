@@ -6,12 +6,14 @@
 *
 *******************************************************************************/
 #include <cstdlib>
+#include <ctime>
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
 #include <glob.h>
 #include <libgen.h>
-#include <boost/filesystem.hpp>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -47,7 +49,7 @@ string
 Basename( const std::string& mypath )
 {
    boost::filesystem::path pathobj( mypath );
-   return pathobj.filename().string() ;
+   return pathobj.filename().string();
 }
 
 /******************************************************************************/
@@ -83,7 +85,6 @@ SubPackageResultsPath( const std::string& x, const std::string& y )
 }
 
 /******************************************************************************/
-
 vector<string>
 Glob( const string& path )
 {
@@ -94,19 +95,30 @@ Glob( const string& path )
    return ret;
 }
 
+/******************************************************************************/
+
 string
-RandomFileName( const unsigned n, const string& ext  )
+RandomFileName( const unsigned n, const string& ext, const bool hidden  )
 {
    const static string alphanum = "0123456789"
                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                   "abcdefghijklmnopqrstuvwxyz";
+
    string ans = "";
-   for( unsigned i = 0 ; i < n ; ++i ){
+   struct timeval time;
+   gettimeofday( &time, NULL );
+   srand( time.tv_usec );// Initializing to microseconds to avoid name collision
+
+   for( unsigned i = 0; i < n; ++i ){
       ans.push_back( alphanum[rand()%alphanum.length()] );
    }
 
    if( ext != "" ){
-      ans += "." + ext ;
+      ans += "." + ext;
+   }
+
+   if( hidden ){
+      ans = "." + ans;
    }
 
    return ans;
