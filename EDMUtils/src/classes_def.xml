@@ -1,0 +1,8 @@
+<lcgdict>
+   <selection>
+      <class name="mgr::Counter" />
+      <class name="edm::Wrapper<mgr::Counter>"/>
+   </selection>
+   <exclusion>
+   </exclusion>
+</lcgdict>

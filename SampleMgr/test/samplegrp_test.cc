@@ -48,8 +48,6 @@ int main(int argc, char* argv[])
    single_default.InitFromReader( cfg );
    DumpInfo( single_default );
 
-
-
    return 0;
 }
 
@@ -59,7 +57,7 @@ void DumpInfo( const SampleGroup& x )
    cout << x.Name() << " " << x.LatexName() << endl;
    for( const auto& sample : x.SampleList() ){
       cout << "   > "
-           << sample->Name() << " " << sample->LatexName()
-           << sample->EventsInFile() << endl;
+           << sample.Name() << " " << sample.LatexName()
+           << sample.EventsInFile() << endl;
    }
 }

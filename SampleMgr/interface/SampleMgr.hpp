@@ -16,7 +16,7 @@
 #include "ManagerUtils/BaseClass/interface/Named.hpp"
 #include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
 
-#include "DataFormats/FWLite/interface/ChainEvent.h"
+#include "ManagerUtils/SampleMgr/interface/MultiFile.hpp"
 
 #include <map>
 #include <string>
@@ -34,8 +34,6 @@ public:
    SampleMgr( const std::string&, const std::string& );
    SampleMgr( const std::string&, const ConfigReader& );
    virtual ~SampleMgr ();
-   SampleMgr(const SampleMgr&) = delete ;
-   SampleMgr& operator=(const SampleMgr&) = delete ;
 
    // Inititializing function
    static void InitStaticFromFile  ( const std::string& filename );
@@ -53,14 +51,14 @@ public:
    virtual const Parameter&  CrossSection()           const { return _cross_section; }
    virtual const Parameter&  KFactor()                const { return _k_factor;      }
    virtual const Parameter&  SelectionEfficiency()    const { return _selection_eff; }
-   virtual const std::vector<std::string>& FileList() const { return _file_list;     }
+   virtual const std::vector<std::string>& FileList() const { return _filelist;     }
    virtual std::vector<std::string> GlobbedFileList() const ;
 
    // Manual setting function
    virtual void SetCrossSection       ( const Parameter& x ) { _cross_section = x; }
    virtual void SetKFactor            ( const Parameter& x ) { _k_factor      = x; }
    virtual void SetSelectionEfficiency( const Parameter& x ) { _selection_eff = x; }
-   virtual std::vector<std::string>& FileList() { return _file_list; }
+   virtual std::vector<std::string>& FileList() { return _filelist; }
 
    // sample wide variable caching
    virtual bool HasCacheDouble( const std::string& ) const ;
@@ -70,10 +68,9 @@ public:
    virtual void AddCacheString( const std::string&, const std::string& );
    virtual std::string GetCacheString( const std::string& ) const ;
 
-
    // fwlite::interaction
-   virtual fwlite::ChainEvent& Event();
-   virtual fwlite::ChainEvent& Event() const ;
+   virtual MultiFileEvent& Event();
+   virtual MultiFileEvent& Event() const ;
    virtual void  ForceNewEvent() const ; // Force refresh in case of new file
 
    // Extended Variables
@@ -88,14 +85,14 @@ private:
    Parameter           _cross_section;
    Parameter           _k_factor;
    Parameter           _selection_eff;
-   std::vector<std::string> _file_list;
+   std::vector<std::string> _filelist;
 
    // Userdefined storage
    std::map<std::string, double>      _cachemap;
    std::map<std::string, std::string> _stringcache;
 
    // FWLite interaction
-   mutable std::unique_ptr<fwlite::ChainEvent>  _event_ptr;
+   mutable MultiFileEvent  _event;
 };
 
 

@@ -59,10 +59,9 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
       const string fullpath = SampleCfgPrefix() + jsonfile;
       ConfigReader sample_cfg( fullpath );
 
-      unique_ptr<SampleMgr> newmgr( new SampleMgr(Name(), sample_cfg ) );
-      SampleList().push_back( move(newmgr) );
-      SetLatexName( SampleList().back()->LatexName() );
-      SetRootName( SampleList().back()->RootName() );
+      SampleList().push_back( SampleMgr( Name(), sample_cfg ) );
+      SetLatexName( SampleList().back().LatexName() );
+      SetRootName( SampleList().back().RootName() );
    } else if( cfg.HasTag( Name(), "Sample List" ) ){
       const string rootname  = cfg.GetString( Name(), "Root Name" );
       const string latexname = cfg.GetString( Name(), "Latex Name" );
@@ -77,7 +76,7 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
       ConfigReader samplecfg( fullpath );
 
       for( const auto& name : cfg.GetStringList( Name(), "Sample List" ) ){
-         SampleList().push_back( unique_ptr<SampleMgr>( new SampleMgr( name, samplecfg ) ) );
+         SampleList().push_back( SampleMgr( name, samplecfg ) );
       }
    } else if( cfg.HasTag( Name(), "File List" ) ){
       const string rootname  = cfg.GetString( Name(), "Root Name" );
@@ -89,16 +88,16 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
          ConfigReader samplecfg( SampleCfgPrefix() + json );
 
          for( const auto& sampletag : samplecfg.GetInstanceList() ){
-            SampleList().push_back( unique_ptr<SampleMgr>( new SampleMgr( sampletag, samplecfg ) ) );
+            SampleList().push_back( SampleMgr( sampletag, samplecfg ) );
          }
       }
    } else if( cfg.HasTag( Name(), "Single Sample" ) ){
       const string jsonfile = cfg.GetString( Name(), "Single Sample" );
       const string fullpath = SampleCfgPrefix() + jsonfile;
       ConfigReader samplecfg( fullpath );
-      SampleList().push_back( unique_ptr<SampleMgr>(new SampleMgr( Name(), samplecfg )) );
-      SetLatexName( SampleList().back()->LatexName() );
-      SetRootName( SampleList().back()->RootName() );
+      SampleList().push_back( SampleMgr( Name(), samplecfg ) );
+      SetLatexName( SampleList().back().LatexName() );
+      SetRootName( SampleList().back().RootName() );
    }
 }
 
@@ -109,24 +108,26 @@ SampleGroup::~SampleGroup()
 /*******************************************************************************
 *   Sample Access functions
 *******************************************************************************/
-SampleMgr* SampleGroup::Sample( const std::string& name )
+SampleMgr&
+SampleGroup::Sample( const std::string& name )
 {
-   for( auto& sample: SampleList() ){
-      if( sample->Name() == name ){
-         return sample.get();
+   for( auto& sample : SampleList() ){
+      if( sample.Name() == name ){
+         return sample;
       }
    }
-   return NULL;
+   throw std::invalid_argument("Name is not within range!!");
 }
 
-const SampleMgr* SampleGroup::Sample( const std::string& name ) const
+const SampleMgr&
+SampleGroup::Sample( const std::string& name ) const
 {
    for( const auto& sample : SampleList() ){
-      if( sample->Name() == name ){
-         return sample.get();
+      if( sample.Name() == name ){
+         return sample;
       }
    }
-   return NULL;
+   throw std::invalid_argument("Name is not within range!!");
 }
 
 // ------------------------------------------------------------------------------
@@ -138,7 +139,7 @@ SampleGroup::EventsInFile() const
    unsigned ans = 0;
 
    for( const auto& sample : _samplelist ){
-      ans += sample->EventsInFile();
+      ans += sample.EventsInFile();
    }
 
    return ans;
@@ -150,7 +151,7 @@ SampleGroup::ExpectedYield() const
    Parameter ans( 0, 0, 0 );
 
    for( const auto& sample : _samplelist ){
-      ans += sample->ExpectedYield();
+      ans += sample.ExpectedYield();
    }
 
    return ans;
@@ -162,7 +163,7 @@ SampleGroup::TotalCrossSection() const
    Parameter ans( 0, 0, 0 );
 
    for( const auto& sample : SampleList() ){
-      ans += sample->CrossSection();
+      ans += sample.CrossSection();
    }
 
    return ans;
@@ -171,28 +172,27 @@ SampleGroup::TotalCrossSection() const
 Parameter
 SampleGroup::AvgSelectionEfficiency() const
 {
-   if( Sample()->IsRealData() ){
+   if( Sample().IsRealData() ){
       double pass = 0;
       double orig = 0;
 
       for( const auto& sample : SampleList() ){
-         pass += sample->EventsInFile();
-         orig += sample->EventsInFile() /
-                 sample->SelectionEfficiency().CentralValue();
+         pass += sample.EventsInFile();
+         orig += sample.EventsInFile() /
+                 sample.SelectionEfficiency().CentralValue();
       }
 
       const double cen = pass / orig;
       const double err = sqrt( cen * ( 1-cen ) / ( orig -1 ) );
       return Parameter( cen, err, err );
-
    } else {
       Parameter ans( 0, 0, 0 );
       double total_cx = 0.;
 
       for( const auto& sample : SampleList() ){
-         ans += sample->CrossSection() * sample->KFactor() *
-                sample->SelectionEfficiency();
-         total_cx += sample->CrossSection() * sample->KFactor();
+         ans += sample.CrossSection() * sample.KFactor() *
+                sample.SelectionEfficiency();
+         total_cx += sample.CrossSection() * sample.KFactor();
       }
 
       ans /= total_cx;

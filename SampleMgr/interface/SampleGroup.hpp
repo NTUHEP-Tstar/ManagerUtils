@@ -27,8 +27,6 @@ public:
    SampleGroup( const std::string&, const std::string& ); // Initing from file
    SampleGroup( const std::string&, const ConfigReader& );
    virtual ~SampleGroup();
-   SampleGroup( const SampleGroup& ) = delete ;
-   SampleGroup& operator=( const SampleGroup& ) = delete;
 
    // Static function
    static void SetSampleCfgPrefix( const std::string& x ) { _sample_cfg_prefix = x; }
@@ -39,15 +37,15 @@ public:
    void InitFromReader( const ConfigReader& ); // Virtual so users could add more variables if wanted
 
    // Access single object
-   SampleMgr*       Sample()       { return _samplelist.front().get(); }
-   const SampleMgr* Sample() const { return _samplelist.front().get(); }
+   SampleMgr&       Sample()       { return _samplelist.front(); }
+   const SampleMgr& Sample() const { return _samplelist.front(); }
 
-   SampleMgr*       Sample( const std::string& );
-   const SampleMgr* Sample( const std::string& ) const;
+   SampleMgr&       Sample( const std::string& );
+   const SampleMgr& Sample( const std::string& ) const;
 
    // Access list
-   std::vector<std::unique_ptr<SampleMgr>>&       SampleList()       { return _samplelist; }
-   const std::vector<std::unique_ptr<SampleMgr>>& SampleList() const { return _samplelist; }
+   std::vector<SampleMgr>&       SampleList()       { return _samplelist; }
+   const std::vector<SampleMgr>& SampleList() const { return _samplelist; }
 
    // Summary objects
    unsigned  EventsInFile() const;
@@ -58,7 +56,7 @@ public:
 private:
    static std::string       _sample_cfg_prefix;
 
-   std::vector<std::unique_ptr<SampleMgr>>  _samplelist;
+   std::vector<SampleMgr>  _samplelist;
 };
 
 }

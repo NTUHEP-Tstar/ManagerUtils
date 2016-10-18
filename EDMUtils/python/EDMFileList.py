@@ -11,7 +11,7 @@ import subprocess, shlex
 
 def ListEDMDatasets(primary_tag,process_tag,tier):
     grep_cmd = "grep /.*/.*/.*"
-    query_cmd = 'das_client --limit=1000000 --query="/{}/{}/{}"'
+    query_cmd = '/cvmfs/cms.cern.ch/slc6_amd64_gcc530/cms/das_client/v03.01.00/bin/das_client.py --limit=1000000 --query="/{}/{}/{}"'
 
     if not primary_tag:
         primary_tag = '*',

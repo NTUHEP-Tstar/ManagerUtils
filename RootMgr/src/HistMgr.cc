@@ -7,14 +7,17 @@
 *******************************************************************************/
 #include "ManagerUtils/RootMgr/interface/HistMgr.hpp"
 
+#include "TFile.h"
+
 #include <cstdlib>
 #include <iostream>
+
 using namespace std;
 using namespace mgr;
 
-//------------------------------------------------------------------------------
-//   Constructor/Destructor
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Constructor/Destructor
+*******************************************************************************/
 HistMgr::HistMgr( const string& name ):
    Named(name)
 {
@@ -24,9 +27,9 @@ HistMgr::~HistMgr()
 {
 }
 
-//------------------------------------------------------------------------------
-//   Getting Histograms
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Histogram access functions
+*******************************************************************************/
 TH1D* HistMgr::Hist( const string& name )
 {
    if( _histmap.count(name) ){
@@ -54,9 +57,9 @@ vector<string> HistMgr::AvailableHistList() const
    return ans;
 }
 
-//------------------------------------------------------------------------------
-//   Histogram Adding functions
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Histogram addition functions
+*******************************************************************************/
 void HistMgr::AddHist(
       const string&  label   ,
       const string&  x_label ,
@@ -105,9 +108,9 @@ void HistMgr::AddHist(
 }
 
 
-//------------------------------------------------------------------------------
-//   Setting Memebers
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Styling memeber functiosn
+*******************************************************************************/
 void HistMgr::Scale( const double x )
 {
    for( auto& histpair: _histmap ){
@@ -123,11 +126,15 @@ void HistMgr::Scale( const double x )
    }
 }
 
+/******************************************************************************/
+
 void HistMgr::SetColor( const Color_t x )
 {
    SetLineColor( x );
    SetFillColor( x );
 }
+
+/******************************************************************************/
 
 void HistMgr::SetLineColor( const Color_t x )
 {
@@ -136,6 +143,8 @@ void HistMgr::SetLineColor( const Color_t x )
    }
 }
 
+/******************************************************************************/
+
 void HistMgr::SetFillColor( const Color_t x )
 {
    for( auto& histpair : _histmap ){
@@ -143,9 +152,35 @@ void HistMgr::SetFillColor( const Color_t x )
    }
 }
 
+/******************************************************************************/
+
 void HistMgr::SetFillStyle( const Style_t x )
 {
    for( auto& histpair : _histmap ){
       histpair.second->SetFillStyle( x );
    }
+}
+
+/*******************************************************************************
+*   File Loading and saving functions
+*******************************************************************************/
+void HistMgr::LoadFromFile( const std::string& filename )
+{
+   TFile* histfile = TFile::Open(filename.c_str(), "READ");
+   for( auto& histpair : _histmap ){
+      const string histrootname = histpair.second->GetName();
+      const TH1D*  histptr = (TH1D*)(histfile->Get(histrootname.c_str())->Clone() );
+      histpair.second.reset( new TH1D( *histptr ) );
+   }
+   // Do not delete file for reading! Even if you have declared a new object!
+   // delete histfile ;
+}
+
+void HistMgr::SaveToFile( const std::string& filename )
+{
+   TFile* histfile = TFile::Open(filename.c_str(),"UPDATE");
+   for( const auto& histpair : _histmap ){
+      histpair.second->Write();
+   }
+   delete histfile;
 }

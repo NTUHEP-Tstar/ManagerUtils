@@ -4,3 +4,4 @@
 
 <bin name="samplemgr_test" file="samplemgr_test.cc"/>
 <bin name="samplegrp_test" file="samplegrp_test.cc"/>
+<bin name="multifiletest"  file="multifiletest.cc"/>

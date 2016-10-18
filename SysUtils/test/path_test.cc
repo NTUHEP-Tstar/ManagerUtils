@@ -1,18 +1,21 @@
 /*******************************************************************************
- *
- *  Filename    : path_test.cc
- *  Description : unit testing for path related utilities
- *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
- *
+*
+*  Filename    : path_test.cc
+*  Description : unit testing for path related utilities
+*  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
+*
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
-#include <vector>
-#include <string>
 #include <cstdio>
+#include <string>
+#include <vector>
+#include <iostream>
 using namespace std;
 
-int main(int argc, char const* argv[]) {
-
+int
+main( int argc, char const* argv[] )
+{
+   // Local globbing test
    vector<string> test_string_list = {
       "./",
       "./*",
@@ -23,11 +26,27 @@ int main(int argc, char const* argv[]) {
    };
 
    for( const auto& test : test_string_list ){
-      printf( "Testing [%s]:\n" , test.c_str() );
-      for( const auto& output : Glob(test) ){
-         printf("\t%s\n", output.c_str() );
+      printf( "Testing [%s]:\n", test.c_str() );
+
+      for( const auto& output : Glob( test ) ){
+         printf( "\t%s\n", output.c_str() );
       }
    }
+   // Remote testing
+   vector<string> remotetestlist = {
+      "root://eoscms.cern.ch//store/*",
+      "root://eoscms.cern.ch//store/*/yichen"
+   };
+
+   for( const auto& remotetest : remotetestlist ){
+      cout << ">>>" << GetServerURL( remotetest ) << endl;
+      cout << ">>>" << GetRemotePath( remotetest ) << endl;
+      for( const auto& path: Glob( remotetest ) ){
+         cout << path << endl;
+      }
+      cout << "=====" << endl ;
+   }
+
 
    return 0;
 }

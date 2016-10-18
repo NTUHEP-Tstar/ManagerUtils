@@ -10,23 +10,29 @@
 
 using namespace mgr;
 using namespace std;
-//------------------------------------------------------------------------------
-//   Constructor and Destructor
-//------------------------------------------------------------------------------
+
+/*******************************************************************************
+*   Static variable declaration
+*******************************************************************************/
 map<string,unique_ptr<RooRealVar>> RooFitMgr::_staticvarmap;
 
+/*******************************************************************************
+*   Constructor and destructor
+*******************************************************************************/
 RooFitMgr::RooFitMgr( const string& name ):
    Named(name)
 {
 }
 
+/******************************************************************************/
+
 RooFitMgr::~RooFitMgr()
 {
 }
 
-//------------------------------------------------------------------------------
-//   Static RooRealVar Access functions
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Static RooRealVar access functions
+*******************************************************************************/
 RooRealVar* RooFitMgr::StaticNewVar(
    const string& varname,
    const string& title,
@@ -56,6 +62,8 @@ RooRealVar* RooFitMgr::StaticNewVar(
    }
 }
 
+/******************************************************************************/
+
 RooRealVar* RooFitMgr::StaticVar( const string& varname )
 {
    if( _staticvarmap.count(varname) ){
@@ -64,6 +72,8 @@ RooRealVar* RooFitMgr::StaticVar( const string& varname )
       return NULL;
    }
 }
+
+/******************************************************************************/
 
 vector<string> RooFitMgr::StaticVarNameList()
 {
@@ -74,9 +84,11 @@ vector<string> RooFitMgr::StaticVarNameList()
    return ans;
 }
 
-//------------------------------------------------------------------------------
-//   RooRealVar Access functions
-//------------------------------------------------------------------------------
+
+
+/*******************************************************************************
+*   RooRealVar access functions
+*******************************************************************************/
 RooRealVar* RooFitMgr::NewVar( const string& varname, const double min, const double max )
 {
    if( Var(varname) ){ // if already exists variable
@@ -93,6 +105,8 @@ RooRealVar* RooFitMgr::NewVar( const string& varname, const double min, const do
       return _varmap[varname].get();
    }
 }
+
+/******************************************************************************/
 
 RooRealVar* RooFitMgr::NewVar( const string& varname, const double cen, const double min, const double max )
 {
@@ -112,6 +126,8 @@ RooRealVar* RooFitMgr::NewVar( const string& varname, const double cen, const do
    }
 }
 
+/******************************************************************************/
+
 RooRealVar* RooFitMgr::Var( const string& name )
 {
    if( _varmap.count(name) ){
@@ -120,6 +136,8 @@ RooRealVar* RooFitMgr::Var( const string& name )
       return NULL;
    }
 }
+
+/******************************************************************************/
 
 const RooRealVar* RooFitMgr::Var( const string& name ) const
 {
@@ -130,6 +148,8 @@ const RooRealVar* RooFitMgr::Var( const string& name ) const
    }
 }
 
+/******************************************************************************/
+
 vector<string>  RooFitMgr::VarNameList() const
 {
    vector<string> ans;
@@ -138,6 +158,8 @@ vector<string>  RooFitMgr::VarNameList() const
    }
    return ans;
 }
+
+/******************************************************************************/
 
 vector<RooRealVar*> RooFitMgr::VarContains( const string& substring ) const
 {
@@ -150,6 +172,8 @@ vector<RooRealVar*> RooFitMgr::VarContains( const string& substring ) const
    return ans;
 }
 
+/******************************************************************************/
+
 void RooFitMgr::SetConstant( const bool state )
 {
    for( const auto& mypair : _varmap ){
@@ -157,9 +181,9 @@ void RooFitMgr::SetConstant( const bool state )
    }
 }
 
-//------------------------------------------------------------------------------
-//   RooDataSet access functions
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   RooDataSet access functions
+*******************************************************************************/
 RooDataSet*   RooFitMgr::DataSet( const std::string& name )
 {
    if( _setmap.count(name) ){
@@ -203,9 +227,10 @@ void RooFitMgr::RemoveDataSet( const std::string& name )
    _setmap.erase( name );
 }
 
-//------------------------------------------------------------------------------
-//   RooAbsPdf access functions
-//------------------------------------------------------------------------------
+
+/*******************************************************************************
+*   RooAbsPdf access functions
+*******************************************************************************/
 void  RooFitMgr::AddPdf( RooAbsPdf* pdf )
 {
    const string newpdfname = MakeStoreName( pdf->GetName() );
@@ -245,9 +270,9 @@ vector<std::string> RooFitMgr::PdfNameList() const
 }
 
 
-//------------------------------------------------------------------------------
-//   Helper functions = checking object naming
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Object name checking functions
+*******************************************************************************/
 string RooFitMgr::MakeStoreName( const string& objname ) const
 {
    if( boost::algorithm::starts_with( objname, Name() ) ){
@@ -256,6 +281,8 @@ string RooFitMgr::MakeStoreName( const string& objname ) const
       return Name() + objname;
    }
 }
+
+/******************************************************************************/
 
 string RooFitMgr::MakeAliasName( const string& objname ) const
 {

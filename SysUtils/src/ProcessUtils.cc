@@ -28,7 +28,13 @@ NumOfThreads()
 string
 GetCMDOutput( const string& cmd )
 {
-   FILE* pipe = popen( cmd.c_str(), "r" );
+   // Augment command to discard stderr outputs
+   // http://stackoverflow.com/questions/6900577/c-popen-wont-catch-stderr
+   const string cmdaug=cmd+" 2> /dev/null";
+
+   // Main reference
+   // http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+   FILE* pipe = popen( cmdaug.c_str(), "r" );
    if( !pipe ){ return ""; }
    char buffer[MAX_BUFFER];
    std::string result = "";

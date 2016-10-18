@@ -40,11 +40,10 @@ main( int argc, char* argv[] )
    int i = 0;
    fwlite::Handle<std::vector<pat::Jet> > Jets;
 
-   for( mysample.Event().toBegin(); !mysample.Event().atEnd();
-        ++mysample.Event(), ++i ){
+   for( mysample.Event().toBegin(); !mysample.Event().atEnd(); ++mysample.Event(), ++i ){
       if( i > 10 ){break; }
       cout << "[Event] " << i << endl;
-      Jets.getByLabel( mysample.Event(), "skimmedPatJets" );
+      Jets.getByLabel( mysample.Event().Base(), "skimmedPatJets" );
 
       for( const auto& jet : *Jets.product() ){
          cout << jet.pt() << " " << flush;

@@ -68,7 +68,7 @@ SampleMgr::InitFromReader( const ConfigReader& cfg )
    SetRootName( cfg.GetString( Name(), "Root Name" ) );
    SetCrossSection( cfg.GetParameter(  Name(), "Cross Section" ) );
    SetKFactor( cfg.GetParameter(  Name(), "K Factor"      ) );
-   _file_list = cfg.GetStringList( Name(), "EDM Files"     );
+   _filelist = cfg.GetStringList( Name(), "EDM Files"     );
 
    ForceNewEvent();// Creating the event files
 
@@ -89,38 +89,39 @@ SampleMgr::~SampleMgr()
 vector<string>
 SampleMgr::GlobbedFileList() const
 {
-   vector<string> full_file_list;
+   vector<string> ans;
 
-   for( const auto& file_name : FileList() ){
-      for( const auto& file : Glob( FilePrefix() + file_name ) ){
-         full_file_list.push_back( file );
+   for( const auto& filename : FileList() ){
+      const auto globq =  FilePrefix().back() == '/' ?
+            FilePrefix() + filename : FilePrefix() + "/" + filename;
+
+      for( const auto& file : Glob( globq ) ){
+         ans.push_back( file );
       }
    }
 
-   return full_file_list;
+   return ans;
 }
 
 // ------------------------------------------------------------------------------
 //   ChainEvent construction
 // ------------------------------------------------------------------------------
-fwlite::ChainEvent&
+mgr::MultiFileEvent&
 SampleMgr::Event()
 {
-   if( !_event_ptr ){ ForceNewEvent(); }
-   return *_event_ptr;
+   return _event;
 }
 
-fwlite::ChainEvent&
+mgr::MultiFileEvent&
 SampleMgr::Event() const
 {
-   if( ! _event_ptr ){ ForceNewEvent(); }
-   return *_event_ptr;
+   return _event;
 }
 
 void
 SampleMgr::ForceNewEvent() const
 {
-   _event_ptr.reset( new fwlite::ChainEvent( GlobbedFileList() ) );
+   _event.reset( GlobbedFileList() );
 }
 
 // ------------------------------------------------------------------------------
@@ -130,7 +131,7 @@ bool
 SampleMgr::IsRealData() const
 {
    if( Event().size() ){
-      return Event().isRealData();
+      return Event().Base().isRealData();
    } else {
       return false;
    }
@@ -146,7 +147,7 @@ Parameter
 SampleMgr::ExpectedYield() const
 {
    if( IsRealData() ){
-      return Parameter( _event_ptr->size(), 0, 0 );
+      return Parameter( Event().size(), 0, 0 );
    } else {
       return TotalLuminosity() * CrossSection() * SelectionEfficiency() *
              KFactor();

@@ -39,6 +39,9 @@ public:
    void SetFillColor( const Color_t );
    void SetFillStyle( const Style_t );
 
+   void LoadFromFile( const std::string& );
+   void SaveToFile( const std::string& );
+
 protected:
    void AddHist(
       const std::string& name,

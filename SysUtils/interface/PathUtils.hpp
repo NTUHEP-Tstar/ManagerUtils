@@ -40,9 +40,21 @@ extern std::string  CMSSWSrc();
 
 
 /*******************************************************************************
-*   Globbing related functions
+*   Globbing related functions:
+*   - Glob: Master function that handle both remote and local globbing queries
+*   - GlobToRegex: Translating glob notation to regex expression
 *******************************************************************************/
 extern std::vector<std::string> Glob( const std::string& );
+extern std::vector<std::string> GlobLocal( const std::string& );
+extern std::vector<std::string> GlobRemote( const std::string& );
+
+extern std::string GlobToRegex( const std::string& );
+
+/*******************************************************************************
+*   Helper functions for remote
+*******************************************************************************/
+extern std::string GetServerURL( const std::string& );
+extern std::string GetRemotePath( const std::string& );
 
 
 /*******************************************************************************
