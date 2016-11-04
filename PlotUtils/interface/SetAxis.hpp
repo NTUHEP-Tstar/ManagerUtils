@@ -9,12 +9,18 @@
 #ifndef MANAGERUTILS_PLOTUTILS_SETAXIS_HPP
 #define MANAGERUTILS_PLOTUTILS_SETAXIS_HPP
 
+#include "TGaxis.h"
+
 namespace plt{
 
 template<class T>
 void
 SetAxis( T* plot )
 {
+   // Global settings from TGaxis
+   TGaxis::SetMaxDigits(4);
+   TGaxis::SetExponentOffset(-1000,-1000); // Hide from view, alter y axis title instead
+
    plot->GetXaxis()->SetLabelFont( FONT_TYPE );
    plot->GetXaxis()->SetTitleFont( FONT_TYPE );
    plot->GetYaxis()->SetLabelFont( FONT_TYPE );

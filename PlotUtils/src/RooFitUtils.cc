@@ -12,7 +12,14 @@
 
 void SetFrame( RooPlot* frame )
 {
-   plt::SetAxis( frame );
+   // Must set
+   gPad->SetLeftMargin( PLOT_X_MIN );
+   gPad->SetRightMargin( 1 - PLOT_X_MAX );
+   gPad->SetBottomMargin( PLOT_Y_MIN );
+   gPad->SetTopMargin( 1 - PLOT_Y_MAX );
+
+   // Common Axis settings
+   plt::SetAxis( frame ); // see PlotObj.cc
    frame->GetXaxis()->SetTitleOffset( 1.2 );
    frame->SetTitle("");
 }

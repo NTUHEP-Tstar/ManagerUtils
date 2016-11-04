@@ -36,20 +36,24 @@ PackagePathMgr::~PackagePathMgr()
 }
 
 
-// ------------------------------------------------------------------------------
-//   Public functions
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*   Public functions
+*******************************************************************************/
 string
 PackagePathMgr::PackageDir() const
 {
-   return GetEnv( "CMSSW_BASE" ) + "/src/" + _package_name + "/";
+   return PackagePath(_package_name );;
 }
+
+/******************************************************************************/
 
 string
 PackagePathMgr::SubPackageDir() const
 {
-   return PackageDir() + _sub_package_name + "/";
+   return SubPackagePath( _package_name, _sub_package_name ) ;
 }
+
+/******************************************************************************/
 
 string
 PackagePathMgr::SettingsDir() const
@@ -57,11 +61,15 @@ PackagePathMgr::SettingsDir() const
    return SubPackageDir() + _settings_dir + "/";
 }
 
+/******************************************************************************/
+
 string
 PackagePathMgr::ResultsDir() const
 {
    return SubPackageDir() + _results_dir +"/";
 }
+
+/******************************************************************************/
 
 string
 PackagePathMgr::SamplesDir() const

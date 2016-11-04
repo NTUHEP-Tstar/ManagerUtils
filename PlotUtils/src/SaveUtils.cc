@@ -5,7 +5,6 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
-
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "TCanvas.h"
 #include "TFile.h"
@@ -25,9 +24,9 @@ namespace plt {
 void
 SaveToPDF( TCanvas* c, const string& filename )
 {
-   // Saving to a temporary file XXXXXX<filename>.pdf
+   // Saving to a temporary file /tmp/XXXXXX<filename>.pdf
    // Forcing postfix to be '.pdf'
-   const string temppdf = RandomFileName(6,"",false) + "_" + Basename(filename) + ".pdf";
+   const string temppdf = "/tmp/" + RandomFileName(6,"",false) + "_" + Basename(filename) + ".pdf";
    char cmd[4096];
 
    c->SaveAs( temppdf.c_str() );

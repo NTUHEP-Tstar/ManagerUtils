@@ -1,15 +1,15 @@
 /*******************************************************************************
- *
- *  Filename    : ConfigReader.cc
- *  Description : Implementations for ConfigReader class
- *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
- *
+*
+*  Filename    : ConfigReader.cc
+*  Description : Implementations for ConfigReader class
+*  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
+*
 *******************************************************************************/
 
 #include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
 
+#include <boost/foreach.hpp>// For looping ptree
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/foreach.hpp> // For looping ptree
 #include <iostream>
 #include <string>
 
@@ -20,23 +20,25 @@ using boost::property_tree::ptree;
 /*******************************************************************************
 *   Helper functions
 *******************************************************************************/
-void mgr::PrintPTree( const ptree& tree, unsigned print_level )
+void
+mgr::PrintPTree( const ptree& tree, unsigned print_level )
 {
    for( const auto& it : tree ){
-      for( unsigned i = 0 ; i < print_level ; ++ i) {
-         cout << "\t" << flush ;
+      for( unsigned i = 0; i < print_level; ++i ){
+         cout << "\t" << flush;
       }
+
       std::cout << it.first << ": " << it.second.get_value<std::string>() << std::endl;
-      PrintPTree(it.second, print_level + 1 );
-    }
+      PrintPTree( it.second, print_level + 1 );
+   }
 }
 
-//------------------------------------------------------------------------------
-//   Constructor and destructor
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   Constructor/Destructor
+*******************************************************************************/
 ConfigReader::ConfigReader( const string& file_name )
 {
-   read_json( file_name , _ptree ); // Try to read to json file
+   read_json( file_name, _ptree );// Try to read to json file
 }
 
 ConfigReader::ConfigReader( const ptree& tree )
@@ -47,125 +49,198 @@ ConfigReader::ConfigReader( const ptree& tree )
 
 ConfigReader::~ConfigReader(){}
 
-//------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 //   Public member fucntions
-//------------------------------------------------------------------------------
-void ConfigReader::DumpTree() const
+// ------------------------------------------------------------------------------
+void
+ConfigReader::DumpTree() const
 {
-   mgr::PrintPTree( _ptree , 0 );
+   mgr::PrintPTree( _ptree, 0 );
 }
 
-//------------------------------------------------------------------------------
-//   Static Variable access
-//------------------------------------------------------------------------------
-string ConfigReader::GetStaticString( const string& tag ) const
+/*******************************************************************************
+*   Static variable access functions
+*******************************************************************************/
+bool
+ConfigReader::GetStaticBool( const string& tag ) const
+{
+   return get_bool( _ptree, tag );
+}
+
+string
+ConfigReader::GetStaticString( const string& tag ) const
 {
    return get_string( _ptree, tag );
 }
-double ConfigReader::GetStaticDouble( const string& tag ) const
+
+/******************************************************************************/
+
+double
+ConfigReader::GetStaticDouble( const string& tag ) const
 {
    return get_double( _ptree, tag );
 }
-Parameter ConfigReader::GetStaticParameter( const string& tag ) const
+
+/******************************************************************************/
+
+Parameter
+ConfigReader::GetStaticParameter( const string& tag ) const
 {
    return get_parameter( _ptree, tag );
 }
 
-vector<string> ConfigReader::GetStaticStringList( const string& tag ) const
+/******************************************************************************/
+
+vector<string>
+ConfigReader::GetStaticStringList( const string& tag ) const
 {
    return get_string_list( _ptree, tag );
 }
 
-vector<double> ConfigReader::GetStaticDoubleList( const string& tag ) const
+/******************************************************************************/
+
+vector<double>
+ConfigReader::GetStaticDoubleList( const string& tag ) const
 {
    return get_double_list( _ptree, tag );
 }
 
-bool ConfigReader::HasStaticTag( const string& tag ) const
+/******************************************************************************/
+
+bool
+ConfigReader::HasStaticTag( const string& tag ) const
 {
    return has_tag( _ptree, tag );
 }
 
-//------------------------------------------------------------------------------
-//  Instance variable access
-//------------------------------------------------------------------------------
-string ConfigReader::GetString( const string& inst_tag, const string& tag ) const
+
+/*******************************************************************************
+*   Instance variable access
+*******************************************************************************/
+bool
+ConfigReader::GetBool( const string& inst_tag, const string& tag ) const
 {
-   return get_string( _ptree.get_child(inst_tag), tag );
+   return get_bool( _ptree.get_child( inst_tag ), tag );
 }
 
-double ConfigReader::GetDouble( const string& inst_tag, const string& tag ) const
+/******************************************************************************/
+
+string
+ConfigReader::GetString( const string& inst_tag, const string& tag ) const
 {
-   return get_double( _ptree.get_child(inst_tag), tag );
-}
-Parameter ConfigReader::GetParameter( const string& inst_tag, const string& tag ) const
-{
-   return get_parameter( _ptree.get_child(inst_tag), tag);
+   return get_string( _ptree.get_child( inst_tag ), tag );
 }
 
-vector<string> ConfigReader::GetStringList( const string& inst_tag, const string& tag ) const
+/******************************************************************************/
+
+double
+ConfigReader::GetDouble( const string& inst_tag, const string& tag ) const
 {
-   return get_string_list( _ptree.get_child(inst_tag), tag );
+   return get_double( _ptree.get_child( inst_tag ), tag );
 }
 
-vector<double> ConfigReader::GetDoubleList( const string& inst_tag, const string& tag ) const
+/******************************************************************************/
+
+Parameter
+ConfigReader::GetParameter( const string& inst_tag, const string& tag ) const
 {
-   return get_double_list( _ptree.get_child(inst_tag), tag );
+   return get_parameter( _ptree.get_child( inst_tag ), tag );
 }
 
-bool ConfigReader::HasTag( const string& inst_tag, const string& tag ) const
+/******************************************************************************/
+
+vector<string>
+ConfigReader::GetStringList( const string& inst_tag, const string& tag ) const
 {
-   return has_tag( _ptree.get_child(inst_tag), tag );
+   return get_string_list( _ptree.get_child( inst_tag ), tag );
 }
 
-//------------------------------------------------------------------------------
-//   Instance detection
-//------------------------------------------------------------------------------
-bool ConfigReader::HasInstance( const string& inst_tag ) const
+/******************************************************************************/
+
+vector<double>
+ConfigReader::GetDoubleList( const string& inst_tag, const string& tag ) const
+{
+   return get_double_list( _ptree.get_child( inst_tag ), tag );
+}
+
+/******************************************************************************/
+
+bool
+ConfigReader::HasTag( const string& inst_tag, const string& tag ) const
+{
+   return has_tag( _ptree.get_child( inst_tag ), tag );
+}
+
+
+/*******************************************************************************
+*   Instance detection functions
+*******************************************************************************/
+bool
+ConfigReader::HasInstance( const string& inst_tag ) const
 {
    return HasStaticTag( inst_tag );
 }
 
-vector<string> ConfigReader::GetInstanceList() const
+/******************************************************************************/
+
+vector<string>
+ConfigReader::GetInstanceList() const
 {
    vector<string> ans;
-   for( const auto& it: _ptree ){
-      string tag = it.first ;
+
+   for( const auto& it : _ptree ){
+      string tag = it.first;
       if( tag.front() != '_' ){
          ans.push_back( tag );
       }
    }
+
    return ans;
 }
 
 
-//------------------------------------------------------------------------------
-//   Helper private functions
-//------------------------------------------------------------------------------
-
-bool ConfigReader::has_tag( const ptree& tree, const string& tag )
+/*******************************************************************************
+*   Helper private functions, PTREE structure crawlers
+*******************************************************************************/
+bool
+ConfigReader::has_tag( const ptree& tree, const string& tag )
 {
-   return ( tree.find(tag) != tree.not_found() );
+   return tree.find( tag ) != tree.not_found();
 }
 
+/******************************************************************************/
+bool
+ConfigReader::get_bool( const ptree& tree, const string& tag )
+{
+   return tree.get<bool>( tag );
+}
 
-string ConfigReader::get_string( const ptree& tree, const string& tag )
+/******************************************************************************/
+
+string
+ConfigReader::get_string( const ptree& tree, const string& tag )
 {
    return tree.get<string>( tag );
 }
 
-double ConfigReader::get_double( const ptree& tree, const string& tag )
+/******************************************************************************/
+
+double
+ConfigReader::get_double( const ptree& tree, const string& tag )
 {
    return tree.get<double>( tag );
 }
 
-vector<string> ConfigReader::get_string_list( const ptree& tree, const string& tag )
+/******************************************************************************/
+
+vector<string>
+ConfigReader::get_string_list( const ptree& tree, const string& tag )
 {
    vector<string> ans;
-   BOOST_FOREACH( const ptree::value_type &v , tree.get_child(tag) ){
+   BOOST_FOREACH( const ptree::value_type &v, tree.get_child( tag ) ){
       if( !v.first.empty() ){
          cerr << "Warning! Skipping over illegal format at branch: (" << tag
-         << ")  with index value: (" << v.first.data() << ")" << endl;
+              << ")  with index value: (" << v.first.data() << ")" << endl;
          continue;
       }
       // cout << v.second.data() << endl;
@@ -174,25 +249,31 @@ vector<string> ConfigReader::get_string_list( const ptree& tree, const string& t
    return ans;
 }
 
-vector<double> ConfigReader::get_double_list( const ptree& tree, const string& tag  )
+/******************************************************************************/
+
+vector<double>
+ConfigReader::get_double_list( const ptree& tree, const string& tag  )
 {
    vector<double> ans;
-   BOOST_FOREACH( const ptree::value_type &v , tree.get_child(tag) ){
+   BOOST_FOREACH( const ptree::value_type &v, tree.get_child( tag ) ){
       if( !v.first.empty() ){
          cerr << "Warning! Skipping over illegal format at branch: (" << tag
-         << ")  with index value: (" << v.first.data() << ")" << endl;
+              << ")  with index value: (" << v.first.data() << ")" << endl;
          continue;
       }
       // cout << v.second.data() << endl;
-      ans.push_back( stod(v.second.data()) );
+      ans.push_back( stod( v.second.data() ) );
    }
    return ans;
 }
 
-Parameter ConfigReader::get_parameter( const ptree& tree, const string& tag )
+/******************************************************************************/
+
+Parameter
+ConfigReader::get_parameter( const ptree& tree, const string& tag )
 {
    vector<double> input = get_double_list( tree, tag );
-   input.resize( 3 , 0 );
+   input.resize( 3, 0 );
    if( input[0] == 0 ){
       input[0] = 1;
    }

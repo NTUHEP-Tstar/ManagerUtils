@@ -1,4 +1,7 @@
 <use name="ManagerUtils/SysUtils"/>
+
+<flags CXXFLAGS="-g"/>
+
 <bin name="hcp_test"      file="hcp_test.cc"/>
 <bin name="path_test"     file="path_test.cc"/>
 <bin name="sysutils_test" file="sysutils_test.cc"/>

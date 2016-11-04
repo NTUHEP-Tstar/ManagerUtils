@@ -33,7 +33,10 @@ NewTopPad()
 {
    TPad* pad = new TPad( "toppad", "", 0, TOP_BOTTOM_SEP, 1., 1.0 );
    pad->SetTicks(1,1);
-   pad->SetBottomMargin( 0.050 );
+   pad->SetBottomMargin( 0.05 );
+   pad->SetLeftMargin(PLOT_X_MIN);
+   pad->SetRightMargin(1-PLOT_X_MAX);
+   pad->SetTopMargin((1-PLOT_Y_MAX)/(1-TOP_BOTTOM_SEP));
    return pad;
 }
 
@@ -43,7 +46,9 @@ NewBottomPad()
    TPad* pad = new TPad( "botpad", "", 0, 0.00, 1, TOP_BOTTOM_SEP );
    pad->SetTicks(1,1);
    pad->SetTopMargin( 0.025 );
-   pad->SetBottomMargin( 0.335 );
+   pad->SetLeftMargin(PLOT_X_MIN);
+   pad->SetRightMargin(1-PLOT_X_MAX);
+   pad->SetBottomMargin((PLOT_Y_MIN)/(TOP_BOTTOM_SEP));
    return pad;
 }
 
@@ -62,7 +67,7 @@ NewLegend( const float x_min,
    // Setting up default values
    ans->SetBorderSize( 0 );
    ans->SetTextFont( FONT_TYPE );
-   ans->SetTextSize( AXIS_TITLE_FONT_SIZE );
+   ans->SetTextSize( TEXT_FONT_SIZE );
    ans->SetFillColorAlpha( 0, 0 );
 
    return ans;
@@ -77,7 +82,7 @@ NewTextBox( const float x_min,
    TPaveText* ans = new TPaveText( x_min, y_min, x_max, y_max );
 
    ans->SetTextFont( FONT_TYPE );
-   ans->SetTextSize( AXIS_TITLE_FONT_SIZE );
+   ans->SetTextSize( TEXT_FONT_SIZE );
    ans->SetFillColor( kWhite );
 
    return ans;

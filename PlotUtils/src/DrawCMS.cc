@@ -18,12 +18,12 @@ DrawCMSLabel( int tag )
    tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
 
    tl.SetTextAlign( BOTTOM_LEFT );
-   tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX + 0.05, "#bf{CMS}" );
+   tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX+0.02, "#bf{CMS}" );
    if( tag == PRELIMINARY ){
-      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.05, "#it{Preliminary}" );
+      tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Preliminary}" );
    } else
    if( tag == SIMULATION ){
-      tl.DrawLatex( PLOT_X_MIN+0.06, PLOT_Y_MAX + 0.05, "#it{Simulation}" );
+      tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Simulation}" );
    }
 }
 
@@ -41,7 +41,7 @@ DrawLuminosity( double luminosity )
    sprintf( buffer, "%.1lffb^{-1} (%d TeV)", luminosity/1000., 13 );
 
    tl.SetTextAlign( BOTTOM_RIGHT );
-   tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.05, buffer );
+   tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.02, buffer );
 }
 
 }

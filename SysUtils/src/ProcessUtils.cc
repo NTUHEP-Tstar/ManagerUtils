@@ -8,16 +8,23 @@
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/TimeUtils.hpp"
 
+#include <boost/format.hpp>
+
 #include <iostream>
 #include <memory>
-#include <stdlib.h>
+#include <cstdlib>
 #include <string>
 #include <thread>
 #include <time.h>
+#include <cstring> // for strerror()
+#include <errno.h>
 
 using namespace std;
 
 #define MAX_BUFFER 65536
+
+
+/******************************************************************************/
 
 unsigned
 NumOfThreads()
@@ -25,29 +32,58 @@ NumOfThreads()
    return std::thread::hardware_concurrency();
 }
 
+/*******************************************************************************
+*   Getting command line ouputs
+*******************************************************************************/
 string
-GetCMDOutput( const string& cmd )
+GetCMDOutput( const std::string& cmd )
 {
-   // Augment command to discard stderr outputs
-   // http://stackoverflow.com/questions/6900577/c-popen-wont-catch-stderr
-   const string cmdaug=cmd+" 2> /dev/null";
-
+   static unsigned callcount = 0 ;
    // Main reference
    // http://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
-   FILE* pipe = popen( cmdaug.c_str(), "r" );
-   if( !pipe ){ return ""; }
    char buffer[MAX_BUFFER];
    std::string result = "";
+   FILE* pipe = popen( cmd.c_str(), "r" ) ;
+   ++callcount;
+   if( !pipe ){
+      // Error message generation
+      // http://stackoverflow.com/questions/25188891/why-is-my-popen-failing
+      cerr << "PIPE error: " << strerror(errno) << endl;
+      cerr << "Function called: " << callcount << " times" << endl;
+      cerr << "Input command: " << cmd << endl;
+      system("cat /proc/meminfo");
+      throw std::runtime_error( "popen() failed!" );
+   }
 
    while( !feof( pipe ) ){
-      if( fgets( buffer, MAX_BUFFER, pipe ) ){
+      if( fgets( buffer, MAX_BUFFER, pipe ) != NULL ){
          result += buffer;
       }
    }
 
-   pclose( pipe );
+   pclose(pipe);
    return result;
+
 }
+
+/******************************************************************************/
+
+string
+GetCMDSTDOutput( const string& cmd )
+{
+   return GetCMDOutput( cmd+" 2> /dev/null" );
+
+}
+
+/******************************************************************************/
+
+string
+GetCMDErrOutput( const string& cmd )
+{
+   return GetCMDOutput( cmd+" > /dev/null  2>&1 " );
+}
+
+/******************************************************************************/
 
 int
 HasProcess( const string& x, const string& exclude )
@@ -64,20 +100,22 @@ HasProcess( const string& x, const string& exclude )
    return stoi( ans );
 }
 
+/******************************************************************************/
+
 void
-WaitProcess( const string& x, const string& exclude )
+WaitProcess( const string& x, const string& exclude, const unsigned sleeptime )
 {
    while( 1 ){
-      int proc_count     = HasProcess( x, exclude );
-      string time_string = CurrentDateTime();
-      printf( "\r[%s] Still %d instance(s) running...",
-         time_string.c_str(),
-         proc_count );
-      fflush( stdout );
+      const int proc_count     = HasProcess( x, exclude );
+      const string time_string = CurrentDateTime();
+
       if( proc_count == 0 ){ break; }
-      system( "sleep 1" );
+
+      boost::format pausemsg("\r[%s] Still %d instance(s) of procees [%s] running...");
+      cout << pausemsg % time_string % proc_count % x << flush ;
+
+      SleepMillSec( sleeptime );
    }
 
-   printf( "All Done!\n" );
-   fflush( stdout );
+   cout << "All Done!" << endl;
 }

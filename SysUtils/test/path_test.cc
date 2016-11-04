@@ -35,12 +35,15 @@ main( int argc, char const* argv[] )
    // Remote testing
    vector<string> remotetestlist = {
       "root://eoscms.cern.ch//store/*",
-      "root://eoscms.cern.ch//store/*/yichen"
+      "root://eoscms.cern.ch//store/*/yichen",
+      "root://eoscms.cern.ch//store/user/yichen/*/*/*/*/*.root"
    };
 
+   cout << "Remote globbing test" << endl;
+
    for( const auto& remotetest : remotetestlist ){
-      cout << ">>>" << GetServerURL( remotetest ) << endl;
-      cout << ">>>" << GetRemotePath( remotetest ) << endl;
+      cout << ">>>  " << GetServerURL( remotetest ) << endl;
+      cout << ">>>  " << GetRemotePath( remotetest ) << endl;
       for( const auto& path: Glob( remotetest ) ){
          cout << path << endl;
       }

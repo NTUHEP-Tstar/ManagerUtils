@@ -9,21 +9,20 @@
 #include "ManagerUtils/SysUtils/interface/HiggsCombineSubmitter.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
+#include "ManagerUtils/SysUtils/interface/TimeUtils.hpp"
 
-#include <boost/asio/io_service.hpp>
-#include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/thread/thread.hpp>
-#include <cstdlib>
+#include <boost/format.hpp>
+#include <exception>
+#include <fstream>
 #include <iostream>
-#include <thread>
 
 using namespace std;
 using namespace mgr;
 
-// ------------------------------------------------------------------------------
-//   Constructor and Destructor
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*   Constructor and destructor
+*******************************************************************************/
 HiggsCombineSubmitter::HiggsCombineSubmitter( const string& config_file )
 {
    const ConfigReader config( config_file );
@@ -38,107 +37,97 @@ HiggsCombineSubmitter::HiggsCombineSubmitter( const string& config_file )
    }
 }
 
+/******************************************************************************/
+
 HiggsCombineSubmitter::~HiggsCombineSubmitter()
 {
 }
 
 
-// ------------------------------------------------------------------------------
-//   Main control flows
-// ------------------------------------------------------------------------------
-static const string higgs_subdir = "HiggsAnalysis/CombinedLimit";
-
+/*******************************************************************************
+*   Main control flow
+*******************************************************************************/
 int
 HiggsCombineSubmitter::SubmitDataCard( const CombineRequest& x ) const
 {
-   const string script_file = temp_script_name( x.mass_point, x.combine_method );
-   MakeScripts( x );
-   cout << "Running script " << script_file << endl;
-   const int result = system( script_file.c_str() );
-   system( ( "rm "+script_file ).c_str() );
+   const string scriptfile = MakeScripts( x );
+   const string cmd   = scriptfile + " &"; // make it run in background
+   cout << "Running script " << scriptfile << endl;
+   const int result = system( cmd.c_str() );
+   // system( ( "rm "+scriptfile ).c_str() );
    return result;
 }
+
+/******************************************************************************/
 
 string
 HiggsCombineSubmitter::MakeScripts( const CombineRequest& x )  const
 {
-   const string script_name = temp_script_name( x.mass_point, x.combine_method );
-   FILE* script_file        = fopen( script_name.c_str(), "w" );
-   fprintf( script_file, "#!/bin/bash\n" );
-   fprintf( script_file, "cd %s\n", higgs_cmssw_dir().c_str() );
-   fprintf( script_file, "eval `scramv1 runtime -sh` &> /dev/null\n" );
-   fprintf(
-      script_file, "combine -M %s -m %d %s %s",
-      x.combine_method.c_str(),
-      x.mass_point,
-      x.card_file.c_str(),
-      x.additional_options.c_str()
-      );
-   if( x.log_file != "stdout" ){
-      fprintf( script_file, "  &> %s", x.log_file.c_str() );
+   if( x.combine_method == "Asymptotic" ){
+      return MakeAsymptoticScript( x );
+   } else if( x.combine_method == "HybridNew" ){
+      return MakeHybridNewScript( x );
+   } else {
+      throw std::invalid_argument( "Un-recongnized method!" );
    }
-   fprintf( script_file, "\n" );
-   fprintf( script_file, "result=$?\n" );
-   fprintf(
-      script_file, "mv %s/higgsCombineTest.%s.mH%d.root %s\n",
-      higgs_cmssw_dir().c_str(),
-      x.combine_method.c_str(),
-      x.mass_point,
-      x.output_file.c_str()
-      );
-   fprintf( script_file, "exit $result\n" );
-   fclose( script_file );
-   system( "sleep 1" );
-   system( ( "chmod +x "+script_name ).c_str() );
-   return script_name;
 }
+
+/******************************************************************************/
 
 vector<int>
 HiggsCombineSubmitter::SubmitParallel( const vector<CombineRequest>& list ) const
 {
+   static const string clearline=
+   "\r                                                                       \r";
+   boost::format waitmsg("\r[%s] %d proceses alreading running, waiting to submit..." );
+   unsigned running ;
 
-   // Recipe found from StackOverflow:
-   // http://stackoverflow.com/questions/19500404/how-to-create-a-thread-pool-using-boost-in-c
-   boost::asio::io_service ioService;
-   boost::thread_group threadpool;
-   boost::asio::io_service::work work( ioService );
-
-   // Number of threads equal to half the number of threads available
-   for( unsigned i = 0; i < NumOfThreads()/2; ++i ){
-      threadpool.create_thread( boost::bind( &boost::asio::io_service::run, &ioService ) );
+   for( const auto request : list ){
+      running = HasProcess("combine");
+      while( running >= NumOfThreads()/2 ){
+         cout << waitmsg % CurrentDateTime() % running << flush ;
+         SleepMillSec( 100 );
+         running = HasProcess("combine");
+      }
+      cout << clearline << endl ; // clearing line
+      SubmitDataCard( request );
+      SleepMillSec( 1000 ); // Wait one second before attempting to send next one
    }
 
-   // Submitting all requests
-   for( const auto& request : list ){
-      ioService.post( boost::bind( &HiggsCombineSubmitter::SubmitDataCard, this, request ) );
-   }
+   // Waiting for all scripts to finish
+   WaitProcess("combine");
+   WaitProcess("mv");
 
-   ioService.stop();
-   threadpool.join_all();
+   // Waiting for additional 3 seconds for file transfere to complete
+   SleepMillSec( 3000 ) ;
 
    vector<int> ans( 0, list.size() );
    return ans;// Indiviual run results are not availiable.. yet
 }
 
-// ------------------------------------------------------------------------------
-//    Helper private functions
-// ------------------------------------------------------------------------------
-
+/*******************************************************************************
+*   Helper private functions
+*******************************************************************************/
 bool
 HiggsCombineSubmitter::check_higgs_dir() const
 {
    static const string git_repo       = "https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git";
    static const string install_script = "./._higgs_install_script.sh";
+   static const string higgs_subdir   = "HiggsAnalysis/CombinedLimit";
    using namespace boost::filesystem;
    if( !exists( _store_path + "/" + _cmssw_version + "/src/" + higgs_subdir ) ){ return false; }
    // TODO: Make sure to correct version tag.. 2016-07-04
    return true;
 }
 
+/******************************************************************************/
+
 void
 HiggsCombineSubmitter::init_higgs_dir() const
 {// Script for automatically installing Higgs Combine package...
 }
+
+/******************************************************************************/
 
 string
 HiggsCombineSubmitter::higgs_cmssw_dir() const
@@ -146,41 +135,138 @@ HiggsCombineSubmitter::higgs_cmssw_dir() const
    return _store_path + "/" + _cmssw_version + "/src/";
 }
 
+/******************************************************************************/
+
 string
-HiggsCombineSubmitter::temp_script_name( const int mass_point, const string& combine_method ) const
+HiggsCombineSubmitter::temp_scriptname( const int masspoint, const string& combine_method ) const
 {
    char ans[1024];
    sprintf(
       ans, "%s/.temp_script_m%d_M%s.sh",
       getenv( "PWD" ),
-      mass_point,
+      masspoint,
       combine_method.c_str()
       );
    return ans;
 }
 
-// ------------------------------------------------------------------------------
-//   CombineRequest class
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*   Script generation for different methods
+*******************************************************************************/
+static boost::format bashheader( "#!/bin/bash\n" );
+static boost::format chdirfmt( "cd %s\n" );
+static boost::format cmsenv( "eval $(scramv1 runtime -sh 2> /dev/null) &> /dev/null\n" );
+static boost::format dumptofile( "  &> %s" );
 
+std::string
+HiggsCombineSubmitter::MakeAsymptoticScript( const CombineRequest& x ) const
+{
+   static boost::format combinecommand( "combine -M Asymptotic -m %d %s %s" );
+   static boost::format combinefilename( "%s/higgsCombineTest.Asymptotic.mH%s.root" );
+
+   const string scriptname = temp_scriptname( x.masspoint, x.combine_method );
+
+   ofstream scriptfile( scriptname, ofstream::out );
+
+   scriptfile << bashheader << endl;
+   scriptfile << chdirfmt % higgs_cmssw_dir() << endl;
+   scriptfile << cmsenv << endl;
+
+   scriptfile << combinecommand % x.masspoint % x.cardfile % x.additional_options;
+   if( x.logfile != "stdout" ){
+      scriptfile <<  dumptofile % x.logfile;
+   }
+   scriptfile << endl;
+   scriptfile << "mv " << combinefilename % higgs_cmssw_dir() % x.masspoint << " " << x.storefile << endl;
+   scriptfile.close();
+
+   system( "sleep 1" );
+   system( ( "chmod +x "+scriptname ).c_str() );
+   return scriptname;
+}
+
+/******************************************************************************/
+
+std::string
+HiggsCombineSubmitter::MakeHybridNewScript( const CombineRequest& x ) const
+{
+   // Listing the common quantpoints;
+   static const vector<double> quantpoints = {0.025, 0.16, 0.5, 0.84, 0.975};
+   static boost::format obslimcmd( "combine -M HybridNew -H Asymptotic -m %d %s %s" );
+   static boost::format obslimout( "%s/higgsCombineTest.HybridNew.mH%d.root" );
+   static boost::format explimcmd( "combine -M HybridNew -m %d --expectedFromGrid=%lf %s %s" );
+   static boost::format explimout( "%s/higgsCombineTest.HybridNew.mH%d.quant%.3lf.root" );
+
+   const string scriptname = temp_scriptname( x.masspoint, x.combine_method );
+
+   ofstream scriptfile( scriptname, ofstream::out );
+   scriptfile << bashheader << endl;
+   scriptfile << chdirfmt % higgs_cmssw_dir() << endl;
+   scriptfile << cmsenv << endl;
+
+   // Print command for observed limit
+   scriptfile << obslimcmd % x.masspoint % x.cardfile % x.additional_options;
+   if( x.logfile != "stdout" ){
+      scriptfile << dumptofile % x.logfile;
+   }
+   scriptfile << endl;
+
+   // Printing command for expected limit
+   for( const auto& quant : quantpoints ){
+      scriptfile << explimcmd % x.masspoint % quant % x.cardfile % x.additional_options;
+      if( x.logfile != "stdout" ){
+         scriptfile << dumptofile % x.logfile;
+      }
+      scriptfile << endl;
+   }
+
+   // Combining the the output root files
+   // Adding -f flag to overide existing files
+   scriptfile << "hadd -f " << x.storefile << " ";
+
+   for( const auto& quant : quantpoints ){
+      scriptfile << " " << explimout % higgs_cmssw_dir() % x.masspoint % quant;
+   }
+
+   scriptfile << " " << obslimout % higgs_cmssw_dir() % x.masspoint;
+   scriptfile << " &> /dev/null" << endl;
+
+   // Deleting the separate files
+   for( const auto& quant : quantpoints ){
+      scriptfile << "rm " << explimout % higgs_cmssw_dir() % x.masspoint % quant  << endl;
+   }
+   scriptfile << "rm  " << obslimout % higgs_cmssw_dir() % x.masspoint;
+
+   // Closing file and tidying output
+   scriptfile.close();
+   system( "sleep 1" );// must wait for system to proces file
+   system( ( "chmod +x "+scriptname ).c_str() );
+   return scriptname;
+
+}
+
+
+/*******************************************************************************
+*   Combine request class
+*******************************************************************************/
 CombineRequest::CombineRequest(
-   const std::string& _card_file,
-   const std::string& _output_file,
-   const int          _mass_point,
+   const std::string& _cardfile,
+   const std::string& _storefile,
+   const int          _masspoint,
    const std::string& _combine_method,
    const std::string& _additional_options,
-   const std::string& _log_file
+   const std::string& _logfile
    ) :
-   card_file( ConvertToAbsPath( _card_file ) ),
-   output_file( ConvertToAbsPath( _output_file ) ),
-   mass_point( _mass_point ),
+   cardfile( ConvertToAbsPath( _cardfile ) ),
+   storefile( ConvertToAbsPath( _storefile ) ),
+   masspoint( _masspoint ),
    combine_method( _combine_method ),
    additional_options( _additional_options )
 {
-   if( _log_file != "stdout" ){
-      log_file = ConvertToAbsPath( _log_file );
+   if( _logfile != "stdout" ){
+      logfile = ConvertToAbsPath( _logfile );
    } else {
-      log_file = _log_file;
+      logfile = _logfile;
    }
 }
 

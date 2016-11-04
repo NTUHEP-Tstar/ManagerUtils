@@ -25,13 +25,22 @@ extern TPad*    NewBottomPad();
 *   * New Legend
 *   Create new Tlegend instance with all the font/size settings done.
 *******************************************************************************/
-extern TLegend* NewLegend( const float, const float, const float = PLOT_X_MAX, const float = PLOT_Y_MAX );
+extern TLegend* NewLegend(
+   const float xmin,
+   const float ymin,
+   const float xmax = PLOT_X_MAX,
+   const float ymax = PLOT_Y_MAX );
 
 /*******************************************************************************
 *   * NewTextBox
 *   Creating a new TextBox instance with all the font/sizing settings done.
 *******************************************************************************/
-extern TPaveText* NewTextBox( const float, const float, const float, const float );
+extern TPaveText* NewTextBox(
+   const float xmin,
+   const float ymin,
+   const float xmax,
+   const float ymax
+);
 
 
 };

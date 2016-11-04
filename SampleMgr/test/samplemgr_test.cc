@@ -33,24 +33,8 @@ main( int argc, char* argv[] )
 
    cout << mysample.LatexName() << endl;
    cout << mysample.RootName() << endl;
-   cout << mysample.EventsInFile() << endl;
    cout << mysample.ExpectedYield() << endl;
 
-   cout << "=====[EVENT LOOP TEST]=====" << endl;
-   int i = 0;
-   fwlite::Handle<std::vector<pat::Jet> > Jets;
-
-   for( mysample.Event().toBegin(); !mysample.Event().atEnd(); ++mysample.Event(), ++i ){
-      if( i > 10 ){break; }
-      cout << "[Event] " << i << endl;
-      Jets.getByLabel( mysample.Event().Base(), "skimmedPatJets" );
-
-      for( const auto& jet : *Jets.product() ){
-         cout << jet.pt() << " " << flush;
-      }
-
-      cout << endl;
-   }
 
    return 0;
 }

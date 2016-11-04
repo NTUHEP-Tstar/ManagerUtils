@@ -8,10 +8,15 @@
 #ifndef MANAGERUTILS_SYSUTILS_TIMEUTILS_HPP
 #define MANAGERUTILS_SYSUTILS_TIMEUTILS_HPP
 
-//------------------------------------------------------------------------------
-//   ** CurrentDateTime
-//   Get a string representing the current time and date
-//------------------------------------------------------------------------------
+/*******************************************************************************
+*   ** CurrentDateTime
+*   Return current date and time as std::string
+*******************************************************************************/
 extern std::string CurrentDateTime();
 
-#endif /* end of include guard: __SYSTEM_UTILS_HH__ */
+/*******************************************************************************
+*   ** Sleep Thead for set number of MilliSeconds
+*******************************************************************************/
+extern void SleepMillSec( const unsigned );
+
+#endif /* end of include guard */

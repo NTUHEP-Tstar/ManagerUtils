@@ -4,80 +4,107 @@
 *  Description : String Formatting functions for Parameter class
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
+*  Using boost::format and std::regex for proper styling
+*
 *******************************************************************************/
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
+#include <regex>
 #include <string>
 
 using namespace std;
 
+/******************************************************************************/
+
 string
 FloatingPoint( double x, const int precision )
 {
-   char buffer[100];
-   char retstr[1024];
-   unsigned index;
-   if( precision < 0 ){
-      // if request indefinite precision, try 8 and strip trailing zeros
-      sprintf( buffer, "%%.8lf" );
+   static const int max_precision = 8;
+   static const int max_digits    = 27;
+
+   boost::format fltfmt;
+   string retstr;
+
+   // Determining precision format
+   if( precision < 0  || precision >= max_precision ){
+      fltfmt = boost::format( boost::str( boost::format( "%%.%dlf" ) % max_precision ) );
    } else {
-      sprintf( buffer, "%%.%df", precision );
+      fltfmt = boost::format( boost::str( boost::format( "%%.%df" ) % precision ) );
    }
 
-   sprintf( retstr, buffer, x );
+   // Making first version of string
+   retstr = boost::str( fltfmt % x );
 
-   if( precision < 0 ){
-      index = strlen( retstr )-1;
+   // stripping trailing zero after decimal point
+   if( precision < 0 && retstr.find( '.' ) != string::npos ){
+      boost::trim_right_if( retstr, boost::is_any_of( "0" ) );
+   }
+   // stripping trailing decimal point
+   boost::trim_right_if( retstr, boost::is_any_of( "." ) );
 
-      while( retstr[index] == '0'  ){
-         retstr[index] = '\0';// wiping to end of string character
-         if( index == 0 ){ break; }
-         --index;
-      }
-
-      if( retstr[index] == '.' ){
-         retstr[index] = '\0';
+   // Add latex "\," spacing every 3 digits away from decimal point
+   for( int space = max_digits; space > 0; space = space-3 ){
+      if( retstr.find( '.' ) != string::npos ){
+         // If decimal point exists, expand around this point
+         boost::format bfexp( "(.*\\d)(\\d{%d}\\..*)" );
+         boost::format afexp( "(.*\\.\\d{%d})(\\d.*)" );
+         const std::regex beforedec( boost::str( bfexp % space ) );
+         const std::regex afterdec(  boost::str( afexp % space ) );
+         retstr = std::regex_replace( retstr, beforedec, "$1\\,$2" );
+         retstr = std::regex_replace( retstr, afterdec,  "$1\\,$2" );
+      } else {
+         // If decimal poitn doesnt exist, expand around left most side
+         boost::format bfexp( "(.*\\d)(\\d{%d})" );
+         const std::regex beforedec( boost::str( bfexp % space ) );
+         std::regex_replace( retstr, beforedec, "$1\\,$2" );
       }
    }
+
+
    return retstr;
 }
+
+/******************************************************************************/
 
 string
 FloatingPoint( const Parameter& x,  const int precision )
 {
-   char full_string[256];
+   string ans;
 
-   const string cen = precision >= 0 ?
-                      FloatingPoint( x.CentralValue(),  precision ) :
-                      FloatingPoint( x.CentralValue(),  -1 );
-   const string up = precision >= 0 ?
-                      FloatingPoint( x.AbsUpperError(), precision ) :
-                      FloatingPoint( x.AbsUpperError(), -1 );
-   const string lo = precision >= 0 ?
-                      FloatingPoint( x.AbsLowerError(), precision ) :
-                      FloatingPoint( x.AbsLowerError(), -1 );
+   const string cen = FloatingPoint( x.CentralValue(),  precision );
+   const string up  = FloatingPoint( x.AbsUpperError(), precision );
+   const string lo  = FloatingPoint( x.AbsLowerError(), precision );
+
+   boost::format symmfmt( "%s\\pm%s" );
+   boost::format asymfmt( "%s^{+%s}_{-%s}" );
 
    if( x.AbsUpperError() == x.AbsLowerError() ){
       if( x.AbsUpperError() == 0. ){
-         sprintf( full_string, "$%s$", cen.c_str() );
+         ans = cen;
       } else {
-         sprintf( full_string, "$%s\\pm%s$", cen.c_str(), up.c_str() );
+         ans = str( symmfmt % cen % up );
       }
    } else {
-      sprintf( full_string, "$%s^{+%s}_{-%s}$", cen.c_str(),
-         up.c_str(), lo.c_str() );
+      ans = str( asymfmt % cen % up % lo );
    }
-   return full_string;
+   return ans;
 }
+
+/******************************************************************************/
 
 string
 Scientific( const Parameter& x, const unsigned precision )
 {
-   char base_string[256];
-   char full_string[256];
+   boost::format symmbase( "%s\\pm%s" );
+   boost::format asymbase( "%s^{+%s}_{-%s}" );
+
+   boost::format symmexpfmt( "(%s)\\times10^{%d}" );
+   boost::format asymexpfmt( "%s\\times10^{%d}" );
+
+   string base;
+   string ans;
    int exponent = 0;
 
    double cen = x.CentralValue();
@@ -120,43 +147,43 @@ Scientific( const Parameter& x, const unsigned precision )
 
    if( up == lo ){
       if( up == 0 ){
-         sprintf( base_string, "%s", censtr.c_str() );
+         base = censtr;
       } else {
-         sprintf( base_string, "%s\\pm%s", censtr.c_str(), upstr.c_str() );
+         base = str( symmbase % censtr % upstr );
       }
    } else {
-      sprintf(
-         base_string, "%s^{+%s}_{-%s}", censtr.c_str(),
-         upstr.c_str(), lostr.c_str() );
+      base = str( asymbase % censtr % upstr % lostr );
    }
 
    if( exponent == 0 ){
-      sprintf( full_string, "$%s$", base_string );
+      ans = base;
    } else {
-      if( up == lo && up != 0){// Special case for symmetric errors
-         sprintf(
-            full_string, "$(%s)\\times10^{%d}$", base_string,
-            exponent );
+      if( up == lo && up != 0 ){// Special case for symmetric errors
+         ans = str( symmexpfmt % base % exponent );
       } else {
-         sprintf( full_string, "$%s\\times10^{%d}$", base_string, exponent );
+         ans = str( asymexpfmt %  base% exponent );
       }
    }
-   return full_string;
+   return ans;
 }
+
+/******************************************************************************/
 
 string
 HiggsDataCard( const Parameter& x )
 {
-   char buffer[1024];
+   static const string null = "--";
+   boost::format symmfmt( "%lf" );
+   boost::format asymfmt( "%lf/%lf" );
+
    if( x.CentralValue() == 0 &&
        x.AbsUpperError() == 0 &&
        x.AbsLowerError() == 0 ){
-      return "--";// special case for null parameter
+      return null;
    } else if( x.AbsUpperError() == x.AbsLowerError() ){
-      sprintf( buffer, "%lg", 1.+x.RelAvgError() );
+      return str( symmfmt % ( 1+x.RelAvgError() ) );
    } else {
-      sprintf( buffer, "%lg/%lg", 1.+ x.RelUpperError(),
-         1.- x.RelLowerError() );
+      return str( asymfmt % ( 1.+ x.RelUpperError() ) %  ( 1.- x.RelLowerError() ) );
    }
-   return buffer;
+   return null;
 }

@@ -5,7 +5,20 @@
  *
  *  Property Tree Configuration reader class powered by boost
  *
- *  Some detailed discription
+ *  Helper class to initialize classes stored in json format:
+ *  {
+ *    "StaticVar1" : <somevalue1>,
+ *    "StaticVar2" : <somevalue2>,
+ *
+ *    "Instance label1" : {
+ *       "Var1" : <somevalue3>,
+ *       "Var2" : <somevalue4>
+ *    },
+ *    "Instance label2" : {
+ *       "Var1" : <somevalue5>,
+ *       "Var2" : <somevalue6>
+ *    },
+ *  }
  *
 *******************************************************************************/
 #ifndef MANAGERUTILS_BASECLASS_CONFIGREADER_HPP
@@ -33,6 +46,7 @@ public:
 
 
    // Static Variable Access
+   bool         GetStaticBool  ( const std::string& tag ) const ;
    std::string  GetStaticString( const std::string& tag ) const ;
    double       GetStaticDouble( const std::string& tag ) const ;
    Parameter    GetStaticParameter( const std::string& tag ) const;
@@ -41,6 +55,7 @@ public:
    bool HasStaticTag( const std::string& tag ) const ;
 
    // Instance variable Access
+   bool        GetBool     ( const std::string& inst_tag, const std::string& tag ) const;
    Parameter   GetParameter( const std::string& inst_tag, const std::string& tag ) const;
    std::string GetString   ( const std::string& inst_tag, const std::string& tag ) const;
    double      GetDouble   ( const std::string& inst_tag, const std::string& tag ) const;
@@ -48,7 +63,7 @@ public:
    std::vector<double>      GetDoubleList( const std::string& inst_tag, const std::string& tag ) const;
    bool HasTag( const std::string& inst_tag, const std::string& tag ) const;
 
-   // Instance detection list
+   // Instance detection functions
    bool HasInstance( const std::string& ) const;
    std::vector<std::string> GetInstanceList() const;
 
@@ -62,7 +77,8 @@ private:
    boost::property_tree::ptree _ptree; /*!< Detailed description after the member */
 
    // Helper member functions
-   static bool has_tag       ( const boost::property_tree::ptree& tree, const std::string& tag );
+   static bool        has_tag      ( const boost::property_tree::ptree& tree, const std::string& tag );
+   static bool        get_bool     ( const boost::property_tree::ptree& tree, const std::string& tag );
    static std::string get_string   ( const boost::property_tree::ptree& tree, const std::string& tag );
    static double      get_double   ( const boost::property_tree::ptree& tree, const std::string& tag );
    static Parameter   get_parameter( const boost::property_tree::ptree& tree, const std::string& tag );
@@ -71,6 +87,6 @@ private:
 
 };
 
-}
+};
 
 #endif /* end of include guard: MANAGERUTILS_BASECLASS_CONFIGREADER_HPP */

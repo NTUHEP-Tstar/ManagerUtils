@@ -34,30 +34,34 @@ private:
    void        init_higgs_dir()  const ;
    bool        check_higgs_dir() const ;
    std::string higgs_cmssw_dir() const ;
-   std::string temp_script_name(
+   std::string temp_scriptname(
       const int masspoint,
       const std::string& combine_method
    ) const;
+
+   std::string MakeHybridNewScript( const CombineRequest& ) const ;
+   std::string MakeAsymptoticScript( const CombineRequest& ) const ;
+
 };
 
 class CombineRequest { // Pure data class for submission management
 public:
    CombineRequest(
-      const std::string& _card_file,
-      const std::string& _output_file,
-      const int          _mass_point,
+      const std::string& _cardfile,
+      const std::string& _storefile,
+      const int          _masspoint,
       const std::string& _combine_method,
       const std::string& _additional_options = "",
-      const std::string& _log_file = "/dev/null"
+      const std::string& _logfile = "/dev/null"
    ); // Constructor with default arguments
    ~CombineRequest();
 
-   std::string card_file ;
-   std::string output_file;
-   int         mass_point;
+   std::string cardfile ;
+   std::string storefile;
+   int         masspoint;
    std::string combine_method;
    std::string additional_options;
-   std::string log_file;
+   std::string logfile;
 };
 
 }

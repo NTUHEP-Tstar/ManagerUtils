@@ -16,8 +16,9 @@
 //   output of the string will be displayed on screen, so the user is resposible
 //   so ensure that the input command could be completed.
 //------------------------------------------------------------------------------
-extern std::string GetCMDOutput( const std::string& x );
-
+extern std::string GetCMDSTDOutput( const std::string& x );
+extern std::string GetCMDERROutput( const std::string& x );
+extern std::string GetCMDOutput( const std::string& );
 
 //------------------------------------------------------------------------------
 //   ** NumOfThreads
@@ -38,6 +39,10 @@ extern int  HasProcess( const std::string& x, const std::string& exclude="" );
 //   Sleep until the results of HasProcess(a,b) returns 0. Will also display
 //   system time while waiting.
 //------------------------------------------------------------------------------
-extern void WaitProcess( const std::string& process_tag , const std::string& exclude="" );
+extern void WaitProcess(
+   const std::string& process_tag,
+   const std::string& exclude="",
+   const unsigned     waitmills=100
+);
 
 #endif /* end of include guard: MANAGERUTILS_SYSUTILS_PROCESSUTILS */

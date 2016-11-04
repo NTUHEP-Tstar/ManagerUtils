@@ -74,7 +74,7 @@ private:
    std::string MakeAliasName( const std::string& ) const;
 };
 
-}
+};
 
 
 #endif/* end of include guard: MANAGERUTILS_ROOTMGR_ROOFITMGR_HPP */

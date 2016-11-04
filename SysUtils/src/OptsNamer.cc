@@ -18,20 +18,22 @@ using namespace mgr;
 namespace pt  = boost::property_tree;
 namespace opt = boost::program_options;
 
-// ------------------------------------------------------------------------------
-//   Constructor and destructor
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*   Constructor/destructor
+*******************************************************************************/
 OptsNamer::OptsNamer(){}
 OptsNamer::~OptsNamer(){}
 
-// ------------------------------------------------------------------------------
-//   Loading functions
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*  Loading functions
+*******************************************************************************/
 void
 OptsNamer::LoadJsonFile( const string& filename )
 {
    read_json( filename, _tree );
 }
+
+/******************************************************************************/
 
 int
 OptsNamer::LoadOptions( const opt::options_description& desc, int argc, char* argv[] )
@@ -54,13 +56,16 @@ OptsNamer::LoadOptions( const opt::options_description& desc, int argc, char* ar
    return PARSE_SUCESS;
 }
 
-// ------------------------------------------------------------------------------
-//   Basic access options to input options
-// ------------------------------------------------------------------------------
+/*******************************************************************************
+*   Input access functions
+*******************************************************************************/
 bool
 OptsNamer::HasOption( const std::string& opt ) const
-{ return _map.count( opt ); }
+{
+   return _map.count( opt );
+}
 
+/******************************************************************************/
 
 string
 OptsNamer::InputStr( const std::string& opt ) const
@@ -82,21 +87,33 @@ OptsNamer::InputStr( const std::string& opt ) const
    return ans;
 }
 
+/******************************************************************************/
+
 double
 OptsNamer::InputDou( const std::string& opt ) const
-{ return _map[opt].as<double>(); }
+{
+   return _map[opt].as<double>();
+}
+
+/******************************************************************************/
+
 int
 OptsNamer::InputInt( const std::string& opt ) const
-{ return _map[opt].as<int>(); }
+{
+   return _map[opt].as<int>();
+}
 
-// ------------------------------------------------------------------------------
-//   Translation functions
-// ------------------------------------------------------------------------------
+
+/*******************************************************************************
+*   Translation functions for extended options
+*******************************************************************************/
 string
 OptsNamer::GetInput( const string& category ) const
 {
    return _map[category].as<string>();
 }
+
+/******************************************************************************/
 
 string
 OptsNamer::GetExtName( const string& category, const string& exttag ) const
@@ -104,6 +121,8 @@ OptsNamer::GetExtName( const string& category, const string& exttag ) const
    const string instance = GetInput( category );
    return query_tree( category, instance, exttag );
 }
+
+/******************************************************************************/
 
 string
 OptsNamer::query_tree(

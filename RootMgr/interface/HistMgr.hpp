@@ -42,6 +42,14 @@ public:
    void LoadFromFile( const std::string& );
    void SaveToFile( const std::string& );
 
+   // Static functions for helping with title creation
+   static std::string MakeYTitle(
+      const double binwidth,
+      const std::string& xunit,
+      const unsigned exponent );
+   static std::string GetXUnit( const TH1D* );
+   static unsigned    GetExponent( const double );
+
 protected:
    void AddHist(
       const std::string& name,
@@ -56,6 +64,6 @@ private:
    std::map<std::string, std::unique_ptr<TH1D> >  _histmap;
 };
 
-}
+};
 
 #endif /* end of include guard: MANAGERUTILS_HISTMGR_HISTMGR_HPP */

@@ -58,6 +58,6 @@ void DumpInfo( const SampleGroup& x )
    for( const auto& sample : x.SampleList() ){
       cout << "   > "
            << sample.Name() << " " << sample.LatexName()
-           << sample.EventsInFile() << endl;
+           << sample.ExpectedYield() << endl;
    }
 }

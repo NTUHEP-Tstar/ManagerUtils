@@ -8,30 +8,36 @@
 #include "ManagerUtils/SampleMgr/interface/SampleGroup.hpp"
 
 #include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
+#include "ManagerUtils/Maths/interface/Efficiency.hpp"
 
 #include <exception>
 #include <iostream>
 using namespace std;
 using namespace mgr;
 
-// ------------------------------------------------------------------------------
-//   Setting static variables
-// ------------------------------------------------------------------------------
-string SampleGroup::_sample_cfg_prefix = "./";
+/*******************************************************************************
+*   Static varaibles
+*******************************************************************************/
+string SampleGroup::_cfgprefix = "./";
 
-// ------------------------------------------------------------------------------
-//   Constructors/destructor and Initializer
-// ------------------------------------------------------------------------------
+
+/*******************************************************************************
+*   Constructor/Destructor and initializer functiosn
+*******************************************************************************/
 SampleGroup::SampleGroup( const string& name ) :
    Named( name )
 {
 }
+
+/******************************************************************************/
 
 SampleGroup::SampleGroup( const string& name, const string& file_name ) :
    Named( name )
 {
    InitFromFile( file_name );
 }
+
+/******************************************************************************/
 
 SampleGroup::SampleGroup( const string& name, const ConfigReader& cfg ) :
    Named( name )
@@ -50,51 +56,41 @@ void
 SampleGroup::InitFromReader( const ConfigReader& cfg )
 {
    if( cfg.HasStaticTag( "Sample Config Prefix" ) ){
-      _sample_cfg_prefix = cfg.GetStaticString( "Sample Config Prefix" );
+      SetSampleCfgPrefix( cfg.GetStaticString( "Sample Config Prefix" ) );
    }
-
-   if( !cfg.HasInstance( Name() ) ){
-      // Not found in config file, assuming it is single sample in default
-      const string jsonfile = cfg.GetStaticString( "Default Json" );
-      const string fullpath = SampleCfgPrefix() + jsonfile;
-      ConfigReader sample_cfg( fullpath );
-
-      SampleList().push_back( SampleMgr( Name(), sample_cfg ) );
+   auto type = GetType( cfg );
+   if( type == Undef ){
+      const auto samplecfg = GetUndefConfig( cfg );
+      SampleList().push_back( SampleMgr( Name(), samplecfg ) );
       SetLatexName( SampleList().back().LatexName() );
       SetRootName( SampleList().back().RootName() );
-   } else if( cfg.HasTag( Name(), "Sample List" ) ){
+
+   } else if( type == Standard ){
       const string rootname  = cfg.GetString( Name(), "Root Name" );
       const string latexname = cfg.GetString( Name(), "Latex Name" );
       SetLatexName( latexname );
       SetRootName( rootname );
 
-      const string jsonfile
-         = cfg.HasTag( Name(), "Subset Json" ) ?
-           cfg.GetString( Name(), "Subset Json" ) :
-           cfg.GetStaticString( "Default Json" );
-      const string fullpath = SampleCfgPrefix() + jsonfile;
-      ConfigReader samplecfg( fullpath );
+      const auto samplecfg = GetSampleListConfig( cfg );
 
-      for( const auto& name : cfg.GetStringList( Name(), "Sample List" ) ){
+      for( const auto& name : GetSampleList( cfg ) ){
          SampleList().push_back( SampleMgr( name, samplecfg ) );
       }
-   } else if( cfg.HasTag( Name(), "File List" ) ){
+
+   } else if( type == FileList ){
       const string rootname  = cfg.GetString( Name(), "Root Name" );
       const string latexname = cfg.GetString( Name(), "Latex Name" );
       SetLatexName( latexname );
       SetRootName( rootname );
 
-      for( const auto& json : cfg.GetStringList( Name(), "File List" ) ){
-         ConfigReader samplecfg( SampleCfgPrefix() + json );
-
-         for( const auto& sampletag : samplecfg.GetInstanceList() ){
-            SampleList().push_back( SampleMgr( sampletag, samplecfg ) );
+      for( const auto& config : GetConfigList( cfg ) ){
+         for( const auto& tag : config.GetInstanceList() ){
+            SampleList().push_back( SampleMgr( tag, config ) );
          }
       }
-   } else if( cfg.HasTag( Name(), "Single Sample" ) ){
-      const string jsonfile = cfg.GetString( Name(), "Single Sample" );
-      const string fullpath = SampleCfgPrefix() + jsonfile;
-      ConfigReader samplecfg( fullpath );
+
+   } else if( type == Single ){
+      const auto samplecfg = GetSingleConfig( cfg );
       SampleList().push_back( SampleMgr( Name(), samplecfg ) );
       SetLatexName( SampleList().back().LatexName() );
       SetRootName( SampleList().back().RootName() );
@@ -104,6 +100,85 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
 SampleGroup::~SampleGroup()
 {
 }
+
+/*******************************************************************************
+*   Sample Group Config file format detection
+*******************************************************************************/
+mgr::SampleGroup::ConfigType
+SampleGroup::GetType( const mgr::ConfigReader& cfg ) const
+{
+   if( !cfg.HasInstance( Name() ) ){
+      if( !cfg.HasStaticTag( "Default Json" ) ){ return ERROR; }
+      return Undef;
+   } else if( cfg.HasTag( Name(), "Sample List" ) ){
+      if( cfg.HasTag( Name(), "Subset Json" ) ){ return Standard; }
+      if( cfg.HasStaticTag( "Default Json" ) ){ return Standard; }
+      return ERROR;
+   } else if( cfg.HasTag( Name(), "File List" ) ){
+      return FileList;
+   } else if( cfg.HasTag( Name(), "Single Sample" ) ){
+      return Single;
+   } else {
+      return ERROR;
+   }
+}
+
+/******************************************************************************/
+
+mgr::ConfigReader
+SampleGroup::GetUndefConfig( const mgr::ConfigReader& cfg ) const
+{
+   const string jsonfile = cfg.GetStaticString( "Default Json" );
+   const string fullpath = SampleCfgPrefix() + jsonfile;
+   return ConfigReader( fullpath );
+}
+
+/******************************************************************************/
+
+mgr::ConfigReader
+SampleGroup::GetSampleListConfig( const mgr::ConfigReader& cfg ) const
+{
+   if( cfg.HasTag( Name(), "Subset Json" ) ){
+      const string jsonfile = cfg.GetString( Name(), "Subset Json" );
+      const string fullpath = SampleCfgPrefix() + jsonfile;
+      return ConfigReader( fullpath );
+   } else {
+      return GetUndefConfig( cfg );
+   }
+}
+
+/******************************************************************************/
+
+mgr::ConfigReader
+SampleGroup::GetSingleConfig( const mgr::ConfigReader& cfg ) const
+{
+   const string jsonfile = cfg.GetString( Name(), "Single Sample" );
+   const string fullpath = SampleCfgPrefix() + jsonfile;
+   return ConfigReader( fullpath );
+}
+
+/******************************************************************************/
+
+vector<mgr::ConfigReader>
+SampleGroup::GetConfigList( const mgr::ConfigReader& cfg ) const
+{
+   vector<mgr::ConfigReader> ans;
+
+   for( const auto& json : cfg.GetStringList( Name(), "File List" ) ){
+      ans.emplace_back( SampleCfgPrefix() + json );
+   }
+
+   return ans;
+}
+
+/******************************************************************************/
+
+vector<string>
+SampleGroup::GetSampleList( const mgr::ConfigReader& cfg ) const
+{
+   return cfg.GetStringList( Name(), "Sample List" );
+}
+
 
 /*******************************************************************************
 *   Sample Access functions
@@ -116,7 +191,8 @@ SampleGroup::Sample( const std::string& name )
          return sample;
       }
    }
-   throw std::invalid_argument("Name is not within range!!");
+
+   throw std::invalid_argument( "Name is not within range!!" );
 }
 
 const SampleMgr&
@@ -127,28 +203,17 @@ SampleGroup::Sample( const std::string& name ) const
          return sample;
       }
    }
-   throw std::invalid_argument("Name is not within range!!");
+
+   throw std::invalid_argument( "Name is not within range!!" );
 }
 
-// ------------------------------------------------------------------------------
-//   Summary Methods
-// ------------------------------------------------------------------------------
-unsigned
-SampleGroup::EventsInFile() const
-{
-   unsigned ans = 0;
-
-   for( const auto& sample : _samplelist ){
-      ans += sample.EventsInFile();
-   }
-
-   return ans;
-}
-
-Parameter
+/*******************************************************************************
+*   Extended variables
+*******************************************************************************/
+double
 SampleGroup::ExpectedYield() const
 {
-   Parameter ans( 0, 0, 0 );
+   double ans = 0;
 
    for( const auto& sample : _samplelist ){
       ans += sample.ExpectedYield();
@@ -177,25 +242,23 @@ SampleGroup::AvgSelectionEfficiency() const
       double orig = 0;
 
       for( const auto& sample : SampleList() ){
-         pass += sample.EventsInFile();
-         orig += sample.EventsInFile() /
-                 sample.SelectionEfficiency().CentralValue();
+         pass += sample.SelectedEventCount();
+         orig += sample.OriginalEventCount();
       }
 
-      const double cen = pass / orig;
-      const double err = sqrt( cen * ( 1-cen ) / ( orig -1 ) );
-      return Parameter( cen, err, err );
+      return Efficiency( pass, orig );
+
    } else {
       Parameter ans( 0, 0, 0 );
-      double total_cx = 0.;
+      double totalxsec = 0.;
 
       for( const auto& sample : SampleList() ){
          ans += sample.CrossSection() * sample.KFactor() *
                 sample.SelectionEfficiency();
-         total_cx += sample.CrossSection() * sample.KFactor();
+         totalxsec += sample.CrossSection() * sample.KFactor();
       }
 
-      ans /= total_cx;
+      ans /= totalxsec;
       return ans;
    }
 }
