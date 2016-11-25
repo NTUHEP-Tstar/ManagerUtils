@@ -51,6 +51,7 @@ public:
 
    std::string GetInput( const std::string& category ) const ;
    std::string GetExtName( const std::string& category,  const std::string& exttag ) const;
+   double      GetExtDouble( const std::string& category, const std::string& exttag ) const;
 
    std::string query_tree(
       const std::string& category,

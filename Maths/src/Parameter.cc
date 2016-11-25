@@ -106,8 +106,7 @@ Parameter::operator+=( const Parameter& x )
 Parameter&
 Parameter::operator*=( const Parameter& x )
 {
-   *this          = Prod( *this, x );
-   _centralValue *= x._centralValue;
+   *this = Prod( *this, x );
    return *this;
 }
 

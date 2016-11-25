@@ -22,8 +22,9 @@
 #include "FWCore/Framework/interface/Run.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "DataFormats/Common/interface/MergeableCounter.h"
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
+
+#include "ManagerUtils/EDMUtils/interface/Counter.hpp"
 
 //------------------------------------------------------------------------------
 //   Class Definition
@@ -42,8 +43,7 @@ private:
 
    const edm::EDGetToken  _lhesrc;
    edm::Handle<LHEEventProduct> _lheHandle;
-   unsigned _positiveEventCount;
-   unsigned _negativeEventCount;
+   double                       _eventCount;
 };
 using namespace edm;
 using namespace std;
@@ -54,8 +54,7 @@ using namespace std;
 WeightCounter::WeightCounter(const edm::ParameterSet& iConfig):
    _lhesrc( consumes<LHEEventProduct>(iConfig.getParameter<edm::InputTag>("lhesrc")) )
 {
-   produces<edm::MergeableCounter, edm::InRun>("positiveEvents").setBranchAlias("positiveEvents");
-   produces<edm::MergeableCounter, edm::InRun>("negativeEvents").setBranchAlias("negativeEvents");
+   produces<mgr::Counter, edm::InRun>("EventsCount");
 }
 
 WeightCounter::~WeightCounter(){}
@@ -65,20 +64,16 @@ WeightCounter::~WeightCounter(){}
 //------------------------------------------------------------------------------
 void WeightCounter::beginRun( const edm::Run& , const edm::EventSetup& )
 {
-   _positiveEventCount = 0;
-   _negativeEventCount = 0;
+   _eventCount = 0;
 }
 
 void WeightCounter::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    iEvent.getByToken( _lhesrc , _lheHandle );
    if( _lheHandle.isValid() ){
-      if( _lheHandle->hepeup().XWGTUP > 0 ){
-         _positiveEventCount++;
-      } else{
-         _negativeEventCount++; }
+      _eventCount += _lheHandle->hepeup().XWGTUP ;
    } else {
-      _positiveEventCount++;
+      _eventCount += 1;
    }
 }
 
@@ -87,14 +82,8 @@ void WeightCounter::endRun( const edm::Run&, const edm::EventSetup& )
 
 void WeightCounter::endRunProduce( edm::Run& iRun , const EventSetup& iSetup)
 {
-   auto_ptr<edm::MergeableCounter> positiveEvents( new edm::MergeableCounter );
-   auto_ptr<edm::MergeableCounter> negativeEvents( new edm::MergeableCounter );
-
-   positiveEvents->value = _positiveEventCount;
-   negativeEvents->value = _negativeEventCount;
-
-   iRun.put(positiveEvents, "positiveEvents");
-   iRun.put(negativeEvents, "negativeEvents");
+   auto_ptr<mgr::Counter> ptr( new mgr::Counter(_eventCount) );
+   iRun.put( ptr, "" );
 }
 
 

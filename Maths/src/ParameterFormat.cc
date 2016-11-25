@@ -16,8 +16,9 @@
 
 using namespace std;
 
-/******************************************************************************/
-
+/*******************************************************************************
+*   Double variable string representations
+*******************************************************************************/
 string
 FloatingPoint( double x, const int precision )
 {
@@ -51,7 +52,7 @@ FloatingPoint( double x, const int precision )
          boost::format bfexp( "(.*\\d)(\\d{%d}\\..*)" );
          boost::format afexp( "(.*\\.\\d{%d})(\\d.*)" );
          const std::regex beforedec( boost::str( bfexp % space ) );
-         const std::regex afterdec(  boost::str( afexp % space ) );
+         const std::regex afterdec( boost::str( afexp % space ) );
          retstr = std::regex_replace( retstr, beforedec, "$1\\,$2" );
          retstr = std::regex_replace( retstr, afterdec,  "$1\\,$2" );
       } else {
@@ -68,6 +69,35 @@ FloatingPoint( double x, const int precision )
 
 /******************************************************************************/
 
+string
+Scientific( double x, const unsigned precision )
+{
+   // Getting exponent
+   int exp = 0;
+
+   while( x && fabs( x ) > 10 ){
+      x /= 10;
+      exp++;
+   }
+
+   while( x && fabs( x ) < 1 ){
+      x *= 10;
+      exp--;
+   }
+
+   if( exp ){
+      return str( boost::format( "%s\\times10^{%d}" )
+         % FloatingPoint( x, precision )
+         % exp
+         );
+   } else {
+      return str( boost::format( "%s" ) % FloatingPoint( x, precision ) );
+   }
+}
+
+/*******************************************************************************
+*   Floating point formating options
+*******************************************************************************/
 string
 FloatingPoint( const Parameter& x,  const int precision )
 {

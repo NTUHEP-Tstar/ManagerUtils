@@ -13,6 +13,7 @@
 #include "RooAbsPdf.h"
 #include "RooAbsData.h"
 
+namespace plt {
 /*******************************************************************************
 *   ** PlotOn
 *   Wrapper class for a RooFit Object plotOn function. Returns the generated
@@ -36,5 +37,8 @@ TGraph* PlotOn( RooPlot* frame , T* rooobj,
 *   with additional RooPlot specializations.
 *******************************************************************************/
 extern void SetFrame(RooPlot*); // Setting common frame options
+
+}; /* plt */
+
 
 #endif /* end of include guard: MANAGERUTILS_PLOTUTILS_ROOFITUTILS_HPP */

@@ -10,6 +10,8 @@
 #include "RooPlot.h"
 #include "TAxis.h"
 
+namespace plt{
+
 void SetFrame( RooPlot* frame )
 {
    // Must set
@@ -20,6 +22,7 @@ void SetFrame( RooPlot* frame )
 
    // Common Axis settings
    plt::SetAxis( frame ); // see PlotObj.cc
-   frame->GetXaxis()->SetTitleOffset( 1.2 );
    frame->SetTitle("");
 }
+
+};

@@ -145,6 +145,55 @@ main( int argc, char const* argv[] )
       cout << "((((a*b)*c)*d)*e)" << FloatingPoint( Prod( Prod( Prod( Prod( a, e1 ), e2 ), e3 ), e4 ), 4  ) << endl;
    }
 
+   cout << "\n>>> Another product test: Scale factor tests" << endl;
+   {
+      Parameter s( 1, 0, 0 );
+      Parameter a( 0.9867, 0.0060, 0.0060 );
+      Parameter b( 0.9791, 0.0132, 0.0132 );
+      Parameter c( 0.9384, 0.0022, 0.0023 );
+
+      cout << FloatingPoint( a, 3 ) << endl;
+      cout << FloatingPoint( b, 3 ) << endl;
+      cout << FloatingPoint( c, 3 ) << endl;
+      cout << FloatingPoint( Prod( a, b, c ), 3 ) << endl;
+      cout << FloatingPoint( s *= a , 3 ) << endl;
+      cout << FloatingPoint( s *= b , 3 ) << endl;
+      cout << FloatingPoint( s *= c , 3 ) << endl;
+   }
+
+   cout << "\n>> Specical case testing " << endl;
+   {
+      Parameter a(11394.14521, +3455.26185, +2904.08486);
+      Parameter b(1.65585, +1.88848, +0.83634 );
+
+      cout << FloatingPoint( a, 5 ) <<endl;
+      cout << FloatingPoint( b, 5 ) <<endl;
+      a+=b;
+      cout << FloatingPoint( a, 5 ) << endl;
+   }
+
+   cout << "\n>>> Scale case testing" << endl ;
+   {
+      Parameter a(0,0,0);
+      Parameter b = Poisson( 10 );
+
+      cout << FloatingPoint( b   , 5 ) << endl;
+      cout << FloatingPoint( a+b , 5 ) << endl;
+      cout << FloatingPoint( b+a , 5 ) << endl;
+   }
+
+   cout << "\n>>> Scale product testing" << endl;
+   {
+      Parameter a(1,0.001,0.2);
+      Parameter b(100,0.1,0.2);
+      Parameter c(1000,100,200);
+
+      cout << FloatingPoint( Prod(a,b), 3 ) << endl;
+      cout << FloatingPoint( Prod(b,c), 3 ) << endl;
+      // cout << FloatingPoint( Prod(c,b), 3 ) << endl;
+      // cout << FloatingPoint( Prod(a,b,c), 3 ) << endl;
+   }
+
 
    return 0;
 }

@@ -267,11 +267,11 @@ HistMgr::GetXUnit( const TH1D* x )
 unsigned
 HistMgr::GetExponent( const double x )
 {
-   unsigned ans             = 0;
-   double poweroften        = 10;
+   unsigned ans      = 0;
+   double poweroften = 10;
 
    while( poweroften < 10000000000 ){
-      if( fabs(x) > poweroften && fabs(x) < poweroften * 1000 ){
+      if( fabs( x ) > poweroften && fabs( x ) < poweroften * 1000 ){
          return ans;
       }
       ans        += 3;

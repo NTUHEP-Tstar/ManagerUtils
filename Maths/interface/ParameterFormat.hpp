@@ -23,7 +23,7 @@
  * @return           Returns output as a std::string                               *
  ***********************************************************************************/
 extern std::string FloatingPoint( double, const int precision );
-
+extern std::string Scientific( double, const unsigned precision);
 
 /**************************************************************************************
  *                                                                                    *
@@ -45,7 +45,6 @@ extern std::string FloatingPoint( double, const int precision );
 **************************************************************************************/
 extern std::string FloatingPoint( const Parameter&, const int precision = -1. );
 extern std::string Scientific( const Parameter&, const unsigned sig );
-
 
 /*******************************************************************************
 *   Higgs Combine data card format

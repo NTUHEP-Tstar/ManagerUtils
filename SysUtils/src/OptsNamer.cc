@@ -122,6 +122,16 @@ OptsNamer::GetExtName( const string& category, const string& exttag ) const
    return query_tree( category, instance, exttag );
 }
 
+
+/******************************************************************************/
+double
+OptsNamer::GetExtDouble( const string& category, const string& exttag ) const
+{
+   const string instance = GetInput( category );
+   const string query    = category + "." + instance + "." + exttag ;
+   return _tree.get<double>( query );
+}
+
 /******************************************************************************/
 
 string
