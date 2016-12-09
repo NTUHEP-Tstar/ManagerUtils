@@ -9,13 +9,10 @@
 #define MANAGERUTILS_ROOTMGR_HISTMGR_HPP
 
 #include "ManagerUtils/BaseClass/interface/Named.hpp"
+#include "ManagerUtils/RootMgr/interface/RootObjMgr.hpp"
 
 #include "TH1D.h"
-
-#include <map>
 #include <string>
-#include <memory>
-
 
 namespace mgr {
 
@@ -61,7 +58,7 @@ protected:
    );
 
 private:
-   std::map<std::string, std::unique_ptr<TH1D> >  _histmap;
+   RootObjMgr<TH1D>  _histmgr;
 };
 
 };

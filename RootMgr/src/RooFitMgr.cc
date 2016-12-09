@@ -14,13 +14,17 @@ using namespace std;
 /*******************************************************************************
 *   Static variable declaration
 *******************************************************************************/
-map<string,unique_ptr<RooRealVar>> RooFitMgr::_staticvarmap;
+RootObjMgr<RooRealVar> RooFitMgr::_staticvarmgr(""); // nameless container
 
 /*******************************************************************************
 *   Constructor and destructor
 *******************************************************************************/
 RooFitMgr::RooFitMgr( const string& name ):
-   Named(name)
+   Named(name),
+   _varmgr(name),
+   _setmgr(name),
+   _pdfmgr(name),
+   _funcmgr(name)
 {
 }
 
@@ -57,31 +61,23 @@ RooRealVar* RooFitMgr::StaticNewVar(
          max,
          unit.c_str()
       );
-      _staticvarmap[varname] = unique_ptr<RooRealVar>( newvar );
-      return _staticvarmap[varname].get();
+      _staticvarmgr.AddObj( newvar );
+      return _staticvarmgr.GetObj( varname );
    }
 }
 
 /******************************************************************************/
 
-RooRealVar* RooFitMgr::StaticVar( const string& varname )
+RooRealVar* RooFitMgr::StaticVar( const string& name )
 {
-   if( _staticvarmap.count(varname) ){
-      return _staticvarmap.at(varname).get();
-   } else {
-      return NULL;
-   }
+   return _staticvarmgr.GetObj( name );
 }
 
 /******************************************************************************/
 
 vector<string> RooFitMgr::StaticVarNameList()
 {
-   vector<string> ans;
-   for( const auto& mypair : _staticvarmap ){
-      ans.push_back( mypair.first );
-   }
-   return ans;
+   return _staticvarmgr.ObjNameList();
 }
 
 
@@ -98,11 +94,9 @@ RooRealVar* RooFitMgr::NewVar( const string& varname, const double min, const do
       var->setMax( max );
       return var;
    } else {
-      const string newvarname = boost::algorithm::starts_with( varname , Name() )?
-         varname : Name() + varname;
-      RooRealVar* newvar = new RooRealVar( newvarname.c_str(), "", min, max );
-      _varmap[varname] = unique_ptr<RooRealVar>( newvar ) ;
-      return _varmap[varname].get();
+      RooRealVar* newvar = new RooRealVar( varname.c_str(), "", min, max );
+      _varmgr.AddObj( newvar );
+      return _varmgr.GetObj( varname );
    }
 }
 
@@ -118,11 +112,9 @@ RooRealVar* RooFitMgr::NewVar( const string& varname, const double cen, const do
       *var = cen;
       return var;
    } else {
-      const string newvarname = boost::algorithm::starts_with( varname , Name() )?
-         varname : Name() + varname;
-      RooRealVar* newvar = new RooRealVar( newvarname.c_str(), "", cen, min, max );
-      _varmap[varname] = unique_ptr<RooRealVar>( newvar ) ;
-      return _varmap[varname].get();
+      RooRealVar* newvar = new RooRealVar( varname.c_str(), "", cen, min, max );
+      _varmgr.AddObj( newvar );
+      return _varmgr.GetObj( varname );
    }
 }
 
@@ -130,167 +122,109 @@ RooRealVar* RooFitMgr::NewVar( const string& varname, const double cen, const do
 
 RooRealVar* RooFitMgr::Var( const string& name )
 {
-   if( _varmap.count(name) ){
-      return _varmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _varmgr.GetObj( name );
 }
 
 /******************************************************************************/
 
 const RooRealVar* RooFitMgr::Var( const string& name ) const
 {
-   if( _varmap.count(name) ){
-      return _varmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _varmgr.GetObj( name );
 }
 
 /******************************************************************************/
 
 vector<string>  RooFitMgr::VarNameList() const
 {
-   vector<string> ans;
-   for( const auto& mypair : _varmap ){
-      ans.push_back( mypair.first );
-   }
-   return ans;
+   return _varmgr.ObjNameList();
 }
 
 /******************************************************************************/
 
-vector<RooRealVar*> RooFitMgr::VarContains( const string& substring ) const
+vector<RooRealVar*> RooFitMgr::VarContains( const string& substring )
 {
-   vector<RooRealVar*> ans;
-   for( auto& mypair : _varmap ) {
-      if( mypair.first.find(substring)!= string::npos ){
-         ans.push_back(mypair.second.get());
-      }
-   }
-   return ans;
+   return _varmgr.GetObjContains( substring );
 }
 
 /******************************************************************************/
 
 void RooFitMgr::SetConstant( const bool state )
 {
-   for( const auto& mypair : _varmap ){
-      mypair.second->setConstant( state );
+   for( const auto& name  : _varmgr.ObjNameList() ){
+      _varmgr.GetObj(name)->setConstant( state );
    }
 }
 
 /*******************************************************************************
-*   RooDataSet access functions
+*   RooAbsData access functions
 *******************************************************************************/
-RooDataSet*   RooFitMgr::DataSet( const std::string& name )
+RooAbsData*   RooFitMgr::DataSet( const std::string& name )
 {
-   if( _setmap.count(name) ){
-      return _setmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _setmgr.GetObj( name );
 }
 
-const RooDataSet*  RooFitMgr::DataSet( const std::string& name ) const
+const RooAbsData*  RooFitMgr::DataSet( const std::string& name ) const
 {
-   if( _setmap.count(name) ){
-      return _setmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _setmgr.GetObj( name );
 }
 
 vector<std::string>  RooFitMgr::SetNameList() const
 {
-   vector<string> ans;
-   for( const auto& mypair : _setmap ){
-      ans.push_back( mypair.first );
-   }
-   return ans;
+   return _setmgr.ObjNameList();
 }
 
-void RooFitMgr::AddDataSet( RooDataSet* set )
+void RooFitMgr::AddDataSet( RooAbsData* set )
 {
-   const string newsetname = MakeStoreName( set->GetName() );
-   const string alias      = MakeAliasName( set->GetName() );
-
-   _setmap.erase(alias); // deleting existing instance of dataset
-
-   set->SetName( newsetname.c_str() );
-   _setmap[alias] = unique_ptr<RooDataSet>( set );
+   _setmgr.AddObj( set );
 }
 
 void RooFitMgr::RemoveDataSet( const std::string& name )
 {
-   _setmap.erase( name );
+   _setmgr.RemoveObj( name );
 }
-
 
 /*******************************************************************************
 *   RooAbsPdf access functions
 *******************************************************************************/
 void  RooFitMgr::AddPdf( RooAbsPdf* pdf )
 {
-   const string newpdfname = MakeStoreName( pdf->GetName() );
-   const string alias      = MakeAliasName( pdf->GetName() );
-
-   _pdfmap.erase(alias); // deleting previous instance of pdf
-
-   pdf->SetName( newpdfname.c_str() );
-   _pdfmap[alias] = unique_ptr<RooAbsPdf>( pdf );
+   _pdfmgr.AddObj( pdf );
 }
 
 RooAbsPdf* RooFitMgr::Pdf( const std::string& name )
 {
-   if( _pdfmap.count(name) ){
-      return _pdfmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _pdfmgr.GetObj( name );
 }
 
 const RooAbsPdf* RooFitMgr::Pdf( const std::string& name ) const
 {
-   if( _pdfmap.count(name) ){
-      return _pdfmap.at(name).get();
-   } else {
-      return NULL;
-   }
+   return _pdfmgr.GetObj( name );
 }
 
 vector<std::string> RooFitMgr::PdfNameList() const
 {
-   vector<string> ans;
-   for( const auto& mypair : _pdfmap ){
-      ans.push_back( mypair.first );
-   }
-   return ans;
+   return _pdfmgr.ObjNameList();
 }
-
 
 /*******************************************************************************
-*   Object name checking functions
+*   RooAbsReal access functions
 *******************************************************************************/
-string RooFitMgr::MakeStoreName( const string& objname ) const
+void RooFitMgr::AddFunc( RooAbsReal* func )
 {
-   if( boost::algorithm::starts_with( objname, Name() ) ){
-      return objname ;
-   } else {
-      return Name() + objname;
-   }
+   _funcmgr.AddObj( func );
 }
 
-/******************************************************************************/
-
-string RooFitMgr::MakeAliasName( const string& objname ) const
+RooAbsReal* RooFitMgr::Func( const std::string& name )
 {
-   if( boost::algorithm::starts_with( objname, Name() ) ){
-      string newname = objname;
-      newname.erase( 0, Name().length() );
-      return newname ;
-   } else {
-      return objname;
-   }
+   return _funcmgr.GetObj( name );
+}
+
+const RooAbsReal* RooFitMgr::Func( const std::string& name ) const
+{
+   return _funcmgr.GetObj( name );
+}
+
+vector<std::string> RooFitMgr::FuncNameList() const
+{
+   return _funcmgr.ObjNameList();
 }

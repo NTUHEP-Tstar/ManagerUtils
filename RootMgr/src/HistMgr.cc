@@ -22,7 +22,8 @@ using namespace mgr;
 *   Constructor/Destructor
 *******************************************************************************/
 HistMgr::HistMgr( const string& name ) :
-   Named( name )
+   Named( name ),
+   _histmgr( name )
 {
 }
 
@@ -38,11 +39,7 @@ HistMgr::~HistMgr()
 TH1D*
 HistMgr::Hist( const string& name )
 {
-   if( _histmap.count( name ) ){
-      return _histmap.at( name ).get();
-   } else {
-      return NULL;
-   }
+   return _histmgr.GetObj( name );
 }
 
 /******************************************************************************/
@@ -50,11 +47,7 @@ HistMgr::Hist( const string& name )
 const TH1D*
 HistMgr::Hist( const string& name ) const
 {
-   if( _histmap.count( name ) ){
-      return _histmap.at( name ).get();
-   } else {
-      return NULL;
-   }
+   return _histmgr.GetObj( name );
 }
 
 /******************************************************************************/
@@ -62,13 +55,7 @@ HistMgr::Hist( const string& name ) const
 vector<string>
 HistMgr::AvailableHistList() const
 {
-   vector<string> ans;
-
-   for( const auto& histpair : _histmap ){
-      ans.push_back( histpair.first );
-   }
-
-   return ans;
+   return _histmgr.ObjNameList();
 }
 
 /*******************************************************************************
@@ -94,16 +81,13 @@ HistMgr::AddHist(
    // Make X axis title
    const string x_title = ( x_unit != "" ) ?
                           x_label+" ["+x_unit +"]" : x_label;
-
-   const string histname = Name() + label;
-
    const string histtitle = ";" + x_title + ";" + y_title;
-   TH1D* hist             = new TH1D( histname.c_str(), histtitle.c_str(), bin_size, x_lower, x_upper );
+
+   TH1D* hist = new TH1D( label.c_str(), histtitle.c_str(), bin_size, x_lower, x_upper );
    hist->SetStats( 0 );
 
-   _histmap[label] = std::unique_ptr<TH1D>( hist );
+   _histmgr.AddObj( hist );
 }
-
 
 /*******************************************************************************
 *   Styling memeber functions
@@ -111,9 +95,7 @@ HistMgr::AddHist(
 void
 HistMgr::Scale( const double x )
 {
-   for( auto& histpair : _histmap ){
-      auto& hist = histpair.second;
-
+   for( auto hist : _histmgr ){
       for( int i = 0; i < hist->GetSize(); ++i ){
          double bincontent = hist->GetBinContent( i );
          double binerror   = hist->GetBinError( i );
@@ -139,8 +121,8 @@ HistMgr::SetColor( const Color_t x )
 void
 HistMgr::SetLineColor( const Color_t x )
 {
-   for( auto& histpair : _histmap ){
-      histpair.second->SetLineColor( x );
+   for( auto hist : _histmgr ){
+      hist->SetLineColor( x );
    }
 }
 
@@ -149,8 +131,8 @@ HistMgr::SetLineColor( const Color_t x )
 void
 HistMgr::SetFillColor( const Color_t x )
 {
-   for( auto& histpair : _histmap ){
-      histpair.second->SetFillColor( x );
+   for( auto hist : _histmgr ){
+      hist->SetFillColor( x );
    }
 }
 
@@ -159,8 +141,8 @@ HistMgr::SetFillColor( const Color_t x )
 void
 HistMgr::SetFillStyle( const Style_t x )
 {
-   for( auto& histpair : _histmap ){
-      histpair.second->SetFillStyle( x );
+   for( auto hist : _histmgr ){
+      hist->SetFillStyle( x );
    }
 }
 
@@ -172,10 +154,10 @@ HistMgr::LoadFromFile( const std::string& filename )
 {
    TFile* histfile = TFile::Open( filename.c_str(), "READ" );
 
-   for( auto& histpair : _histmap ){
-      const string histrootname = histpair.second->GetName();
-      const TH1D* histptr       = (TH1D*)( histfile->Get( histrootname.c_str() )->Clone() );
-      histpair.second.reset( new TH1D( *histptr ) );
+   for( auto hist : _histmgr ){
+      const string histrootname = hist->GetName();
+      TH1D* histptr             = (TH1D*)( histfile->Get( histrootname.c_str() )->Clone() );
+      _histmgr.AddObj( histptr );
    }
 
    // Do not delete file for reading! Even if you have declared a new object!
@@ -189,8 +171,8 @@ HistMgr::SaveToFile( const std::string& filename )
 {
    TFile* histfile = TFile::Open( filename.c_str(), "UPDATE" );
 
-   for( const auto& histpair : _histmap ){
-      histpair.second->Write();
+   for( const auto hist : _histmgr ){
+      hist->Write();
    }
 
    delete histfile;

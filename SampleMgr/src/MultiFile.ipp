@@ -11,6 +11,10 @@
 #ifndef MANAGERUTILE_SAMPLEMGR_MULTIFILE_IPP
 #define MANAGERUTILE_SAMPLEMGR_MULTIFILE_IPP
 
+#include <iostream>
+#include <exception>
+
+#include "TFile.h"
 
 /*******************************************************************************
 *   Constructor, desctructor and assignment
@@ -18,7 +22,7 @@
 template<typename STRUCTOBJ>
 mgr::MultiFile<STRUCTOBJ>::MultiFile()
 {
-   _size = 0 ;
+   _size = 0;
 }
 
 /******************************************************************************/
@@ -34,7 +38,7 @@ mgr::MultiFile<STRUCTOBJ>::MultiFile( const std::vector<std::string> & x )
 template<typename STRUCTOBJ>
 mgr::MultiFile<STRUCTOBJ>::~MultiFile()
 {
-
+   // FWlite object handled by unique_ptr object
 }
 
 /******************************************************************************/
@@ -60,7 +64,12 @@ template<typename STRUCTOBJ>
 mgr::MultiFile<STRUCTOBJ>&
 mgr::MultiFile<STRUCTOBJ>::reset( const std::vector<std::string>& x )
 {
-   _filelist = x ;
+   // Error checking
+   if( x.empty() ){
+      throw std::invalid_argument("mgr::MultiFile cannot have blank vector as input");
+   }
+
+   _filelist = x;
    _size     = getsize();
    toBegin();
    return *this;
@@ -98,11 +107,12 @@ mgr::MultiFile<STRUCTOBJ>::operator++()
 
    ++( *_structptr );
    if( _structptr->atEnd() ){
-      ++_currentfile;
-      if( _currentfile != _filelist.end() ){
-         setfile();
-         _structptr->toBegin();
-      }
+      do {
+         ++_currentfile;
+         if( _currentfile != _filelist.end() && setfile() ){
+            _structptr->toBegin();
+         }
+      } while( _structptr->size() == 0 && _currentfile != _filelist.end() );
    }
    return *this;
 }
@@ -114,8 +124,11 @@ mgr::MultiFile<STRUCTOBJ>&
 mgr::MultiFile<STRUCTOBJ>::toBegin()
 {
    _currentfile = _filelist.begin();
-   setfile();
-   _structptr->toBegin();
+   if( setfile() ){
+      _structptr->toBegin();
+   } else {
+      return ++(*this);
+   }
    return *this;
 }
 
@@ -132,17 +145,18 @@ mgr::MultiFile<STRUCTOBJ>::atEnd() const
 /*******************************************************************************
 *   Helper private functions
 *******************************************************************************/
-template <typename STRUCTOBJ>
-const unsigned
+template<typename STRUCTOBJ>
+unsigned
 mgr::MultiFile<STRUCTOBJ>::getsize()
 {
    unsigned ans = 0;
 
-   for( _currentfile = _filelist.begin();
-        _currentfile != _filelist.end();
-        ++_currentfile ){
-      setfile();
-      ans += _structptr->size();
+   for( _currentfile = _filelist.begin(); _currentfile != _filelist.end(); ++_currentfile ){
+      if( setfile() ){
+         ans += _structptr->size();
+      } else {
+         std::cerr << "Warning! Invalid file [" << *_currentfile << "] Skipped!" << std::endl;
+      }
    }
 
    return ans;
@@ -150,11 +164,21 @@ mgr::MultiFile<STRUCTOBJ>::getsize()
 
 /******************************************************************************/
 
-template <typename STRUCTOBJ>
-void
+template<typename STRUCTOBJ>
+bool
 mgr::MultiFile<STRUCTOBJ>::setfile()
 {
-   _structptr.reset( new STRUCTOBJ( TFile::Open( _currentfile->c_str() ) ) );
+   if( _currentfile != _filelist.end() ){
+      TFile* newfile = TFile::Open( _currentfile->c_str() );
+      if( newfile ){
+         _structptr.reset( new STRUCTOBJ( newfile ) );
+         return true;
+      } else {
+         return false;
+      }
+   } else {
+      return false;
+   }
 }
 
 

@@ -109,7 +109,7 @@ private:
    std::vector<std::string> _filelist;
 
    // Data-members that are dependent on analysis details
-   // but are expected to exists regardless user
+   // but are expected to exists regardless of user
    double   _originaleventcount ;
    double   _selectedeventcount ;
 

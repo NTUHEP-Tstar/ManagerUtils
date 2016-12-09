@@ -4,9 +4,6 @@
 *  Description : Listing a group of samples for easier plotting commands
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
-*  Loading from a file should typically be in the form of:
-*  "File"
-*
 *******************************************************************************/
 #ifndef MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
 #define MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
@@ -81,8 +78,6 @@ private:
    static std::string _cfgprefix;
 
    std::vector<SampleMgr> _samplelist;
-
-
 };
 
 };

@@ -45,12 +45,15 @@ SampleGroup::SampleGroup( const string& name, const ConfigReader& cfg ) :
    InitFromReader( cfg );
 }
 
+/******************************************************************************/
 
 void
 SampleGroup::InitFromFile( const string& file_name )
 {
    InitFromReader( ConfigReader( file_name ) );
 }
+
+/******************************************************************************/
 
 void
 SampleGroup::InitFromReader( const ConfigReader& cfg )
@@ -88,14 +91,17 @@ SampleGroup::InitFromReader( const ConfigReader& cfg )
             SampleList().push_back( SampleMgr( tag, config ) );
          }
       }
-
    } else if( type == Single ){
       const auto samplecfg = GetSingleConfig( cfg );
       SampleList().push_back( SampleMgr( Name(), samplecfg ) );
       SetLatexName( SampleList().back().LatexName() );
       SetRootName( SampleList().back().RootName() );
+   } else {
+      throw std::invalid_argument("Unrecognized JSON file format for mgr::SampleGroup instance " + Name() );
    }
 }
+
+/******************************************************************************/
 
 SampleGroup::~SampleGroup()
 {
@@ -192,8 +198,10 @@ SampleGroup::Sample( const std::string& name )
       }
    }
 
-   throw std::invalid_argument( "Name is not within range!!" );
+   throw std::out_of_range( "Name is not within range!!" );
 }
+
+/******************************************************************************/
 
 const SampleMgr&
 SampleGroup::Sample( const std::string& name ) const
@@ -204,7 +212,7 @@ SampleGroup::Sample( const std::string& name ) const
       }
    }
 
-   throw std::invalid_argument( "Name is not within range!!" );
+   throw std::out_of_range( "Name is not within range!!" );
 }
 
 /*******************************************************************************
@@ -222,6 +230,8 @@ SampleGroup::ExpectedYield() const
    return ans;
 }
 
+/******************************************************************************/
+
 Parameter
 SampleGroup::TotalCrossSection() const
 {
@@ -233,6 +243,8 @@ SampleGroup::TotalCrossSection() const
 
    return ans;
 }
+
+/******************************************************************************/
 
 Parameter
 SampleGroup::AvgSelectionEfficiency() const

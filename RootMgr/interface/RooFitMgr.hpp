@@ -9,8 +9,11 @@
 #define MANAGERUTILS_ROOTMGR_ROOFITMGR_HPP
 
 #include "ManagerUtils/BaseClass/interface/Named.hpp"
+#include "ManagerUtils/RootMgr/interface/RootObjMgr.hpp"
+
+#include "RooAbsData.h"
 #include "RooAbsPdf.h"
-#include "RooDataSet.h"
+#include "RooAbsReal.h"
 #include "RooRealVar.h"
 #include <map>
 #include <memory>
@@ -46,14 +49,14 @@ public:
    RooRealVar*              Var( const std::string& );
    const RooRealVar*        Var( const std::string& ) const;
    std::vector<std::string> VarNameList() const;
-   std::vector<RooRealVar*> VarContains( const std::string& ) const;
+   std::vector<RooRealVar*> VarContains( const std::string& );
    void                     SetConstant( const bool set = kTRUE );
 
-   // DataSet access list
-   RooDataSet*              DataSet( const std::string& );// Should contain a default dataset
-   const RooDataSet*        DataSet( const std::string& ) const;
+   // DataSet access members
+   RooAbsData*              DataSet( const std::string& );
+   const RooAbsData*        DataSet( const std::string& ) const;
    std::vector<std::string> SetNameList() const;
-   void                     AddDataSet( RooDataSet* );
+   void                     AddDataSet( RooAbsData* );
    void                     RemoveDataSet( const std::string& );
 
    // PDF making functions
@@ -62,16 +65,19 @@ public:
    const RooAbsPdf*         Pdf( const std::string& ) const;
    std::vector<std::string> PdfNameList() const;
 
+   // Function access members
+   void                     AddFunc( RooAbsReal* );
+   RooAbsReal*              Func( const std::string& );
+   const RooAbsReal*        Func( const std::string& ) const;
+   std::vector<std::string> FuncNameList() const;
+
 private:
-   static std::map<std::string, std::unique_ptr<RooRealVar> > _staticvarmap;
+   static RootObjMgr<RooRealVar> _staticvarmgr;
 
-   std::map<std::string, std::unique_ptr<RooRealVar> > _varmap;
-   std::map<std::string, std::unique_ptr<RooDataSet> > _setmap;
-   std::map<std::string, std::unique_ptr<RooAbsPdf> > _pdfmap;
-
-   // Helper functions
-   std::string MakeStoreName( const std::string& ) const;
-   std::string MakeAliasName( const std::string& ) const;
+   RootObjMgr<RooRealVar> _varmgr;
+   RootObjMgr<RooAbsData> _setmgr;
+   RootObjMgr<RooAbsPdf>  _pdfmgr;
+   RootObjMgr<RooAbsReal> _funcmgr;
 };
 
 };

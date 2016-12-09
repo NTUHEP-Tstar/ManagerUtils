@@ -8,7 +8,6 @@
 #ifndef MANAGERUTILS_SAMPLEMGR_MULTIFILE_HPP
 #define MANAGERUTILS_SAMPLEMGR_MULTIFILE_HPP
 
-#include "TFile.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -53,7 +52,7 @@ public:
    inline unsigned Size() { return _size; }
    inline unsigned FileCount() { return _filelist.size(); }
    inline unsigned FileIdx()   { return _currentfile - _filelist.begin(); }
-
+   inline std::string CurrentFile() { return *_currentfile; }
 
 private:
    std::vector<std::string> _filelist;
@@ -64,14 +63,10 @@ private:
    /*******************************************************************************
    *   Helper private functions
    *******************************************************************************/
-   const unsigned getsize();
-   void setfile();
+   unsigned getsize();
+   bool     setfile();
 };
 
-/*******************************************************************************
-*   Implementaion file inclusion
-*******************************************************************************/
-#include "ManagerUtils/SampleMgr/src/MultiFile.ipp"
 
 /*******************************************************************************
 *   Common Object type
@@ -80,9 +75,12 @@ typedef MultiFile<fwlite::Event> MultiFileEvent;
 typedef MultiFile<fwlite::Run>   MultiFileRun;
 
 
-
 }/* mgr */
 
+/*******************************************************************************
+*   Implementaion file inclusion
+*******************************************************************************/
+#include "ManagerUtils/SampleMgr/src/MultiFile.ipp"
 
 
 #endif/* end of include guard: MANAGERUTILS_SAMPLEMGR_MULTIFILE_HPP */
