@@ -20,6 +20,7 @@ namespace plt {
 extern TCanvas* NewCanvas();
 extern TPad*    NewTopPad();
 extern TPad*    NewBottomPad();
+extern void     SetSinglePad( TVirtualPad* );
 
 /*******************************************************************************
 *   * New Legend

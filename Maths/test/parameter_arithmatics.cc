@@ -156,44 +156,60 @@ main( int argc, char const* argv[] )
       cout << FloatingPoint( b, 3 ) << endl;
       cout << FloatingPoint( c, 3 ) << endl;
       cout << FloatingPoint( Prod( a, b, c ), 3 ) << endl;
-      cout << FloatingPoint( s *= a , 3 ) << endl;
-      cout << FloatingPoint( s *= b , 3 ) << endl;
-      cout << FloatingPoint( s *= c , 3 ) << endl;
+      cout << FloatingPoint( s *= a, 3 ) << endl;
+      cout << FloatingPoint( s *= b, 3 ) << endl;
+      cout << FloatingPoint( s *= c, 3 ) << endl;
    }
 
    cout << "\n>> Specical case testing " << endl;
    {
-      Parameter a(11394.14521, +3455.26185, +2904.08486);
-      Parameter b(1.65585, +1.88848, +0.83634 );
+      Parameter a( 11394.14521, +3455.26185, +2904.08486 );
+      Parameter b( 1.65585, +1.88848, +0.83634 );
 
       cout << FloatingPoint( a, 5 ) <<endl;
       cout << FloatingPoint( b, 5 ) <<endl;
-      a+=b;
+      a += b;
       cout << FloatingPoint( a, 5 ) << endl;
    }
 
-   cout << "\n>>> Scale case testing" << endl ;
+   cout << "\n>>> Scale case testing" << endl;
    {
-      Parameter a(0,0,0);
+      Parameter a( 0, 0, 0 );
       Parameter b = Poisson( 10 );
 
-      cout << FloatingPoint( b   , 5 ) << endl;
-      cout << FloatingPoint( a+b , 5 ) << endl;
-      cout << FloatingPoint( b+a , 5 ) << endl;
+      cout << FloatingPoint( b, 5 ) << endl;
+      cout << FloatingPoint( a+b, 5 ) << endl;
+      cout << FloatingPoint( b+a, 5 ) << endl;
    }
 
    cout << "\n>>> Scale product testing" << endl;
    {
-      Parameter a(1,0.001,0.2);
-      Parameter b(100,0.1,0.2);
-      Parameter c(1000,100,200);
+      Parameter a( 1, 0.001, 0.2 );
+      Parameter b( 100, 0.1, 0.2 );
+      Parameter c( 1000, 100, 200 );
 
-      cout << FloatingPoint( Prod(a,b), 3 ) << endl;
-      cout << FloatingPoint( Prod(b,c), 3 ) << endl;
+      cout << FloatingPoint( Prod( a, b ), 3 ) << endl;
+      cout << FloatingPoint( Prod( b, c ), 3 ) << endl;
       // cout << FloatingPoint( Prod(c,b), 3 ) << endl;
       // cout << FloatingPoint( Prod(a,b,c), 3 ) << endl;
    }
 
+   cout << "\n>>> Product test " << endl;
+   {
+      Parameter results = Prod(
+         Parameter( 1, 0.0107266, 0.0107266 ),
+         Parameter( 1, 0.0329748, 0.0279871 ),
+         Parameter( 1,         0,  0.170623 ),
+         Parameter( 1,  0.133084,   0.13232 ),
+         Parameter( 1, 0.0243757, 0.0240791 ),
+         Parameter( 1, 0.0257803, 0.0254051 ),
+         Parameter( 1, 0.0249153, 0.0249153 ),
+         Parameter( 1,  0.163553,  0.163553 ),
+         Parameter( 1, 0.0547323, 0.0542217 ),
+         Parameter( 1,     0.046,     0.046 ),
+         Parameter( 1,      0.03,      0.03 )
+         );
+   }
 
    return 0;
 }

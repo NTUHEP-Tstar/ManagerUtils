@@ -15,10 +15,7 @@ namespace plt{
 void SetFrame( RooPlot* frame )
 {
    // Must set
-   gPad->SetLeftMargin( PLOT_X_MIN );
-   gPad->SetRightMargin( 1 - PLOT_X_MAX );
-   gPad->SetBottomMargin( PLOT_Y_MIN );
-   gPad->SetTopMargin( 1 - PLOT_Y_MAX );
+   SetSinglePad( gPad ); // Using global pad settings
 
    // Common Axis settings
    plt::SetAxis( frame ); // see PlotObj.cc

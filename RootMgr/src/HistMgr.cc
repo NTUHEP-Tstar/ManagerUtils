@@ -156,12 +156,14 @@ HistMgr::LoadFromFile( const std::string& filename )
 
    for( auto hist : _histmgr ){
       const string histrootname = hist->GetName();
-      TH1D* histptr             = (TH1D*)( histfile->Get( histrootname.c_str() )->Clone() );
-      _histmgr.AddObj( histptr );
+      TH1D* histinfile          = (TH1D*)( histfile->Get( histrootname.c_str() ) );
+      for( int i = 1 ; i < hist->GetSize() ; ++i ){
+         hist->SetBinContent(i, histinfile->GetBinContent(i) );
+         hist->SetBinError(i, histinfile->GetBinError(i) );
+      }
    }
 
-   // Do not delete file for reading! Even if you have declared a new object!
-   // delete histfile ;
+   delete histfile ;
 }
 
 /******************************************************************************/

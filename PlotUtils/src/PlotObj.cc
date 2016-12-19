@@ -28,6 +28,8 @@ NewCanvas()
    return c;
 }
 
+/******************************************************************************/
+
 TPad*
 NewTopPad()
 {
@@ -39,6 +41,8 @@ NewTopPad()
    pad->SetTopMargin((1-PLOT_Y_MAX)/(1-TOP_BOTTOM_SEP));
    return pad;
 }
+
+/******************************************************************************/
 
 TPad*
 NewBottomPad()
@@ -52,6 +56,15 @@ NewBottomPad()
    return pad;
 }
 
+/******************************************************************************/
+
+void SetSinglePad( TVirtualPad* pad )
+{
+   pad->SetLeftMargin( PLOT_X_MIN );
+   pad->SetRightMargin( 1 - PLOT_X_MAX );
+   pad->SetBottomMargin( PLOT_Y_MIN );
+   pad->SetTopMargin( 1 - PLOT_Y_MAX );
+}
 
 /*******************************************************************************
 *   New Legend settings
@@ -72,6 +85,8 @@ NewLegend( const float x_min,
 
    return ans;
 }
+
+/******************************************************************************/
 
 TPaveText*
 NewTextBox( const float x_min,
