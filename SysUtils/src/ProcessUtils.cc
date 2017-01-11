@@ -88,9 +88,10 @@ GetCMDErrOutput( const string& cmd )
 int
 HasProcess( const string& x, const string& exclude )
 {
-   string cmd = "ps aux | grep ^${USER}";
-   cmd += " | grep " + x;
-   cmd += " | grep --invert-match grep ";
+   string cmd = "ps aux ";
+   cmd += " | grep ^${USER} ";
+   cmd += " | awk '{print $11}' ";
+   cmd += " | grep " + x ;
    if( exclude != "" ){
       cmd += "| grep --invert-match  " + exclude;
    }

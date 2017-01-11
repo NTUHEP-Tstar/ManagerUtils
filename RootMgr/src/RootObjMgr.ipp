@@ -19,6 +19,8 @@ mgr::RootObjMgr<T>::RootObjMgr( const std::string& x ) :
 {
 }
 
+/******************************************************************************/
+
 template<typename T>
 mgr::RootObjMgr<T>::~RootObjMgr()
 {
@@ -67,6 +69,8 @@ mgr::RootObjMgr<T>::GetObj( const std::string& name )
       return NULL;
    }
 }
+
+/******************************************************************************/
 
 template<typename T>
 const T*
@@ -127,6 +131,7 @@ mgr::RootObjMgr<T>::MakeStoreName( const std::string& objname ) const
 }
 
 /******************************************************************************/
+
 template<typename T>
 std::string
 mgr::RootObjMgr<T>::MakeAliasName( const std::string& objname ) const

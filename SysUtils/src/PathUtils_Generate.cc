@@ -11,6 +11,8 @@
 
 using namespace std;
 
+/******************************************************************************/
+
 string
 RandomString( const unsigned n )
 {
@@ -29,6 +31,8 @@ RandomString( const unsigned n )
 
    return ans;
 }
+
+/******************************************************************************/
 
 string
 RandomFileName( const unsigned n, const string& ext, const bool hidden  )
