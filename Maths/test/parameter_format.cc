@@ -6,13 +6,12 @@
 *
 *******************************************************************************/
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
-#include "ManagerUtils/Maths/interface/ParameterFormat.hpp"
 
 #include <iostream>
 #include <regex>
 
 using namespace std;
-
+using namespace mgr;
 
 int
 main( int argc, char const* argv[] )

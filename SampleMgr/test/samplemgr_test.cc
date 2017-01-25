@@ -6,10 +6,11 @@
 *
 *******************************************************************************/
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
-#include <iostream>
 
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+
+#include <iostream>
 
 using namespace std;
 using namespace mgr;

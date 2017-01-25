@@ -1,25 +1,26 @@
 /*******************************************************************************
- *
- *  Filename    : RooFitUtils.hh
- *  Description : Implementation of functions defined in RooFitUtils.hh
- *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
- *
+*
+*  Filename    : RooFitUtils.hh
+*  Description : Implementation of functions defined in RooFitUtils.hh
+*  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
+*
 *******************************************************************************/
 
 #include "ManagerUtils/PlotUtils/interface/Common.hpp"
 #include "RooPlot.h"
 #include "TAxis.h"
 
-namespace plt{
+namespace mgr {
 
-void SetFrame( RooPlot* frame )
+void
+SetFrame( RooPlot* frame )
 {
-   // Must set
-   SetSinglePad( gPad ); // Using global pad settings
+  // Must set
+  SetSinglePad( gPad );  // Using global pad settings
 
-   // Common Axis settings
-   plt::SetAxis( frame ); // see PlotObj.cc
-   frame->SetTitle("");
+  // Common Axis settings
+  SetAxis( frame );  // see PlotObj.cc
+  frame->SetTitle( "" );
 }
 
 };

@@ -8,11 +8,12 @@
 #ifndef MANAGERUTILS_PLOTUTILS_GETRANGE_HPP
 #define MANAGERUTILS_PLOTUTILS_GETRANGE_HPP
 
-#include "TH1.h"
+#include "ManagerUtils/Common/interface/Variadic.hpp"
 #include "TGraph.h"
+#include "TH1.h"
 #include <vector>
 
-namespace plt{
+namespace mgr {
 /*******************************************************************************
 *   * GetYMax - getting y axis maximum (including error) for a histogram
 *******************************************************************************/
@@ -30,9 +31,26 @@ extern double GetYmin( const TGraph* );
 *   ** GetYmax( const vector<TGraph*>& )
 *   ** GetYmin( const veoctr<TGraph*>& ) Getting ymax and ymin of multiple graphs
 *******************************************************************************/
-extern double GetYmax( const std::vector<const TGraph*>&  );
-extern double GetYmin( const std::vector<const TGraph*>&  );
+extern double GetYmax( const std::vector<TGraph*>&  );
+extern double GetYmin( const std::vector<TGraph*>&  );
+
+// /*******************************************************************************
+// *   Variadic interface
+// *******************************************************************************/
+// template<typename TF, typename ... TS>
+// double
+// GetYmin( TF x, TS ... arg )
+// {
+//   return GetYmin( MakeVector<TGraph*>( x, arg ... ) );
+// }
+//
+// template<typename T, typename TF, typename ... TS>
+// double
+// GetYmax( TF x, TS ... arg )
+// {
+//   return GetYmax( MakeVector<T*>( x, arg ... ) );
+// }
 
 };
 
-#endif /* end of include guard: MANAGERUTILS_PLOTUTILS_GETRANGE_HPP */
+#endif/* end of include guard: MANAGERUTILS_PLOTUTILS_GETRANGE_HPP */

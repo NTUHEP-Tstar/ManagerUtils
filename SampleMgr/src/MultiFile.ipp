@@ -11,68 +11,69 @@
 #ifndef MANAGERUTILE_SAMPLEMGR_MULTIFILE_IPP
 #define MANAGERUTILE_SAMPLEMGR_MULTIFILE_IPP
 
-#include <iostream>
 #include <exception>
+#include <iostream>
 
 #include "TFile.h"
 
+namespace mgr {
 /*******************************************************************************
 *   Constructor, desctructor and assignment
 *******************************************************************************/
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>::MultiFile()
+MultiFile<STRUCTOBJ>::MultiFile()
 {
-   _size = 0;
+  _size = 0;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>::MultiFile( const std::vector<std::string> & x )
+MultiFile<STRUCTOBJ>::MultiFile( const std::vector<std::string> & x )
 {
-   reset( x );
+  reset( x );
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>::~MultiFile()
+MultiFile<STRUCTOBJ>::~MultiFile()
 {
-   // FWlite object handled by unique_ptr object
+  // FWlite object handled by unique_ptr object
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>::MultiFile( const mgr::MultiFile<STRUCTOBJ>& x )
+MultiFile<STRUCTOBJ>::MultiFile( const MultiFile<STRUCTOBJ>& x )
 {
-   *this = x;
+  *this = x;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>&
-mgr::MultiFile<STRUCTOBJ>::operator=( const mgr::MultiFile<STRUCTOBJ>& x )
+MultiFile<STRUCTOBJ>&
+MultiFile<STRUCTOBJ>::operator=( const MultiFile<STRUCTOBJ>& x )
 {
-   return reset( x._filelist );
+  return reset( x._filelist );
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>&
-mgr::MultiFile<STRUCTOBJ>::reset( const std::vector<std::string>& x )
+MultiFile<STRUCTOBJ>&
+MultiFile<STRUCTOBJ>::reset( const std::vector<std::string>& x )
 {
-   // Error checking
-   if( x.empty() ){
-      throw std::invalid_argument("mgr::MultiFile cannot have blank vector as input");
-   }
+  // Error checking
+  if( x.empty() ){
+    throw std::invalid_argument( "mgr::MultiFile cannot have blank vector as input" );
+  }
 
-   _filelist = x;
-   _size     = getsize();
-   toBegin();
-   return *this;
+  _filelist = x;
+  _size     = getsize();
+  toBegin();
+  return *this;
 }
 
 
@@ -81,18 +82,18 @@ mgr::MultiFile<STRUCTOBJ>::reset( const std::vector<std::string>& x )
 *******************************************************************************/
 template<typename STRUCTOBJ>
 STRUCTOBJ&
-mgr::MultiFile<STRUCTOBJ>::Base()
+MultiFile<STRUCTOBJ>::Base()
 {
-   return *_structptr;
+  return *_structptr;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
 const STRUCTOBJ&
-mgr::MultiFile<STRUCTOBJ>::Base() const
+MultiFile<STRUCTOBJ>::Base() const
 {
-   return *_structptr;
+  return *_structptr;
 }
 
 
@@ -100,45 +101,45 @@ mgr::MultiFile<STRUCTOBJ>::Base() const
 *   Operators ob struct objects to override
 *******************************************************************************/
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>&
-mgr::MultiFile<STRUCTOBJ>::operator++()
+MultiFile<STRUCTOBJ>&
+MultiFile<STRUCTOBJ>::operator++()
 {
-   if( _currentfile == _filelist.end() ){ return *this; }
+  if( _currentfile == _filelist.end() ){ return *this; }
 
-   ++( *_structptr );
-   if( _structptr->atEnd() ){
-      do {
-         ++_currentfile;
-         if( _currentfile != _filelist.end() && setfile() ){
-            _structptr->toBegin();
-         }
-      } while( _structptr->size() == 0 && _currentfile != _filelist.end() );
-   }
-   return *this;
+  ++( *_structptr );
+  if( _structptr->atEnd() ){
+    do {
+      ++_currentfile;
+      if( _currentfile != _filelist.end() && setfile() ){
+        _structptr->toBegin();
+      }
+    } while( _structptr->size() == 0 && _currentfile != _filelist.end() );
+  }
+  return *this;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
-mgr::MultiFile<STRUCTOBJ>&
-mgr::MultiFile<STRUCTOBJ>::toBegin()
+MultiFile<STRUCTOBJ>&
+MultiFile<STRUCTOBJ>::toBegin()
 {
-   _currentfile = _filelist.begin();
-   if( setfile() ){
-      _structptr->toBegin();
-   } else {
-      return ++(*this);
-   }
-   return *this;
+  _currentfile = _filelist.begin();
+  if( setfile() ){
+    _structptr->toBegin();
+  } else {
+    return ++( *this );
+  }
+  return *this;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
 bool
-mgr::MultiFile<STRUCTOBJ>::atEnd() const
+MultiFile<STRUCTOBJ>::atEnd() const
 {
-   return _currentfile == _filelist.end();
+  return _currentfile == _filelist.end();
 }
 
 
@@ -147,39 +148,41 @@ mgr::MultiFile<STRUCTOBJ>::atEnd() const
 *******************************************************************************/
 template<typename STRUCTOBJ>
 unsigned
-mgr::MultiFile<STRUCTOBJ>::getsize()
+MultiFile<STRUCTOBJ>::getsize()
 {
-   unsigned ans = 0;
+  unsigned ans = 0;
 
-   for( _currentfile = _filelist.begin(); _currentfile != _filelist.end(); ++_currentfile ){
-      if( setfile() ){
-         ans += _structptr->size();
-      } else {
-         std::cerr << "Warning! Invalid file [" << *_currentfile << "] Skipped!" << std::endl;
-      }
-   }
+  for( _currentfile = _filelist.begin(); _currentfile != _filelist.end(); ++_currentfile ){
+    if( setfile() ){
+      ans += _structptr->size();
+    } else {
+      std::cerr << "Warning! Invalid file [" << *_currentfile << "] Skipped!" << std::endl;
+    }
+  }
 
-   return ans;
+  return ans;
 }
 
 /******************************************************************************/
 
 template<typename STRUCTOBJ>
 bool
-mgr::MultiFile<STRUCTOBJ>::setfile()
+MultiFile<STRUCTOBJ>::setfile()
 {
-   if( _currentfile != _filelist.end() ){
-      TFile* newfile = TFile::Open( _currentfile->c_str() );
-      if( newfile ){
-         _structptr.reset( new STRUCTOBJ( newfile ) );
-         return true;
-      } else {
-         return false;
-      }
-   } else {
+  if( _currentfile != _filelist.end() ){
+    TFile* newfile = TFile::Open( _currentfile->c_str() );
+    if( newfile ){
+      _structptr.reset( new STRUCTOBJ( newfile ) );
+      return true;
+    } else {
       return false;
-   }
+    }
+  } else {
+    return false;
+  }
 }
 
+
+} /* mgr */
 
 #endif/* end of include guard: MANAGERUTILE_SAMPLEMGR_MULTIFILE_IPP */

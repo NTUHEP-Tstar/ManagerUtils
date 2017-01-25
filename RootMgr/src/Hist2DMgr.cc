@@ -14,8 +14,8 @@ using namespace mgr;
 *   Constructor and destructor
 *******************************************************************************/
 Hist2DMgr::Hist2DMgr( const string& name ) :
-   Named( name ),
-   _histmgr(name)
+  Named( name ),
+  _histmgr( name )
 {
 
 }
@@ -29,7 +29,7 @@ Hist2DMgr::~Hist2DMgr()
 TH2D*
 Hist2DMgr::Hist2D( const string& name )
 {
-   return _histmgr.GetObj( name );
+  return _histmgr.GetObj( name );
 }
 
 /******************************************************************************/
@@ -37,7 +37,7 @@ Hist2DMgr::Hist2D( const string& name )
 const TH2D*
 Hist2DMgr::Hist2D( const string& name ) const
 {
-   return _histmgr.GetObj( name );
+  return _histmgr.GetObj( name );
 }
 
 /******************************************************************************/
@@ -45,7 +45,7 @@ Hist2DMgr::Hist2D( const string& name ) const
 vector<string>
 Hist2DMgr::AvailableHist2DList() const
 {
-   return _histmgr.ObjNameList();
+  return _histmgr.ObjNameList();
 }
 
 
@@ -54,24 +54,24 @@ Hist2DMgr::AvailableHist2DList() const
 *******************************************************************************/
 void
 Hist2DMgr::AddHist2D(
-   const std::string& histname,
-   const std::string& xtitle,
-   const std::string& ytitle,
-   const unsigned     xbin,
-   const double       xmin,
-   const double       xmax,
-   const unsigned     ybin,
-   const double       ymin,
-   const double       ymax
-   )
+  const std::string& histname,
+  const std::string& xtitle,
+  const std::string& ytitle,
+  const unsigned     xbin,
+  const double       xmin,
+  const double       xmax,
+  const unsigned     ybin,
+  const double       ymin,
+  const double       ymax
+  )
 {
-   const string histtitle = ";"+xtitle + ";" + ytitle;
-   TH2D* newhist          = new TH2D(
-      histname.c_str(),
-      histtitle.c_str(),
-      xbin, xmin, xmax,
-      ybin, ymin, ymax
-      );
-   newhist->SetStats( 0 );
-   _histmgr.AddObj( newhist );
+  const string histtitle = ";"+xtitle + ";" + ytitle;
+  TH2D* newhist          = new TH2D(
+    histname.c_str(),
+    histtitle.c_str(),
+    xbin, xmin, xmax,
+    ybin, ymin, ymax
+    );
+  newhist->SetStats( 0 );
+  _histmgr.AddObj( newhist );
 }

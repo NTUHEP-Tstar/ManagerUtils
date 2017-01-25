@@ -8,7 +8,7 @@
 #ifndef MANAGERUTILS_PLOTUTILS_DRAWCMS_HPP
 #define MANAGERUTILS_PLOTUTILS_DRAWCMS_HPP
 
-namespace plt{
+namespace mgr{
 /*******************************************************************************
 *   ** DrawCMSLabel
 *   Drawing the CMS Preliminary/Simulation label on top left of canvas

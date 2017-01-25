@@ -19,7 +19,6 @@
 #include "TFile.h"
 #include "TGraph.h"
 #include "THStack.h"
-#include "TLatex.h"
 #include "TLegend.h"
 #include "TLine.h"
 #include "TPad.h"
@@ -34,6 +33,7 @@
 #include "ManagerUtils/PlotUtils/interface/PlotObj.hpp"
 #include "ManagerUtils/PlotUtils/interface/SaveUtils.hpp"
 #include "ManagerUtils/PlotUtils/interface/SetAxis.hpp"
+#include "ManagerUtils/PlotUtils/interface/LatexMgr.hpp"
 
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 

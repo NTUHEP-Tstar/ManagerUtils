@@ -11,7 +11,7 @@
 
 #include "TGaxis.h"
 
-namespace plt{
+namespace mgr{
 
 template<class T>
 void

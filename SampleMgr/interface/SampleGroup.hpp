@@ -8,8 +8,8 @@
 #ifndef MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
 #define MAMAGERUTILS_SAMPLEMGR_SAMPLEGROUP_HPP
 
-#include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
-#include "ManagerUtils/BaseClass/interface/Named.hpp"
+#include "ManagerUtils/Common/interface/ConfigReader.hpp"
+#include "ManagerUtils/Common/interface/Named.hpp"
 
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
@@ -67,12 +67,12 @@ protected:
       Single     = 3,
       ERROR      = 10,
    };
-   ConfigType                      GetType( const mgr::ConfigReader& ) const ;
-   mgr::ConfigReader               GetUndefConfig( const mgr::ConfigReader& ) const ;
-   mgr::ConfigReader               GetSampleListConfig( const mgr::ConfigReader& ) const ;
-   mgr::ConfigReader               GetSingleConfig( const mgr::ConfigReader& ) const ;
-   std::vector<mgr::ConfigReader>  GetConfigList( const mgr::ConfigReader& ) const ;
-   std::vector<std::string>        GetSampleList( const mgr::ConfigReader& ) const ;
+   ConfigType                 GetType( const ConfigReader& ) const ;
+   ConfigReader               GetUndefConfig( const ConfigReader& ) const ;
+   ConfigReader               GetSampleListConfig( const ConfigReader& ) const ;
+   ConfigReader               GetSingleConfig( const ConfigReader& ) const ;
+   std::vector<ConfigReader>  GetConfigList( const ConfigReader& ) const ;
+   std::vector<std::string>   GetSampleList( const ConfigReader& ) const ;
 
 private:
    static std::string _cfgprefix;

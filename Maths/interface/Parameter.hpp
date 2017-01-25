@@ -1,66 +1,19 @@
 /*******************************************************************************
- *
- *  Filename    : Parameter.hh
- *  Description : Storage class for handling parameters
- *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
- *
- *  Includes support for systematic and statistical uncertainties
- *
+*
+*  Filename    : Parameter.hpp
+*  Description : Master include for all Parameter related classes and functions
+*  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
+*
 *******************************************************************************/
 #ifndef MANAGERUTILS_MATHS_PARAMETER_HPP
 #define MANAGERUTILS_MATHS_PARAMETER_HPP
 
-#include <string>
-#include <RooRealVar.h>
+#include "ManagerUtils/Maths/interface/Parameter/Parameter.hpp"
 
-class Parameter {
-public:
+#include "ManagerUtils/Maths/interface/Parameter/Arithmetic.hpp"
 
-   // Constructor, Desctructor and conversion :: See Parameter.cc
-   Parameter();
-   Parameter(
-      const double central ,
-      const double error_up ,
-      const double error_down );
-   Parameter( const Parameter& );
-   Parameter( const RooRealVar& );
+#include "ManagerUtils/Maths/interface/Parameter/Format.hpp"
 
-   virtual ~Parameter ();
+#include "ManagerUtils/Maths/interface/Parameter/CommonDistro.hpp"
 
-   Parameter& operator=( const Parameter& );
-
-   inline operator double() const{ return _centralValue; }
-
-   // Basic access functions
-   inline double CentralValue()  const { return _centralValue; }
-   inline double AbsUpperError() const { return _error_up; }
-   inline double AbsLowerError() const { return _error_down; }
-   inline double AbsAvgError()   const { return (_error_up+_error_down) / 2 ; }
-   inline double RelUpperError() const { return _error_up/_centralValue; }
-   inline double RelLowerError() const { return _error_down/_centralValue; }
-   inline double RelAvgError()   const { return (RelUpperError()+RelLowerError()) /2.; }
-   inline double UpperValue() const { return _centralValue + _error_up;}
-   inline double LowerValue() const { return _centralValue - _error_down; }
-
-   // Normalized version
-   Parameter NormParam() const ;
-
-   // Error arithmatics :: See src/Parameter_Arithmatics.cc
-   Parameter& operator+=( const Parameter& );
-   Parameter& operator*=( const Parameter& );
-   Parameter& operator*=( const double );
-   Parameter& operator/=( const double );
-   Parameter operator+( const Parameter& ) const ;
-   Parameter operator*( const Parameter& ) const ;
-   Parameter operator*( const double )     const ;
-   Parameter operator/( const double )     const ;
-   friend Parameter operator*( const double, const Parameter& );
-   friend Parameter operator/( const double, const Parameter& );
-
-private:
-   double _centralValue;
-   double _error_up;
-   double _error_down;
-};
-
-#endif /* end of include guard: __PARAMETER_HH__ */
+#endif /* end of include guard: MANAGERUTILS_MATHS_PARAMETER_HPP */

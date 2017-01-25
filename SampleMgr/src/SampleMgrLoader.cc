@@ -8,9 +8,9 @@
 
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
 #include <fstream>
+#include <iomanip>
 #include <map>
 #include <string>
-#include <iomanip>
 
 using namespace std;
 
@@ -21,9 +21,9 @@ namespace mgr {
 *******************************************************************************/
 struct FlatCache
 {
-   double              original;
-   double              selected;
-   map<string, double> cachemap;
+  double              original;
+  double              selected;
+  map<string, double> cachemap;
 };
 
 /******************************************************************************/
@@ -31,11 +31,11 @@ struct FlatCache
 FlatCache
 MakeCache( const SampleMgr& x )
 {
-   FlatCache ans;
-   ans.original = x.OriginalEventCount();
-   ans.selected = x.SelectedEventCount();
-   ans.cachemap = x.DoubleCache();
-   return ans;
+  FlatCache ans;
+  ans.original = x.OriginalEventCount();
+  ans.selected = x.SelectedEventCount();
+  ans.cachemap = x.DoubleCache();
+  return ans;
 }
 
 /******************************************************************************/
@@ -43,21 +43,21 @@ MakeCache( const SampleMgr& x )
 FlatCache
 MakeCache( const std::string& filename )
 {
-   FlatCache ans;
-   ifstream file( filename );
-   if( file.is_open() ){
-      file >> ans.original;
-      file >> ans.selected;
+  FlatCache ans;
+  ifstream file( filename );
+  if( file.is_open() ){
+    file >> ans.original;
+    file >> ans.selected;
 
-      while( 1 ){
-         string name;
-         double value;
-         file >> name >> value;
-         if( file.eof() ){ break; }
-         ans.cachemap[name] = value;
-      }
-   }
-   return ans;
+    while( 1 ){
+      string name;
+      double value;
+      file >> name >> value;
+      if( file.eof() ){ break; }
+      ans.cachemap[name] = value;
+    }
+  }
+  return ans;
 }
 
 /******************************************************************************/
@@ -65,16 +65,16 @@ MakeCache( const std::string& filename )
 void
 WriteCache( const FlatCache& x, const string& filename )
 {
-   ofstream file( filename );
-   file << fixed << setprecision(10) ;
-   file << x.original << endl;
-   file << x.selected << endl;
+  ofstream file( filename );
+  file << fixed << setprecision( 10 );
+  file << x.original << endl;
+  file << x.selected << endl;
 
-   for( const auto& cachepair : x.cachemap ){
-      file << cachepair.first << " " << cachepair.second << endl;
-   }
+  for( const auto& cachepair : x.cachemap ){
+    file << cachepair.first << " " << cachepair.second << endl;
+  }
 
-   file.close();
+  file.close();
 }
 
 /******************************************************************************/
@@ -82,12 +82,12 @@ WriteCache( const FlatCache& x, const string& filename )
 void
 MergeCache( FlatCache& x, const FlatCache& y )
 {
-   x.original = y.original;
-   x.selected = y.selected;
+  x.original = y.original;
+  x.selected = y.selected;
 
-   for( const auto cachepair : y.cachemap ){
-      x.cachemap[cachepair.first] = cachepair.second;
-   }
+  for( const auto cachepair : y.cachemap ){
+    x.cachemap[cachepair.first] = cachepair.second;
+  }
 }
 
 /******************************************************************************/
@@ -95,10 +95,10 @@ MergeCache( FlatCache& x, const FlatCache& y )
 void
 SaveCacheToFile( const SampleMgr& x, const std::string& filename )
 {
-   FlatCache mgrcache  = MakeCache( x );
-   FlatCache filecache = MakeCache( filename );
-   MergeCache( filecache, mgrcache );
-   WriteCache( filecache, filename );
+  FlatCache mgrcache  = MakeCache( x );
+  FlatCache filecache = MakeCache( filename );
+  MergeCache( filecache, mgrcache );
+  WriteCache( filecache, filename );
 }
 
 /******************************************************************************/
@@ -106,13 +106,13 @@ SaveCacheToFile( const SampleMgr& x, const std::string& filename )
 void
 LoadCacheFromFile( SampleMgr& x, const std::string& filename )
 {
-   FlatCache filecache = MakeCache( filename );
-   x.SetOriginalEventCount( filecache.original );
-   x.SetSelectedEventCount( filecache.selected );
+  FlatCache filecache = MakeCache( filename );
+  x.SetOriginalEventCount( filecache.original );
+  x.SetSelectedEventCount( filecache.selected );
 
-   for( const auto& cachepair : filecache.cachemap ){
-      x.AddCacheDouble( cachepair.first, cachepair.second );
-   }
+  for( const auto& cachepair : filecache.cachemap ){
+    x.AddCacheDouble( cachepair.first, cachepair.second );
+  }
 }
 
 }/* mgr namespace */

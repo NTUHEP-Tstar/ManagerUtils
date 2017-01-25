@@ -7,26 +7,31 @@
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PackagePathMgr.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
+
+#include <boost/filesystem.hpp>
 #include <cstdlib>
 #include <exception>
-using namespace std;
-using namespace mgr;
 
-// ------------------------------------------------------------------------------
-//   Constructor & Destructor
-// ------------------------------------------------------------------------------
+using namespace std;
+namespace fs = boost::filesystem;
+
+namespace mgr {
+
+/*******************************************************************************
+*   Constructor and Destructor
+*******************************************************************************/
 PackagePathMgr::PackagePathMgr(
-   const std::string& package,
-   const std::string& sub_package,
-   const std::string& settings_dir,
-   const std::string& results_dir,
-   const std::string& samples_dir
-   ) :
-   _package_name( package ),
-   _sub_package_name( sub_package ),
-   _settings_dir( settings_dir ),
-   _results_dir( results_dir ),
-   _samples_dir( samples_dir )
+  const std::string& package,
+  const std::string& sub_package,
+  const std::string& settings_dir,
+  const std::string& results_dir,
+  const std::string& samples_dir
+  ) :
+  _package_name( package ),
+  _sub_package_name( sub_package ),
+  _settings_dir( settings_dir ),
+  _results_dir( results_dir ),
+  _samples_dir( samples_dir )
 {
 }
 
@@ -42,7 +47,8 @@ PackagePathMgr::~PackagePathMgr()
 string
 PackagePathMgr::PackageDir() const
 {
-   return PackagePath(_package_name );;
+  return PackagePath( _package_name );
+  ;
 }
 
 /******************************************************************************/
@@ -50,7 +56,15 @@ PackagePathMgr::PackageDir() const
 string
 PackagePathMgr::SubPackageDir() const
 {
-   return SubPackagePath( _package_name, _sub_package_name ) ;
+  return SubPackagePath( _package_name, _sub_package_name );
+}
+
+/******************************************************************************/
+
+string
+PackagePathMgr::SubDir( const string& x ) const
+{
+  return SubPackageDir()/x ;
 }
 
 /******************************************************************************/
@@ -58,7 +72,7 @@ PackagePathMgr::SubPackageDir() const
 string
 PackagePathMgr::SettingsDir() const
 {
-   return SubPackageDir() + _settings_dir + "/";
+  return SubDir(_settings_dir);
 }
 
 /******************************************************************************/
@@ -66,7 +80,7 @@ PackagePathMgr::SettingsDir() const
 string
 PackagePathMgr::ResultsDir() const
 {
-   return SubPackageDir() + _results_dir +"/";
+  return SubDir(_results_dir);
 }
 
 /******************************************************************************/
@@ -74,5 +88,7 @@ PackagePathMgr::ResultsDir() const
 string
 PackagePathMgr::SamplesDir() const
 {
-   return SubPackageDir() + _samples_dir + "/";
+  return SubDir(_samples_dir);
 }
+
+} /* mgr */

@@ -5,15 +5,13 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
-#include "ManagerUtils/Maths/interface/Efficiency.hpp"
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
-#include "ManagerUtils/Maths/interface/ParameterArithmetic.hpp"
-#include "ManagerUtils/Maths/interface/ParameterFormat.hpp"
 #include <iostream>
 #include <vector>
 
 #include <boost/format.hpp>
 using namespace std;
+using namespace mgr;
 
 void
 AddTest( const vector<Parameter>& list )
@@ -35,8 +33,8 @@ AddTest( const vector<Parameter>& list )
 void
 ProdTest( const vector<double> chain )
 {
-   Parameter original  = Poisson( chain.front() );
-   Parameter finalpass = Poisson( chain.back() );
+   Parameter original  = Poisson::Default( chain.front() );
+   Parameter finalpass = Poisson::Default( chain.back() );
 
    vector<Parameter> prodlist;
    prodlist.push_back( original );
@@ -45,7 +43,7 @@ ProdTest( const vector<double> chain )
 
    for( size_t i = 0; i < chain.size() -1; ++i ){
       cout << boost::format( "\\times\\frac{%lg}{%lg}" ) % chain[i+1] % chain[i] << flush;
-      prodlist.push_back( Efficiency( chain[i+1], chain[i] ) );
+      prodlist.push_back( Efficiency::Default( chain[i+1], chain[i] ) );
    }
 
    cout << "&" << flush;
@@ -59,17 +57,17 @@ main( int argc, char const* argv[] )
 {
    cout << ">>>> Addition testing: Sum to 100" << endl;
    {
-      Parameter a = Poisson( 10 );
-      Parameter b = Poisson( 20 );
-      Parameter c = Poisson( 30 );
-      Parameter d = Poisson( 40 );
-      Parameter e = Poisson( 50 );
-      Parameter f = Poisson( 60 );
-      Parameter g = Poisson( 70 );
-      Parameter h = Poisson( 80 );
-      Parameter i = Poisson( 90 );
+      Parameter a = Poisson::Default( 10 );
+      Parameter b = Poisson::Default( 20 );
+      Parameter c = Poisson::Default( 30 );
+      Parameter d = Poisson::Default( 40 );
+      Parameter e = Poisson::Default( 50 );
+      Parameter f = Poisson::Default( 60 );
+      Parameter g = Poisson::Default( 70 );
+      Parameter h = Poisson::Default( 80 );
+      Parameter i = Poisson::Default( 90 );
 
-      cout << "Direct value: " << FloatingPoint( Poisson( 100 ), 4 ) << endl;
+      cout << "Direct value: " << FloatingPoint( Poisson::Default( 100 ), 4 ) << endl;
       AddTest( {e, e} );
       AddTest( {d, f} );
       AddTest( {c, g} );
@@ -83,17 +81,17 @@ main( int argc, char const* argv[] )
    }
    cout << ">>>> Addition testing: Sum to 1000" << endl;
    {
-      Parameter a = Poisson( 100 );
-      Parameter b = Poisson( 200 );
-      Parameter c = Poisson( 300 );
-      Parameter d = Poisson( 400 );
-      Parameter e = Poisson( 500 );
-      Parameter f = Poisson( 600 );
-      Parameter g = Poisson( 700 );
-      Parameter h = Poisson( 800 );
-      Parameter i = Poisson( 900 );
+      Parameter a = Poisson::Default( 100 );
+      Parameter b = Poisson::Default( 200 );
+      Parameter c = Poisson::Default( 300 );
+      Parameter d = Poisson::Default( 400 );
+      Parameter e = Poisson::Default( 500 );
+      Parameter f = Poisson::Default( 600 );
+      Parameter g = Poisson::Default( 700 );
+      Parameter h = Poisson::Default( 800 );
+      Parameter i = Poisson::Default( 900 );
 
-      cout << "Direct value: " << FloatingPoint( Poisson( 1000 ), 4 ) << endl;
+      cout << "Direct value: " << FloatingPoint( Poisson::Default( 1000 ), 4 ) << endl;
       AddTest( {e, e} );
       AddTest( {d, f} );
       AddTest( {c, g} );
@@ -109,9 +107,9 @@ main( int argc, char const* argv[] )
 
    cout << ">>>> Addition testing: Partial addition to 100" << endl;
    {
-      Parameter a = Poisson( 20 );
+      Parameter a = Poisson::Default( 20 );
 
-      cout << "Direct value: " << FloatingPoint( Poisson( 100 ), 4 ) << endl;
+      cout << "Direct value: " << FloatingPoint( Poisson::Default( 100 ), 4 ) << endl;
       cout << "(20+20+20+20+20) & " << FloatingPoint( Sum( a, a, a, a, a ), 4  ) << endl;
       cout << "(20+20)+(20+20+20) & " << FloatingPoint( Sum( Sum( a, a ), Sum( a, a, a ) ), 4  ) << endl;
       cout << "(20+20)+(20+20)+20 & " << FloatingPoint( Sum( Sum( a, a ), Sum( a, a ), a ), 4  ) << endl;
@@ -122,7 +120,7 @@ main( int argc, char const* argv[] )
 
    cout << ">>>> Product testing: Product to 50" << endl;
    {
-      cout << "Direct value : " << FloatingPoint( Poisson( 50 ), 4 ) << endl;
+      cout << "Direct value : " << FloatingPoint( Poisson::Default( 50 ), 4 ) << endl;
       ProdTest( {100, 50} );
       ProdTest( {100, 75, 50} );
       ProdTest( {100, 75, 60, 50} );
@@ -132,13 +130,13 @@ main( int argc, char const* argv[] )
 
    cout << ">>> Product test: Partial product " << endl;
    {
-      Parameter a  = Poisson( 200 );
-      Parameter e1 = Efficiency( 100, 200 );
-      Parameter e2 = Efficiency( 75, 100 );
-      Parameter e3 = Efficiency( 60, 75 );
-      Parameter e4 = Efficiency( 50, 60 );
+      Parameter a  = Poisson::Default( 200 );
+      Parameter e1 = Efficiency::Default( 100, 200 );
+      Parameter e2 = Efficiency::Default( 75, 100 );
+      Parameter e3 = Efficiency::Default( 60, 75 );
+      Parameter e4 = Efficiency::Default( 50, 60 );
 
-      cout << "Direct value: " << FloatingPoint( Poisson( 50 ), 4 ) << endl;
+      cout << "Direct value: " << FloatingPoint( Poisson::Default( 50 ), 4 ) << endl;
       cout << "(a*b*c*d*e)" << FloatingPoint( Prod( a, e1, e2, e3, e4 ), 4  ) << endl;
       cout << "(a*b)*(c*d*e)" << FloatingPoint( Prod( Prod( a, e1 ), Prod( e2, e3, e4 ) ), 4  ) << endl;
       cout << "(a*b)*(c*d)*e" << FloatingPoint( Prod( Prod( a, e1 ), Prod( e2, e3 ), e4 ), 4  ) << endl;
@@ -175,7 +173,7 @@ main( int argc, char const* argv[] )
    cout << "\n>>> Scale case testing" << endl;
    {
       Parameter a( 0, 0, 0 );
-      Parameter b = Poisson( 10 );
+      Parameter b = Poisson::Default( 10 );
 
       cout << FloatingPoint( b, 5 ) << endl;
       cout << FloatingPoint( a+b, 5 ) << endl;

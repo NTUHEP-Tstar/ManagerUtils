@@ -11,25 +11,20 @@
 
 #include <string>
 
+namespace mgr {
 /*******************************************************************************
-*   Generating of random string
+*   RandomFileName
+*   * Generate random file name with alpha-numerical length of n
+*   * Could add extension to end of filename
+*   * Could prefix with '.' to make hiden
 *******************************************************************************/
-extern std::string RandomString(
-   const unsigned n
-);
-
-/**
- * Generate a random file name of length n
- * @param  n      [description]
- * @param  ext    [description]
- * @param  hidden [description]
- * @return        [description]
- */
 extern std::string RandomFileName(
    const unsigned n ,
    const std::string& ext ="" ,
    const bool hidden=true
 );
+
+} /* mgr */
 
 
 #endif /* end of include guard: MANAGERUTILS_SYSUTILS_PATHUTILS_GENERATE_HPP */

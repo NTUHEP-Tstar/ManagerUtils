@@ -13,59 +13,61 @@
 #include "FWCore/Common/interface/TriggerNames.h"
 
 #include "ManagerUtils/PhysUtils/interface/TriggerMatching.hpp"
-#include "ManagerUtils/SysUtils/interface/PathUtils.hpp" // For regex
+#include "ManagerUtils/SysUtils/interface/PathUtils.hpp"// For regex
 
 #include <regex>
 
 #include "TLorentzVector.h"
+
+namespace mgr {
 
 /*******************************************************************************
 *   User Level functions
 *******************************************************************************/
 bool
 HasTriggerMatch(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqfilter,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r
-   )
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqfilter,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r
+  )
 {
-   auto match = MatchTrgObj(
-      recoobj,
-      trgobjlist,
-      reqtrigger,
-      reqfilter,
-      trgnames,
-      mindelta_r );
-   return match != trgobjlist.end();
+  auto match = MatchTrgObj(
+    recoobj,
+    trgobjlist,
+    reqtrigger,
+    reqfilter,
+    trgnames,
+    mindelta_r );
+  return match != trgobjlist.end();
 }
 
 /******************************************************************************/
 
 TLorentzVector
 TriggerMatchP4(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqfilter,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r
-   )
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqfilter,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r
+  )
 {
-   auto match = MatchTrgObj(
-      recoobj,
-      trgobjlist,
-      reqtrigger,
-      reqfilter,
-      trgnames,
-      mindelta_r );
-   if( match != trgobjlist.end() ){
-      return TLorentzVector( match->px(), match->py(), match->pz(), match->energy() );
-   } else {
-      return TLorentzVector( 0, 0, 0, 0 );
-   }
+  auto match = MatchTrgObj(
+    recoobj,
+    trgobjlist,
+    reqtrigger,
+    reqfilter,
+    trgnames,
+    mindelta_r );
+  if( match != trgobjlist.end() ){
+    return TLorentzVector( match->px(), match->py(), match->pz(), match->energy() );
+  } else {
+    return TLorentzVector( 0, 0, 0, 0 );
+  }
 }
 
 /*******************************************************************************
@@ -74,56 +76,58 @@ TriggerMatchP4(
 
 pat::TriggerObjectStandAloneCollection::const_iterator
 MatchTrgObj(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqfilter,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r
-   )
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqfilter,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r
+  )
 {
-   for( auto objiter = trgobjlist.begin(); objiter != trgobjlist.end(); ++objiter ){
-      auto obj = *objiter;// making duplicate
-      obj.unpackPathNames( trgnames );
+  for( auto objiter = trgobjlist.begin(); objiter != trgobjlist.end(); ++objiter ){
+    auto obj = *objiter;  // making duplicate
+    obj.unpackPathNames( trgnames );
 
-      if( TrigObjMatchPathFilter( obj, reqtrigger, reqfilter )
-          && reco::deltaR( recoobj, obj ) < mindelta_r ){
-         return objiter;
-      }
-   }
+    if( TrigObjMatchPathFilter( obj, reqtrigger, reqfilter )
+        && reco::deltaR( recoobj, obj ) < mindelta_r ){
+      return objiter;
+    }
+  }
 
-   return trgobjlist.end();
+  return trgobjlist.end();
 }
 
 /******************************************************************************/
 
 bool
 TrigObjMatchPathFilter(
-   const pat::TriggerObjectStandAlone& obj,
-   const std::string&                  path,
-   const std::string&                  filter
-   )
+  const pat::TriggerObjectStandAlone& obj,
+  const std::string&                  path,
+  const std::string&                  filter
+  )
 {
-   bool hasmatchpath   = false;
-   bool hasmatchfilter = false;
+  bool hasmatchpath   = false;
+  bool hasmatchfilter = false;
 
-   const std::regex pathreg( GlobToRegex( path ) );
+  const std::regex pathreg( mgr::GlobToRegex( path ) );
 
-   for( const auto& objpath : obj.pathNames() ){
-      if( std::regex_match( objpath, pathreg ) && obj.hasPathName( objpath ) ){
-         hasmatchpath = true;
-         break;
-      }
-   }
+  for( const auto& objpath : obj.pathNames() ){
+    if( std::regex_match( objpath, pathreg ) && obj.hasPathName( objpath ) ){
+      hasmatchpath = true;
+      break;
+    }
+  }
 
-   const std::regex filterreg( GlobToRegex( filter ) );
+  const std::regex filterreg( mgr::GlobToRegex( filter ) );
 
-   for( const auto& objfilter : obj.filterLabels() ){
-      if( std::regex_match( objfilter, filterreg ) && obj.hasFilterLabel( objfilter ) ){
-         hasmatchfilter = true;
-         break;
-      }
-   }
+  for( const auto& objfilter : obj.filterLabels() ){
+    if( std::regex_match( objfilter, filterreg ) && obj.hasFilterLabel( objfilter ) ){
+      hasmatchfilter = true;
+      break;
+    }
+  }
 
-   return hasmatchpath && hasmatchfilter;
+  return hasmatchpath && hasmatchfilter;
 }
+
+} /* mgr */

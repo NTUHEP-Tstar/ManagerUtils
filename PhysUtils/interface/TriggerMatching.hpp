@@ -22,18 +22,19 @@
 
 #include "TLorentzVector.h"
 
+namespace mgr {
 /*******************************************************************************
 *   HassTriggerMatch
 *   Check if a recon::Candidate object has any matched trigger objects
 *******************************************************************************/
 extern bool HasTriggerMatch(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqlabel,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r = 0.1
-   );
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqlabel,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r = 0.1
+  );
 
 /*******************************************************************************
 *   TriggerMatchP4
@@ -41,13 +42,13 @@ extern bool HasTriggerMatch(
 *      object doesn't exist. It will return a (0,0,0,0) four momentum.
 *******************************************************************************/
 TLorentzVector TriggerMatchP4(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqlabel,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r = 0.1
-   );
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqlabel,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r = 0.1
+  );
 
 /*******************************************************************************
 *   MatchTrgObj
@@ -57,13 +58,13 @@ TLorentzVector TriggerMatchP4(
 *      It is not recommended to use this function directly, but to use the functions above.
 *******************************************************************************/
 extern pat::TriggerObjectStandAloneCollection::const_iterator MatchTrgObj(
-   const reco::Candidate&                        recoobj,
-   const pat::TriggerObjectStandAloneCollection& trgobjlist,
-   const std::string&                            reqtrigger,
-   const std::string&                            reqfilter,
-   const edm::TriggerNames&                      trgnames,
-   const double                                  mindelta_r = 0.1
-   );
+  const reco::Candidate&                        recoobj,
+  const pat::TriggerObjectStandAloneCollection& trgobjlist,
+  const std::string&                            reqtrigger,
+  const std::string&                            reqfilter,
+  const edm::TriggerNames&                      trgnames,
+  const double                                  mindelta_r = 0.1
+  );
 
 /*******************************************************************************
 *   TrigObjMatchPathFilter :
@@ -71,11 +72,13 @@ extern pat::TriggerObjectStandAloneCollection::const_iterator MatchTrgObj(
 *   Input could be glob notation and will return firsted glob match results
 *******************************************************************************/
 extern bool TrigObjMatchPathFilter(
-   const pat::TriggerObjectStandAlone& obj,
-   const std::string&                  path,
-   const std::string&                  filter
-   );
+  const pat::TriggerObjectStandAlone& obj,
+  const std::string&                  path,
+  const std::string&                  filter
+  );
 
 
+
+} /* mgr */
 
 #endif/* end of include guard: MANAGERUTILS_PHYS_UTILS_HPP */

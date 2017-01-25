@@ -1,6 +1,6 @@
 <use name="root"/>
 <use name="roofit"/>
-<use name="ManagerUtils/BaseClass" />
+<use name="ManagerUtils/Common" />
 
 <flags CXXFLAGS="-g" />
 

@@ -30,8 +30,8 @@
 #ifndef MANAGERUTILS_SAMPLEMGR_SAMPLEMGR_HPP
 #define MANAGERUTILS_SAMPLEMGR_SAMPLEMGR_HPP
 
-#include "ManagerUtils/BaseClass/interface/ConfigReader.hpp"
-#include "ManagerUtils/BaseClass/interface/Named.hpp"
+#include "ManagerUtils/Common/interface/ConfigReader.hpp"
+#include "ManagerUtils/Common/interface/Named.hpp"
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
 #include <map>

@@ -5,44 +5,49 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
-#include <string>
 #include <boost/filesystem.hpp>
+#include <string>
 #include <unistd.h>
 using namespace std;
+namespace fs = boost::filesystem ;
+
+
+/*******************************************************************************
+*   Operator overloading
+*******************************************************************************/
+string
+operator/( const std::string& x ,const std::string& y )
+{
+  return (fs::path(x)/y).string();
+}
+
+
+
+namespace mgr {
 
 /******************************************************************************/
 
 string
 GetEnv( const std::string& x )
 {
-   return getenv( x.c_str() );
+  return getenv( x.c_str() );
 }
-
 
 /******************************************************************************/
 
 string
 ConvertToAbsPath( const std::string& path )
 {
-   string ans = path;
-   if( ans.empty() ){
-      return "/";
-   }
-
-   if( ans[0] != '/' ){
-      ans = GetEnv( "PWD" ) + "/" + ans;
-   }
-   return ans;
+  return fs::absolute( path ).string();
 }
 
 
 /******************************************************************************/
 
 string
-Basename( const std::string& mypath )
+Basename( const std::string& path )
 {
-   boost::filesystem::path pathobj( mypath );
-   return pathobj.filename().string();
+  return fs::path( path ).filename().string();
 }
 
 /******************************************************************************/
@@ -50,7 +55,7 @@ Basename( const std::string& mypath )
 string
 CMSSWSrc()
 {
-   return GetEnv( "CMSSW_BASE" ) + "/src/";
+  return GetEnv( "CMSSW_BASE" ) / "src" ;
 }
 
 /******************************************************************************/
@@ -58,7 +63,7 @@ CMSSWSrc()
 string
 PackagePath( const std::string& x )
 {
-   return CMSSWSrc() + x + "/";
+  return CMSSWSrc() / x ;
 }
 
 /******************************************************************************/
@@ -66,5 +71,7 @@ PackagePath( const std::string& x )
 string
 SubPackagePath( const std::string& x, const std::string& y )
 {
-   return PackagePath( x ) + y + "/";
+  return PackagePath(x)/y;
 }
+
+} /* mgr */

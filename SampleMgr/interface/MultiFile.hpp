@@ -22,49 +22,49 @@ class MultiFile
 {
 public:
 
-   /*******************************************************************************
-   *   Constructor destructor and assignment operator
-   *******************************************************************************/
-   MultiFile();
-   MultiFile( const std::vector<std::string>& filelist );
-   MultiFile( const MultiFile& );
-   ~MultiFile() ;
-   MultiFile& operator=( const MultiFile& );
-   MultiFile& reset( const std::vector<std::string>& filelist );
+  /*******************************************************************************
+  *   Constructor destructor and assignment operator
+  *******************************************************************************/
+  MultiFile();
+  MultiFile( const std::vector<std::string>& filelist );
+  MultiFile( const MultiFile& );
+  ~MultiFile();
+  MultiFile& operator=( const MultiFile& );
+  MultiFile& reset( const std::vector<std::string>& filelist );
 
-   /*******************************************************************************
-   *   Casting operation to original object
-   *******************************************************************************/
-   STRUCTOBJ& Base();
-   const STRUCTOBJ& Base() const;
+  /*******************************************************************************
+  *   Casting operation to original object
+  *******************************************************************************/
+  STRUCTOBJ&       Base();
+  const STRUCTOBJ& Base() const;
 
-   /*******************************************************************************
-   *   Structure navigation operators to ovveride
-   *******************************************************************************/
-   MultiFile& operator++() ;
-   MultiFile& toBegin()    ;
-   bool       atEnd() const ;
+  /*******************************************************************************
+  *   Structure navigation operators to ovveride
+  *******************************************************************************/
+  MultiFile& operator++();
+  MultiFile& toBegin();
+  bool       atEnd() const;
 
-   /*******************************************************************************
-   *   File information
-   *******************************************************************************/
-   inline unsigned size() { return _size; }
-   inline unsigned Size() { return _size; }
-   inline unsigned FileCount() { return _filelist.size(); }
-   inline unsigned FileIdx()   { return _currentfile - _filelist.begin(); }
-   inline std::string CurrentFile() { return *_currentfile; }
+  /*******************************************************************************
+  *   File information
+  *******************************************************************************/
+  inline unsigned size(){ return _size; }
+  inline unsigned Size(){ return _size; }
+  inline unsigned FileCount(){ return _filelist.size(); }
+  inline unsigned FileIdx()  { return _currentfile - _filelist.begin(); }
+  inline std::string CurrentFile(){ return *_currentfile; }
 
 private:
-   std::vector<std::string> _filelist;
-   std::vector<std::string>::const_iterator _currentfile;
-   std::unique_ptr<STRUCTOBJ> _structptr;
-   unsigned _size;
+  std::vector<std::string> _filelist;
+  std::vector<std::string>::const_iterator _currentfile;
+  std::unique_ptr<STRUCTOBJ> _structptr;
+  unsigned _size;
 
-   /*******************************************************************************
-   *   Helper private functions
-   *******************************************************************************/
-   unsigned getsize();
-   bool     setfile();
+  /*******************************************************************************
+  *   Helper private functions
+  *******************************************************************************/
+  unsigned getsize();
+  bool     setfile();
 };
 
 

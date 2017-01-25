@@ -9,22 +9,24 @@
 #ifndef MANAGERUTILS_EDMUTILS_COUNTER_HPP
 #define MANAGERUTILS_EDMUTILS_COUNTER_HPP
 
-namespace mgr{
+namespace mgr {
 
-class Counter {
+class Counter
+{
 public:
-   // constructor
-   Counter();
-   Counter( const double );
-   virtual ~Counter();
+  // constructor
+  Counter();
+  Counter( const double );
+  virtual
+  ~Counter();
 
-   // Most have this function to allow run level storage
-   bool mergeProduct( const Counter& nextCounter );
+  // Most have this function to allow run level storage
+  bool mergeProduct( const Counter& nextCounter );
 
-   // Saving value
-   double value;
+  // Saving value
+  double value;
 };
 
-} /* mgr  */
+}/* mgr  */
 
-#endif /* end of include guard: MANAGERUTILS_EDMUTILS_COUNTER_HPP */
+#endif/* end of include guard: MANAGERUTILS_EDMUTILS_COUNTER_HPP */

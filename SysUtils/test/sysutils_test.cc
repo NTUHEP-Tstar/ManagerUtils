@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+
 using namespace std;
+using namespace mgr;
 
 int main(int argc, char* argv[]) {
    string result = GetCMDOutput( "ls" );

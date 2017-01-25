@@ -11,6 +11,8 @@
 #include <queue>
 using namespace std;
 
+namespace mgr {
+
 const reco::Candidate*
 GetDirectMother( const reco::Candidate* x, int target_ID )
 {
@@ -62,3 +64,5 @@ GetDaughter( const reco::Candidate* x, int target_ID )
 
    return NULL;
 }
+
+} /* mgr */

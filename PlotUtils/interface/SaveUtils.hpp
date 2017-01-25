@@ -10,11 +10,11 @@
 
 #include "TCanvas.h"
 
-namespace plt{
+namespace mgr {
 /*******************************************************************************
 *   SaveToPDF - saving TCanvas to PDF file, invokes PDF correction ghostscript
 *******************************************************************************/
-void SaveToPDF( TCanvas* , const std::string& );
+void SaveToPDF( TCanvas*, const std::string& );
 
 /*******************************************************************************
 *   SaveToRoot - saving TCanvas to ROOT File
@@ -24,4 +24,4 @@ void SaveToROOT( TCanvas*, const std::string& filename, const std::string& objna
 }
 
 
-#endif /* end of include guard: MANAGERUTILS_PLOTUTILS_SAVEUTILS */
+#endif/* end of include guard: MANAGERUTILS_PLOTUTILS_SAVEUTILS */

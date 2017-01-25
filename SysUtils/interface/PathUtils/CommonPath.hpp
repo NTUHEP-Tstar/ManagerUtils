@@ -11,16 +11,23 @@
 #include <string>
 
 /*******************************************************************************
+*   Operator / for strings
+*   Boost filesystem flavour path appendage
+*******************************************************************************/
+extern std::string operator/( const std::string& lhs, const std::string& rhs );
+
+namespace mgr {
+/*******************************************************************************
 *   * GetEnv
 *   Returning a system environment variable, C++ string as input and output
 *******************************************************************************/
-extern std::string  GetEnv( const std::string& );
+extern std::string GetEnv( const std::string& );
 
 /*******************************************************************************
 *   * ConvertToAbsPath
 *   Chaing a relative path to an absolute one
 *******************************************************************************/
-extern std::string  ConvertToAbsPath( const std::string& );
+extern std::string ConvertToAbsPath( const std::string& );
 
 /*******************************************************************************
 *   * Basename
@@ -32,7 +39,7 @@ extern std::string Basename( const std::string& );
 *   ** CMSSWSrc
 *   Returns the absolute path of the CMSSSW_X_Y_Z/src/ directory of this program
 *******************************************************************************/
-extern std::string  CMSSWSrc();
+extern std::string CMSSWSrc();
 
 /*******************************************************************************
 *   ** GetPackagePath
@@ -46,7 +53,6 @@ extern std::string PackagePath( const std::string& x );
 *******************************************************************************/
 extern std::string SubPackagePath( const std::string& x, const std::string& y );
 
+}/* mgr */
 
-
-
-#endif /* end of include guard:  */
+#endif/* end of include guard:  */

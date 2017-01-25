@@ -1,8 +1,7 @@
 <use name="root"/> <!-- Required for Header inclusion --->
-<use name="ManagerUtils/BaseClass"/>
+<use name="ManagerUtils/Common"/>
 <use name="ManagerUtils/Maths"/>
 <use name="ManagerUtils/SysUtils"/>
-<use name="DataFormats/FWLite"/>
 <flags CXXFLAGS="-g"/>
 
 <export>

@@ -9,16 +9,17 @@
 
 namespace mgr {
 
-Counter::Counter() { value = 0 ; }
-Counter::Counter( const double x ) { value = x; }
-Counter::~Counter() {}
+Counter::Counter(){ value = 0; }
+Counter::Counter( const double x ){ value = x; }
+Counter::~Counter(){}
 
-bool Counter::mergeProduct( const Counter& nextcounter )
+bool
+Counter::mergeProduct( const Counter& nextcounter )
 {
-   // No case handling for overflow, assuming that double
-   // should be able to handle precision
-   value += nextcounter.value ;
-   return true;
+  // No case handling for overflow, assuming that double
+  // should be able to handle precision
+  value += nextcounter.value;
+  return true;
 }
 
-} /* mgr */
+}/* mgr */

@@ -5,7 +5,6 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
-#include "ManagerUtils/Maths/interface/Efficiency.hpp"
 #include "ManagerUtils/SampleMgr/interface/SampleMgr.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 
@@ -13,8 +12,8 @@
 #include <string>
 
 using namespace std;
-using namespace mgr;
 
+namespace mgr {
 /*******************************************************************************
 *   Static Variable
 *******************************************************************************/
@@ -26,24 +25,24 @@ string SampleMgr::_fileprefix = "./";
 *   Constructor/Destructor and initializers
 *******************************************************************************/
 SampleMgr::SampleMgr( const string& name ) :
-   Named( name )
+  Named( name )
 {
 }
 
 /******************************************************************************/
 
 SampleMgr::SampleMgr( const string& name, const string& file_name ) :
-   Named( name )
+  Named( name )
 {
-   InitFromFile( file_name );
+  InitFromFile( file_name );
 }
 
 /******************************************************************************/
 
 SampleMgr::SampleMgr( const string& name, const ConfigReader& cfg ) :
-   Named( name )
+  Named( name )
 {
-   InitFromReader( cfg );
+  InitFromReader( cfg );
 }
 
 /******************************************************************************/
@@ -51,7 +50,7 @@ SampleMgr::SampleMgr( const string& name, const ConfigReader& cfg ) :
 void
 SampleMgr::InitStaticFromFile( const string& file_name )
 {
-   InitStaticFromReader( ConfigReader( file_name ) );
+  InitStaticFromReader( ConfigReader( file_name ) );
 }
 
 /******************************************************************************/
@@ -59,13 +58,13 @@ SampleMgr::InitStaticFromFile( const string& file_name )
 void
 SampleMgr::InitStaticFromReader( const ConfigReader& cfg )
 {
-   if( cfg.HasStaticTag( "Total Luminosity" ) ){
-      SetTotalLuminosity( cfg.GetStaticDouble( "Total Luminosity" ) );
-   }
+  if( cfg.HasStaticTag( "Total Luminosity" ) ){
+    SetTotalLuminosity( cfg.GetStaticDouble( "Total Luminosity" ) );
+  }
 
-   if( cfg.HasStaticTag( "File Prefix" ) ){
-      SetFilePrefix( cfg.GetStaticString( "File Prefix" ) );
-   }
+  if( cfg.HasStaticTag( "File Prefix" ) ){
+    SetFilePrefix( cfg.GetStaticString( "File Prefix" ) );
+  }
 }
 
 /******************************************************************************/
@@ -73,7 +72,7 @@ SampleMgr::InitStaticFromReader( const ConfigReader& cfg )
 void
 SampleMgr::InitFromFile( const string& file_name )
 {
-   InitFromReader( ConfigReader( file_name ) );
+  InitFromReader( ConfigReader( file_name ) );
 }
 
 /******************************************************************************/
@@ -81,18 +80,18 @@ SampleMgr::InitFromFile( const string& file_name )
 void
 SampleMgr::InitFromReader( const ConfigReader& cfg )
 {
-   SetLatexName( cfg.GetString(  Name(), "Latex Name"    ) );
-   SetRootName( cfg.GetString( Name(), "Root Name" ) );
-   _filelist = cfg.GetStringList( Name(), "EDM Files"     );
-   SetIsRealData( cfg.GetBool( Name(), "Is Data" ) );
+  SetLatexName( cfg.GetString(  Name(), "Latex Name"    ) );
+  SetRootName( cfg.GetString( Name(), "Root Name" ) );
+  _filelist = cfg.GetStringList( Name(), "EDM Files"     );
+  SetIsRealData( cfg.GetBool( Name(), "Is Data" ) );
 
-   if( !IsRealData() ){
-      SetCrossSection( cfg.GetParameter(  Name(), "Cross Section" ) );
-      SetKFactor( cfg.GetDouble(  Name(), "K Factor"      ) );
-   } else {
-      SetCrossSection( Parameter( 0, 0, 0 ) );
-      SetKFactor( 0 );
-   }
+  if( !IsRealData() ){
+    SetCrossSection( cfg.GetParameter(  Name(), "Cross Section" ) );
+    SetKFactor( cfg.GetDouble(  Name(), "K Factor"      ) );
+  } else {
+    SetCrossSection( Parameter( 0, 0, 0 ) );
+    SetKFactor( 0 );
+  }
 
 }
 
@@ -150,7 +149,7 @@ SampleMgr::SetFileList( const vector<string>& x ){ _filelist = x; }
 double
 SampleMgr::EffectiveLuminosity() const
 {
-   return OriginalEventCount() / CrossSection().CentralValue() / KFactor();
+  return OriginalEventCount() / CrossSection().CentralValue() / KFactor();
 }
 
 /******************************************************************************/
@@ -158,21 +157,21 @@ SampleMgr::EffectiveLuminosity() const
 Parameter
 SampleMgr::SelectionEfficiency() const
 {
-   return Efficiency( SelectedEventCount(), OriginalEventCount() );
+  return Efficiency::Default( SelectedEventCount(), OriginalEventCount() );
 }
 
 /******************************************************************************/
 double
 SampleMgr::ExpectedYield() const
 {
-   if( IsRealData() ){
-      return SelectedEventCount();
-   } else {
-      return TotalLuminosity()
-             * CrossSection().CentralValue()
-             * SelectionEfficiency().CentralValue()
-             * KFactor();
-   }
+  if( IsRealData() ){
+    return SelectedEventCount();
+  } else {
+    return TotalLuminosity()
+           * CrossSection().CentralValue()
+           * SelectionEfficiency().CentralValue()
+           * KFactor();
+  }
 }
 
 /******************************************************************************/
@@ -180,18 +179,18 @@ SampleMgr::ExpectedYield() const
 vector<string>
 SampleMgr::GlobbedFileList() const
 {
-   vector<string> ans;
+  vector<string> ans;
 
-   for( const auto& filename : FileList() ){
-      const auto globq = FilePrefix().back() == '/' ?
-                         FilePrefix() + filename : FilePrefix() + "/" + filename;
+  for( const auto& filename : FileList() ){
+    const auto globq = FilePrefix().back() == '/' ? FilePrefix() + filename :
+                                                    FilePrefix() + "/" + filename;
 
-      for( const auto& file : Glob( globq ) ){
-         ans.push_back( file );
-      }
-   }
+    for( const auto& file : Glob( globq ) ){
+      ans.push_back( file );
+    }
+  }
 
-   return ans;
+  return ans;
 }
 
 
@@ -201,7 +200,7 @@ SampleMgr::GlobbedFileList() const
 bool
 SampleMgr::HasCacheDouble( const string& x ) const
 {
-   return _cachemap.count( x );
+  return _cachemap.count( x );
 }
 
 /******************************************************************************/
@@ -209,7 +208,7 @@ SampleMgr::HasCacheDouble( const string& x ) const
 void
 SampleMgr::AddCacheDouble( const string& key, const double x )
 {
-   _cachemap[key] = x;
+  _cachemap[key] = x;
 }
 
 /******************************************************************************/
@@ -217,7 +216,7 @@ SampleMgr::AddCacheDouble( const string& key, const double x )
 double
 SampleMgr::GetCacheDouble( const string& key ) const
 {
-   return _cachemap.at( key );
+  return _cachemap.at( key );
 }
 
 /******************************************************************************/
@@ -225,7 +224,7 @@ SampleMgr::GetCacheDouble( const string& key ) const
 bool
 SampleMgr::HasCacheString( const string& x ) const
 {
-   return _stringcache.count( x );
+  return _stringcache.count( x );
 }
 
 /******************************************************************************/
@@ -233,7 +232,7 @@ SampleMgr::HasCacheString( const string& x ) const
 void
 SampleMgr::AddCacheString( const string& key, const string& x )
 {
-   _stringcache[key] = x;
+  _stringcache[key] = x;
 }
 
 /******************************************************************************/
@@ -241,20 +240,22 @@ SampleMgr::AddCacheString( const string& key, const string& x )
 string
 SampleMgr::GetCacheString( const string& key ) const
 {
-   return _stringcache.at( key );
+  return _stringcache.at( key );
 }
 
 
 /******************************************************************************/
 
-const map<string,double>&
+const map<string, double>&
 SampleMgr::DoubleCache() const
 {
-   return _cachemap;
+  return _cachemap;
 }
 
-const map<string,string>&
+const map<string, string>&
 SampleMgr::StringCache() const
 {
-   return _stringcache;
+  return _stringcache;
 }
+
+} /* mgr */

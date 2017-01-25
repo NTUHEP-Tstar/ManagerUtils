@@ -9,11 +9,11 @@
 #define MANAGERUTILS_PLOTUTILS_PLOTOBJ_HPP
 
 #include "TCanvas.h"
-#include "TPad.h"
 #include "TLegend.h"
+#include "TPad.h"
 #include "TPaveText.h"
 
-namespace plt {
+namespace mgr {
 /*******************************************************************************
 *   * New Pad - default settings for new padding in top and botom pads
 *******************************************************************************/
@@ -27,24 +27,24 @@ extern void     SetSinglePad( TVirtualPad* );
 *   Create new Tlegend instance with all the font/size settings done.
 *******************************************************************************/
 extern TLegend* NewLegend(
-   const float xmin,
-   const float ymin,
-   const float xmax = PLOT_X_MAX,
-   const float ymax = PLOT_Y_MAX );
+  const float xmin,
+  const float ymin,
+  const float xmax = PLOT_X_TEXT_MAX,
+  const float ymax = PLOT_Y_TEXT_MAX );
 
 /*******************************************************************************
 *   * NewTextBox
 *   Creating a new TextBox instance with all the font/sizing settings done.
 *******************************************************************************/
 extern TPaveText* NewTextBox(
-   const float xmin,
-   const float ymin,
-   const float xmax,
-   const float ymax
-);
+  const float xmin,
+  const float ymin,
+  const float xmax,
+  const float ymax
+  );
 
 
 };
 
 
-#endif /* end of include guard: MANAGERUTILS_PLOTUTILS_PLOTOBJ_HPP */
+#endif/* end of include guard: MANAGERUTILS_PLOTUTILS_PLOTOBJ_HPP */

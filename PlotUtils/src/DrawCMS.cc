@@ -7,24 +7,23 @@
 #include "ManagerUtils/PlotUtils/interface/Constants.hpp"
 #include "TLatex.h"
 
-namespace plt {
+namespace mgr {
 
 void
 DrawCMSLabel( int tag )
 {
-   TLatex tl;
-   tl.SetNDC( kTRUE );
-   tl.SetTextFont( FONT_TYPE );
-   tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
+  TLatex tl;
+  tl.SetNDC( kTRUE );
+  tl.SetTextFont( FONT_TYPE );
+  tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
 
-   tl.SetTextAlign( BOTTOM_LEFT );
-   tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX+0.02, "#bf{CMS}" );
-   if( tag == PRELIMINARY ){
-      tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Preliminary}" );
-   } else
-   if( tag == SIMULATION ){
-      tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Simulation}" );
-   }
+  tl.SetTextAlign( BOTTOM_LEFT );
+  tl.DrawLatex( PLOT_X_MIN, PLOT_Y_MAX+0.02, "#bf{CMS}" );
+  if( tag == PRELIMINARY ){
+    tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Preliminary}" );
+  } else if( tag == SIMULATION ){
+    tl.DrawLatex( PLOT_X_MIN+0.08, PLOT_Y_MAX+0.02, "#it{Simulation}" );
+  }
 }
 
 /******************************************************************************/
@@ -32,16 +31,16 @@ DrawCMSLabel( int tag )
 void
 DrawLuminosity( double luminosity )
 {
-   TLatex tl;
-   tl.SetNDC( kTRUE );
-   tl.SetTextFont( FONT_TYPE );
-   tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
+  TLatex tl;
+  tl.SetNDC( kTRUE );
+  tl.SetTextFont( FONT_TYPE );
+  tl.SetTextSize( AXIS_TITLE_FONT_SIZE );
 
-   char buffer[1024];
-   sprintf( buffer, "%.1lffb^{-1} (%d TeV)", luminosity/1000., 13 );
+  char buffer[1024];
+  sprintf( buffer, "%.1lffb^{-1} (%d TeV)", luminosity/1000., 13 );
 
-   tl.SetTextAlign( BOTTOM_RIGHT );
-   tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.02, buffer );
+  tl.SetTextAlign( BOTTOM_RIGHT );
+  tl.DrawLatex( PLOT_X_MAX, PLOT_Y_MAX+0.02, buffer );
 }
 
 }

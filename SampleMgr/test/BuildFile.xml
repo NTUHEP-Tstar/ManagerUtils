@@ -1,4 +1,7 @@
+<use name="root"/>
+<use name="DataFormats/FWLite"/>
 <use name="ManagerUtils/SampleMgr"/>
+<use name="DataFormats/PatCandidates" />
 
 <flags CXXFLAGS="-g"/>
 

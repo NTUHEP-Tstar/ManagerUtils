@@ -1,6 +1,7 @@
+<use name="roofit"/>
 <use name="boost"/>
 <use name="boost_program_options"/>
-<use name="ManagerUtils/BaseClass"/>
+<use name="ManagerUtils/Common"/>
 
 <flags CXXFLAGS="-g" />
 

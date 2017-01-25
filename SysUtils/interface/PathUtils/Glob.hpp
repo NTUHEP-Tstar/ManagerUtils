@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 
+namespace mgr {
 /*******************************************************************************
 *   * Glob
 *   Master function that most users will directly use. It will attempt to expand
@@ -66,6 +67,8 @@ extern std::string GetServerURL( const std::string& );
 *   For a input rot root://someurl//somestring, returns /somestrings
 *******************************************************************************/
 extern std::string GetRemotePath( const std::string& );
+
+} /* mgr */
 
 
 

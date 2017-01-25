@@ -8,34 +8,38 @@
 #ifndef MANAGERUTILS_PHYSUTILS_MCHELPER_HPP
 #define MANAGERUTILS_PHYSUTILS_MCHELPER_HPP
 
+#include "DataFormats/Candidate/interface/Candidate.h"
+
+namespace mgr {
 /*******************************************************************************
 *   PDG ID definitions:
 *   https://twiki.cern.ch/twiki/bin/view/Main/PdgId
 *******************************************************************************/
-#define DOWN_QUARK_ID     1
-#define UP_QUARK_ID       2
-#define STRANGE_QUARK_ID  3
-#define CHARM_QUARK_ID    4
-#define BOTTOM_QUARK_ID   5
-#define TOP_QUARK_ID      6
+enum PID
+{
+  DOWN_QUARK_ID    = 1,
+  UP_QUARK_ID      = 2,
+  STRANGE_QUARK_ID = 3,
+  CHARM_QUARK_ID   = 4,
+  BOTTOM_QUARK_ID  = 5,
+  TOP_QUARK_ID     = 6,
 
-#define ELEC_ID      11
-#define ELECNU_ID    12
-#define MUON_ID      13
-#define MUONNEU_ID   14
-#define TAU_ID       15
-#define TAUNEU_ID    16
+  ELEC_ID    = 11,
+  ELECNU_ID  = 12,
+  MUON_ID    = 13,
+  MUONNEU_ID = 14,
+  TAU_ID     = 15,
+  TAUNEU_ID  = 16,
 
-#define GLUON_ID       21
-#define GAMMA_ID       22
-#define Z_BOSON_ID     23
-#define W_BOSON_ID     24
-#define HIGGS_BOSON_ID 25
-
+  GLUON_ID       = 21,
+  GAMMA_ID       = 22,
+  Z_BOSON_ID     = 23,
+  W_BOSON_ID     = 24,
+  HIGGS_BOSON_ID = 25
+};
 /*******************************************************************************
 *   Gen level topology transvering helper functions
 *******************************************************************************/
-#include "DataFormats/Candidate/interface/Candidate.h"
 
 /*******************************************************************************
 *   * GetDirectMother( x , F ),
@@ -73,5 +77,7 @@ const reco::Candidate* GetDaughter( const reco::Candidate*, int );
 
 
 
+} /* mgr */
 
-#endif /* end of include guard: MANAGERUTILS_PHYSUTILS_MCHELPER_HPP */
+
+#endif/* end of include guard: MANAGERUTILS_PHYSUTILS_MCHELPER_HPP */

@@ -14,13 +14,12 @@
 *               results in intx, and inty return true;
 *               Return false otherewise;
 *******************************************************************************/
-
 bool Intersect(
-   const double p1x, const double p1y,
-   const double p2x, const double p2y,
-   const double p3x, const double p3y,
-   const double p4x, const double p4y,
-   double& intx, double& inty
-);
+  const double p1x, const double p1y,
+  const double p2x, const double p2y,
+  const double p3x, const double p3y,
+  const double p4x, const double p4y,
+  double& intx, double& inty
+  );
 
-#endif /* end of include guard: MANAGERUTILS_MATHS_INTERSECT_HPP */
+#endif/* end of include guard: MANAGERUTILS_MATHS_INTERSECT_HPP */

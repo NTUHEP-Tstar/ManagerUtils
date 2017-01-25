@@ -7,49 +7,54 @@
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include <cstdio>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
+
 using namespace std;
+using namespace mgr;
 
 int
 main( int argc, char const* argv[] )
 {
-   // Local globbing test
-   vector<string> test_string_list = {
-      "./",
-      "./*",
-      "./*.cc",
-      "./*.json",
-      "../*/*.cc",
-      "../*/*.hpp"
-   };
+  // Local globbing test
+  vector<string> test_string_list = {
+    "./",
+    "./*",
+    "./*.cc",
+    "./*.json",
+    "../*/*.cc",
+    "../*/*.hpp"
+  };
 
-   for( const auto& test : test_string_list ){
-      printf( "Testing [%s]:\n", test.c_str() );
+  for( const auto& test : test_string_list ){
+    printf( "Testing [%s]:\n", test.c_str() );
 
-      for( const auto& output : Glob( test ) ){
-         printf( "\t%s\n", output.c_str() );
-      }
-   }
-   // Remote testing
-   vector<string> remotetestlist = {
-      "root://eoscms.cern.ch//store/*",
-      "root://eoscms.cern.ch//store/*/yichen",
-      "root://eoscms.cern.ch//store/user/yichen/*/*/*/*/*.root"
-   };
+    for( const auto& output : Glob( test ) ){
+      printf( "\t%s\n", output.c_str() );
+    }
+  }
 
-   cout << "Remote globbing test" << endl;
+  // Remote testing
+  vector<string> remotetestlist = {
+    "root://eoscms.cern.ch//store/*",
+    "root://eoscms.cern.ch//store/*/yichen",
+    "root://eoscms.cern.ch//store/user/yichen/*/*/*/*/*.root"
+  };
 
-   for( const auto& remotetest : remotetestlist ){
-      cout << ">>>  " << GetServerURL( remotetest ) << endl;
-      cout << ">>>  " << GetRemotePath( remotetest ) << endl;
-      for( const auto& path: Glob( remotetest ) ){
-         cout << path << endl;
-      }
-      cout << "=====" << endl ;
-   }
+  cout << "Remote globbing test" << endl;
+
+  for( const auto& remotetest : remotetestlist ){
+    cout << ">>>  " << GetServerURL( remotetest ) << endl;
+    cout << ">>>  " << GetRemotePath( remotetest ) << endl;
+
+    for( const auto& path : Glob( remotetest ) ){
+      cout << path << endl;
+    }
+
+    cout << "=====" << endl;
+  }
 
 
-   return 0;
+  return 0;
 }

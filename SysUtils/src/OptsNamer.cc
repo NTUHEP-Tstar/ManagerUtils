@@ -14,10 +14,10 @@
 #include <iostream>
 
 using namespace std;
-using namespace mgr;
 namespace pt  = boost::property_tree;
 namespace opt = boost::program_options;
 
+namespace mgr {
 /*******************************************************************************
 *   Constructor/destructor
 *******************************************************************************/
@@ -144,3 +144,5 @@ OptsNamer::query_tree(
    const string querystring = category + "." + instance + "." + tag;
    return _tree.get<string>( querystring );
 }
+
+} /* mgr */

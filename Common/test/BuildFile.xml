@@ -1,0 +1,3 @@
+<use name="ManagerUtils/Common"/>
+
+<bin name="variadic_test" file="variadic_test.cc"/>
