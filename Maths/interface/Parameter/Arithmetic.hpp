@@ -10,36 +10,75 @@
 #ifndef MANAGERUTILS_MATHS_PARAMETER_ARITHMETIC_HPP
 #define MANAGERUTILS_MATHS_PARAMETER_ARITHMETIC_HPP
 
-#include "ManagerUtils/Maths/interface/Parameter.hpp"
 #include "ManagerUtils/Common/interface/Variadic.hpp"
+#include "ManagerUtils/Maths/interface/Parameter/Parameter.hpp"
+#include "ManagerUtils/Maths/interface/StatisticsUtil.hpp"
 #include <vector>
 
 namespace mgr {
+
+/*******************************************************************************
+*   Common interfacing with MinosError functions
+*******************************************************************************/
+extern Parameter MakeMinos(
+  gsl_function* nll,
+  const double  initguess,
+  const double  min,
+  const double  max,
+  const double  confidencelevel = mgr::stat::onesigma_level
+  );
+
+extern Parameter MakeMinos(
+  mgr::gsl::gsl_multifunc* nll,
+  mgr::gsl::gsl_multifunc* varfunction,
+  gsl_vector*              initguess,
+  const double             confidencelevel = mgr::stat::onesigma_level,
+  gsl_vector*              upperguess = nullptr,
+  gsl_vector*              lowerguess = nullptr
+  );
+
+/*******************************************************************************
+*   Defining Default approximation NLL function for a given parameter
+*******************************************************************************/
+double LinearVarianceNLL( double, const Parameter& );
+
 /*******************************************************************************
 *   Main calculation functions, do mot call from outside
 *   - Implemented in ParamterArithmethic.cc
 *******************************************************************************/
-Parameter Sum( const std::vector<Parameter>& );
-Parameter Prod( const std::vector<Parameter>& );
+Parameter SumUncorrelated(
+  const std::vector<Parameter>& paramlist,
+  const double confidencelevel = mgr::stat::onesigma_level,
+  double ( * nll )( double, const Parameter& ) = & LinearVarianceNLL
+  );
+
+Parameter ProdUncorrelated(
+  const std::vector<Parameter>& paramlist,
+  const double confidencelevel = mgr::stat::onesigma_level,
+  double ( * nll )( double, const Parameter& ) = & LinearVarianceNLL
+  );
 
 /*******************************************************************************
 *   Template variadic functions for better interfacing
 *   ex. Sum( a, b, c , d );
 *******************************************************************************/
-template<typename Tf, typename ... Ts>
+template<typename ... Ts>
 Parameter
-Sum( Tf x,  Ts ... args )
+Sum( const Parameter& x,  Ts ... args )
 {
-  return Sum( MakeVector<Parameter>( x, args ... ) );
+  return SumUncorrelated( MakeVector<Parameter>( x, args ... ) );
 }
 
-template<typename Tf, typename ... Ts>
-mgr::Parameter
-Prod( Tf x, Ts ... args )
+template<typename ... Ts>
+Parameter
+Prod( const Parameter& x, Ts ... args )
 {
-  return Prod( MakeVector<Parameter>( x, args ... ) );
+  return ProdUncorrelated( MakeVector<Parameter>( x, args ... ) );
 }
-} /* mgr */
+
+
+
+}/* mgr */
 
 
 #endif/* end of include guard: MANAGERUTILS_MATHS_PARAMETERARITHMETIC_HPP */

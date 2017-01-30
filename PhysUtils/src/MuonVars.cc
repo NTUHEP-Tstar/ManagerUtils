@@ -13,8 +13,8 @@ namespace mgr {
 *   Muon PF Isolation
 *   https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideMuonId
 *******************************************************************************/
-extern const double MUPFISO_TIGHT = 0.12;
-extern const double MUPFISO_LOOSE = 0.20;
+extern const double MUPFISO_TIGHT = 0.15;
+extern const double MUPFISO_LOOSE = 0.25;
 
 double
 MuPfIso( const pat::Muon& mu )

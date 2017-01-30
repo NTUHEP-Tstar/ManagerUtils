@@ -11,35 +11,28 @@
 #ifndef MANAGERUTILS_MATHS_PARAMETER_COMMONDISTRO_HPP
 #define MANAGERUTILS_MATHS_PARAMETER_COMMONDISTRO_HPP
 
-#include "ManagerUtils/Maths/interface/Parameter.hpp"
+#include "ManagerUtils/Maths/interface/Parameter/Parameter.hpp"
+#include "ManagerUtils/Maths/interface/StatisticsUtil.hpp"
 
 namespace mgr {
 
 /*******************************************************************************
 *   Efficiency - all efficiency related structures obtained here
 *******************************************************************************/
-
 namespace Efficiency
 {
-/*******************************************************************************
-*   Interaction flags and constants
-*******************************************************************************/
-extern const bool shortest_interval;
-extern const bool central_interval;
 
-/***********************************************************************************
-* Returns the parameter for a selection efficiency with "passed" passed number of *
-* of events and "total" total number of events. Assumes: Baysian with uniform     *
-* prior functions                                                                 *
-* @param  passed Passed number of events                                          *
-* @param  total  Total number of events                                           *
-* @return        Returned value                                                   *
-***********************************************************************************/
-extern Parameter Default( double passed,  double total );
+extern Parameter Minos(
+  const double passed,
+  const double total,
+  const double confidencelevel = mgr::stat::onesigma_level
+  );
 
 /********************************************************************
 * General wrapper function for the TEfficiency::Bayesian functions *
 ********************************************************************/
+extern const bool shortest_interval;
+extern const bool central_interval;
 extern Parameter Bayesian(
   double passed,
   double total,
@@ -49,19 +42,21 @@ extern Parameter Bayesian(
   double beta
   );
 
-// TODO:: Add extra method
 };// Efficiency
 
 
-
+/*******************************************************************************
+*   Poisson - all Poison related method for creating Parameters
+*******************************************************************************/
 namespace Poisson
 {
-/********************************************************************
-* Get the error interval of Poisson interval base on a observation *
-* @param  obs input observation                                    *
-* @return     Paramter with asymmetric error                       *
-********************************************************************/
-extern Parameter Default( double obs );
+extern Parameter Minos(
+  const double obs ,
+  const double confidencelevel = mgr::stat::onesigma_level
+);
+
+// TODO: Add more methods
+
 };// Poisson
 
 }/* mgr */

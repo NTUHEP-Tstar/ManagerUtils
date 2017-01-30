@@ -53,6 +53,12 @@ extern std::string PackagePath( const std::string& x );
 *******************************************************************************/
 extern std::string SubPackagePath( const std::string& x, const std::string& y );
 
+/*******************************************************************************
+*   Check If parent directory of file exists, create if doesn't
+*******************************************************************************/
+extern bool CheckPath( const std::string& filename );
+
+
 }/* mgr */
 
 #endif/* end of include guard:  */

@@ -7,6 +7,7 @@
 *******************************************************************************/
 #include <boost/filesystem.hpp>
 #include <string>
+#include <iostream>
 #include <unistd.h>
 using namespace std;
 namespace fs = boost::filesystem ;
@@ -72,6 +73,25 @@ string
 SubPackagePath( const std::string& x, const std::string& y )
 {
   return PackagePath(x)/y;
+}
+
+/******************************************************************************/
+
+bool
+CheckPath( const std::string& filename )
+{
+  fs::path parent = fs::path(filename).parent_path();
+  if( fs::is_directory(parent) ){
+    return true; //Early exit if already exists
+  }
+
+  if( fs::create_directory(parent) ){
+    cout << "New directory " << parent << " created!" << endl;
+    return true;
+  } else {
+    cout << "Failed making new directory " << parent << "!" << endl;
+    return false;
+  }
 }
 
 } /* mgr */

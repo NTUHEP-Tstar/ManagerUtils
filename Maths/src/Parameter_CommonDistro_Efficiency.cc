@@ -5,38 +5,39 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
-#include "ManagerUtils/Maths/interface/Compute.hpp"
 #include "ManagerUtils/Maths/interface/Parameter/CommonDistro.hpp"
+#include "ManagerUtils/Maths/interface/Parameter/Arithmetic.hpp"
+#include "ManagerUtils/Maths/interface/StatisticsUtil.hpp"
 #include "TEfficiency.h"
 
 namespace mgr {
 
 /*******************************************************************************
-*   Defining static constants
+*   Minos error from calling StatisticsUtil defined functions
+*******************************************************************************/
+Parameter
+Efficiency::Minos( const double passed,  const double total, const double confidencelevel )
+{
+  double params[] ={passed,total};
+  gsl_function binomial;
+  binomial.function = &mgr::stat::BinomialNLL;
+  binomial.params   = params;
+
+  return MakeMinos(
+    &binomial,
+    passed/total,
+    (mgr::gsl::epsilon)*(mgr::gsl::epsilon), // Must be very small...
+    1-(mgr::gsl::epsilon)*(mgr::gsl::epsilon),
+    confidencelevel
+  );
+}
+
+/*******************************************************************************
+*   General Wrapper functions for TEfficiency Bayesian method
 *******************************************************************************/
 const bool Efficiency::shortest_interval = true;
 const bool Efficiency::central_interval  = false;
 
-/*******************************************************************************
-*   Default Method
-*******************************************************************************/
-Parameter
-Efficiency::Default( double passed,  double total )
-{
-  static const double uniform_priory_alpha = 1.;
-  static const double uniform_priory_beta  = 1.;
-  return Bayesian(
-    passed, total,
-    stat::onesigma_interval,
-    shortest_interval,
-    uniform_priory_alpha,
-    uniform_priory_beta
-    );
-}
-
-/*******************************************************************************
-*   General Wrapper functions
-*******************************************************************************/
 Parameter
 Efficiency::Bayesian(
   double passed,

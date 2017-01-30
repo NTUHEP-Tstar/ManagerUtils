@@ -8,7 +8,7 @@
 #ifndef MANAGERUTILS_MATHS_PARAMETER_FORMAT_HPP
 #define MANAGERUTILS_MATHS_PARAMETER_FORMAT_HPP
 
-#include "ManagerUtils/Maths/interface/Parameter.hpp"
+#include "ManagerUtils/Maths/interface/Parameter/Parameter.hpp"
 #include <string>
 
 namespace mgr {

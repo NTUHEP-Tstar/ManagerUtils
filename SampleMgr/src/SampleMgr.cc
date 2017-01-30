@@ -157,7 +157,7 @@ SampleMgr::EffectiveLuminosity() const
 Parameter
 SampleMgr::SelectionEfficiency() const
 {
-  return Efficiency::Default( SelectedEventCount(), OriginalEventCount() );
+  return Efficiency::Minos( SelectedEventCount(), OriginalEventCount() );
 }
 
 /******************************************************************************/

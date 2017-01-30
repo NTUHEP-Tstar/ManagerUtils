@@ -6,9 +6,11 @@
 *
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
+
 #include "TCanvas.h"
 #include "TFile.h"
-#include <cstdlib>
+
+#include <boost/format.hpp>
 #include <iostream>
 #include <string>
 
@@ -27,37 +29,36 @@ SaveToPDF( TCanvas* c, const string& filename )
   // Saving to a temporary file /tmp/XXXXXX<filename>.pdf
   // Forcing postfix to be '.pdf'
   const string temppdf = "/tmp/" + RandomFileName( 6, "", false ) + "_" + Basename( filename ) + ".pdf";
-  char cmd[4096];
 
   c->SaveAs( temppdf.c_str() );
 
+  CheckPath( filename );
+
   // Command found at
   // http://tex.stackexchange.com/questions/66522/xelatex-rotating-my-figures-in-beamer
-  sprintf(
-    cmd,
-    "gs"
-    "  -sDEVICE=pdfwrite"
-    "  -dCompatibilityLevel=1.4"
-    "  -dPDFSETTINGS=/screen"
-    "  -dNOPAUSE"
-    "  -dQUIET"
-    "  -dBATCH"
-    "  -sOutputFile=%s"
-    "  %s",
-    filename.c_str(),
-    temppdf.c_str()
-    );
+  const string cmd = boost::str( boost::format(
+      "gs"
+      "  -sDEVICE=pdfwrite"
+      "  -dCompatibilityLevel=1.4"
+      "  -dPDFSETTINGS=/screen"
+      "  -dNOPAUSE"
+      "  -dQUIET"
+      "  -dBATCH"
+      "  -sOutputFile=%s"
+      "  %s"
+      ) % filename % temppdf );
 
-  system( cmd );
+  system( cmd.c_str() );
   system( ( "rm "+ temppdf ).c_str() );
 
-  cout << "Saving Tcanvas " << c->GetName() << " to " << filename << endl;
+  cout << "Saving TCanvas " << c->GetName() << " to " << filename << endl;
 }
 
 /******************************************************************************/
 void
 SaveToROOT( TCanvas* c, const string& filename, const string& objname )
 {
+  CheckPath( filename );
   TFile* myfile = TFile::Open( filename.c_str(), "UPDATE" );
   c->Write( objname.c_str(), TFile::kOverwrite );
   delete myfile;

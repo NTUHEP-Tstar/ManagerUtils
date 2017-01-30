@@ -11,6 +11,7 @@
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/TimeUtils.hpp"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <exception>
@@ -132,17 +133,24 @@ HiggsCombineSubmitter::check_higgs_dir() const
 
   // Git command for checking branch name
   // http://stackoverflow.com/questions/6245570/how-to-get-the-current-branch-name-in-git
-  boost::format gitcheck_fmt( "cd %s && $(git branch | grep ^\\* | awk '{print $2}')" );
+  boost::format gitcheck_fmt( "cd %s && git branch | grep ^\\* | awk '{print $2}'" );
   const string gitcheck = str( gitcheck_fmt % higgspath );
-  if( GetCMDERROutput( gitcheck ) != "" ){
+
+  // Checking if error code is returned
+  string output = GetCMDERROutput( gitcheck );
+  if( output != "" ){
     cerr << "Error running command [" << gitcheck << "], check you installation directory!" << endl;
     return false;
   }
-  if( GetCMDSTDOutput( gitcheck ) != _higg_combine_version ){
+
+  // Checking output validity
+  output = GetCMDSTDOutput( gitcheck );
+  if( boost::trim_copy( output ) != _higg_combine_version ){
     cerr << boost::format( "Different version of higgs combined detected! Installed [%s], required [%s]" )
       % GetCMDSTDOutput( gitcheck )
       % _higg_combine_version
          << endl;
+    cerr << gitcheck << endl;
     cerr << boost::format( "Try command [git checkout -b %s] in install directory [%s]" )
       % _higg_combine_version
       % higgspath
@@ -158,14 +166,14 @@ void
 HiggsCombineSubmitter::init_higgs_dir() const
 {
   boost::format cmdformat(
-"export SCRAM_ARCH=%0%\n"
-"cd %1%\n"
-"cmsrel %2%\n"
-"cd %2%/src\n"
-"cmsenv\n"
-"git clone %3% %4%\n"
-"cd %4%\n"
-"git checkout -b %5%\n"
+    "export SCRAM_ARCH=%1%\n"
+    "cd %2%\n"
+    "cmsrel %3%\n"
+    "cd %3%/src\n"
+    "cmsenv\n"
+    "git clone %4% %5%\n"
+    "cd %5%\n"
+    "git checkout -b %6%\n"
     );
   cout << "Try running the following commands" << endl;
   cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
@@ -325,4 +333,4 @@ CombineRequest::~CombineRequest()
 {
 }
 
-} /* mgr */
+}/* mgr */

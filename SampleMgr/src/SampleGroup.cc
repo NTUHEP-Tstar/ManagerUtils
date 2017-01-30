@@ -8,6 +8,7 @@
 #include "ManagerUtils/SampleMgr/interface/SampleGroup.hpp"
 
 #include "ManagerUtils/Common/interface/ConfigReader.hpp"
+#include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
 #include <exception>
@@ -135,7 +136,7 @@ ConfigReader
 SampleGroup::GetUndefConfig( const ConfigReader& cfg ) const
 {
   const string jsonfile = cfg.GetStaticString( "Default Json" );
-  const string fullpath = SampleCfgPrefix() + jsonfile;
+  const string fullpath = SampleCfgPrefix() / jsonfile;
   return ConfigReader( fullpath );
 }
 
@@ -146,7 +147,7 @@ SampleGroup::GetSampleListConfig( const ConfigReader& cfg ) const
 {
   if( cfg.HasTag( Name(), "Subset Json" ) ){
     const string jsonfile = cfg.GetString( Name(), "Subset Json" );
-    const string fullpath = SampleCfgPrefix() + jsonfile;
+    const string fullpath = SampleCfgPrefix() / jsonfile;
     return ConfigReader( fullpath );
   } else {
     return GetUndefConfig( cfg );
@@ -159,7 +160,7 @@ ConfigReader
 SampleGroup::GetSingleConfig( const ConfigReader& cfg ) const
 {
   const string jsonfile = cfg.GetString( Name(), "Single Sample" );
-  const string fullpath = SampleCfgPrefix() + jsonfile;
+  const string fullpath = SampleCfgPrefix() / jsonfile;
   return ConfigReader( fullpath );
 }
 
@@ -171,7 +172,7 @@ SampleGroup::GetConfigList( const ConfigReader& cfg ) const
   vector<ConfigReader> ans;
 
   for( const auto& json : cfg.GetStringList( Name(), "File List" ) ){
-    ans.emplace_back( SampleCfgPrefix() + json );
+    ans.emplace_back( SampleCfgPrefix() / json );
   }
 
   return ans;
@@ -257,7 +258,7 @@ SampleGroup::AvgSelectionEfficiency() const
       orig += sample.OriginalEventCount();
     }
 
-    return Efficiency::Default( pass, orig );
+    return Efficiency::Minos( pass, orig );
 
   } else {
     Parameter ans( 0, 0, 0 );
