@@ -215,8 +215,8 @@ ProdUncorrelated(
   for( size_t i = 0; i < normlist.size(); ++i ){
     const Parameter& p = normlist.at( i );
     gsl_vector_set( initguess,  i, p.CentralValue() );
-    gsl_vector_set( upperguess, i, p.CentralValue() + p.AbsUpperError()/2 );
-    gsl_vector_set( lowerguess, i, p.CentralValue() - p.AbsLowerError()/2 );
+    gsl_vector_set( upperguess, i, p.CentralValue() + p.AbsUpperError()/10 );
+    gsl_vector_set( lowerguess, i, p.CentralValue() - p.AbsLowerError()/10 );
   }
 
   // Calling MinosError function for acutal computation

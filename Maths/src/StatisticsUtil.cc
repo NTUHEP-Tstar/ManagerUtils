@@ -140,12 +140,15 @@ MinosError(
 
   // All steps required setting to 1
   for( size_t i = 0; i < dim; ++i ){
-    double stepsize = 0.05;// Default step size
+    double stepsize = 0.005;// Default step size
+    const double x  = gsl_vector_get( initguess, i );
     if( upperguess ){
-      stepsize = std::min( stepsize, gsl_vector_get( upperguess, i )/2 );
+      const double y = gsl_vector_get( upperguess, i );
+      stepsize = std::min( stepsize, fabs( y-x )/5 );
     }
     if( lowerguess ){
-      stepsize = std::min( stepsize, gsl_vector_get( lowerguess, i )/2 );
+      const double y = gsl_vector_get( upperguess, i );
+      stepsize = std::min( stepsize, fabs( y-x )/5 );
     }
     gsl_vector_set( step, i, stepsize );
   }
@@ -204,12 +207,12 @@ MinosError(
   for( size_t i = 0; i < dim; ++i ){
     if( upperguess ){// If upper guess is provided.
       gsl_vector_set( errinitguess, i, gsl_vector_get( upperguess, i ) );
-    } else {
+    } else { // Otherwise stargin for Minimum point
       gsl_vector_set( errinitguess, i, gsl_vector_get( bestinput, i ) );
     }
   }
 
-  gsl_vector_set( errinitguess, dim, 0.1 );
+  gsl_vector_set( errinitguess, dim, 0.01 );
   gsl_multiroot_fsolver_set( errsolver, &minosfunc, errinitguess );
 
   mgr::gsl::IterateSolver( errsolver );

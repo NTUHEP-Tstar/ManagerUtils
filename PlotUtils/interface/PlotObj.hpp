@@ -43,6 +43,29 @@ extern TPaveText* NewTextBox(
   const float ymax
   );
 
+/*******************************************************************************
+*   * Divide TGraphAsymmErrors
+*   Creating a new TGraph that is the division of two existing TGraphs,
+*   the numerator number of points will be used. The points in between
+*   for the demominator will ge evaluted using the Eval function:
+*
+*   >  NewGraph->GetY()[i] == Num->GetY()[i] / Den->Eval( Num->GetX()[i] );
+*
+*   The Y error will be a simple devition of the Numerators value by the
+*   Denominators central value. No error propagation is calcualted:
+*
+*   >  NewGraph->GetErrorYhigh(i) = Num->GetErrorYhigh(i) / Den->Eval( Num->GetX()[i]);
+*
+*   The X Error will be a duplicate
+*
+*   >  NewGraph->GetErrorXhigh(i) = Num->GetErrorXhigh(i)
+*
+*******************************************************************************/
+extern TGraphAsymmErrors* DividedGraph(
+  TGraphAsymmErrors* num,
+  TGraph*            den
+  );
+
 
 };
 

@@ -18,11 +18,13 @@
 #include "TColor.h"
 #include "TFile.h"
 #include "TGraph.h"
+#include "TGraphAsymmErrors.h"
 #include "THStack.h"
 #include "TLegend.h"
 #include "TLine.h"
 #include "TPad.h"
 #include "TPaveText.h"
+#include "TMultiGraph.h"
 
 /*******************************************************************************
 *   Including custom defined functions
@@ -30,10 +32,10 @@
 #include "ManagerUtils/PlotUtils/interface/Constants.hpp"
 #include "ManagerUtils/PlotUtils/interface/DrawCMS.hpp"
 #include "ManagerUtils/PlotUtils/interface/GetRange.hpp"
+#include "ManagerUtils/PlotUtils/interface/LatexMgr.hpp"
 #include "ManagerUtils/PlotUtils/interface/PlotObj.hpp"
 #include "ManagerUtils/PlotUtils/interface/SaveUtils.hpp"
 #include "ManagerUtils/PlotUtils/interface/SetAxis.hpp"
-#include "ManagerUtils/PlotUtils/interface/LatexMgr.hpp"
 
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 

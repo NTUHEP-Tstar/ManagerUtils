@@ -6,12 +6,15 @@
 *
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PathUtils/Glob.hpp"
+#include "ManagerUtils/SysUtils/interface/PathUtils/CommonPath.hpp"
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
+#include "ManagerUtils/Common/interface/STLUtils.hpp"
 
 #include <algorithm>
 #include <regex>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
@@ -27,10 +30,9 @@ namespace mgr {
 vector<string>
 Glob( const string& path )
 {
-  static const std::string remoteprefix = "root://";
-  if( std::mismatch( remoteprefix.begin(), remoteprefix.end(), path.begin() ).first == remoteprefix.end() ){
+  if( IsRemotePath(path) ){
     return GlobRemote( path );
-  } else {
+  }else {
     return GlobLocal( path );
   }
 }
@@ -56,6 +58,7 @@ GlobRemote( const string& fullpath )
   vector<string> ans;
   const string remoteurl  = GetServerURL( fullpath );
   const string remotepath = GetRemotePath( fullpath );
+  // cout << remoteurl << " " << remotepath << endl;
 
   // Breaking up original directory query by directory
   vector<string> tokens;
@@ -72,7 +75,7 @@ GlobRemote( const string& fullpath )
     const string prev = tokens[index-1];
     const string pres = tokens[index];
     if( GlobToRegex( prev ) == prev && GlobToRegex( pres ) == pres ){
-      tokens[index-1] = prev + '/' + pres;
+      tokens[index-1] = prev / pres;
       tokens.erase( tokens.begin() + index );
       --index;
     }
@@ -89,8 +92,10 @@ GlobRemote( const string& fullpath )
     if( querydepth >= tokens.size() ){ continue; }
 
     const string cmd = str( boost::format( "xrdfs %1% ls '%2%'" ) % remoteurl % querydir );
-    string rawoutput = "";   // cannot be const
-    rawoutput = GetCMDOutput( cmd );
+    // cout << cmd << endl;
+
+    // Cannot be const
+    string rawoutput = GetCMDOutput( cmd );
 
     vector<string> outlist;
     boost::split( outlist, rawoutput, boost::is_any_of( "\n\t " ) );
@@ -136,6 +141,19 @@ GlobToRegex( const std::string& query )
   ans = std::regex_replace( ans, qmmatch, qmrep );
   return ans;
 }
+/*******************************************************************************
+*   IsRemotePath
+*******************************************************************************/
+bool
+IsRemotePath( const std::string& path )
+{
+  static const std::string remoteprefix = "root://";
+  if( std::mismatch( remoteprefix.begin(), remoteprefix.end(), path.begin() ).first == remoteprefix.end() ){
+    return true;
+  } else {
+    return false;
+  }
+}
 
 /*******************************************************************************
 *   Remote Helper functions
@@ -143,7 +161,7 @@ GlobToRegex( const std::string& query )
 std::string
 GetServerURL( const std::string& remotepath )
 {
-  static const std::regex urlregex( "root:\\/\\/([a-z.]+)\\/\\/.*" );
+  static const std::regex urlregex( "root:\\/\\/([a-z.0-9]+)\\/\\/.*" );
   std::smatch urlmatch;
   if( std::regex_match( remotepath, urlmatch, urlregex ) ){
     if( urlmatch.size() == 2 ){
@@ -153,7 +171,7 @@ GetServerURL( const std::string& remotepath )
       return "";
     }
   } else {
-    throw std::invalid_argument( "Input does not contain server url!" );
+    throw std::invalid_argument( "Input does not contain valid server url!" );
     return "";
   }
 }
@@ -163,7 +181,7 @@ GetServerURL( const std::string& remotepath )
 std::string
 GetRemotePath( const std::string& remotepath )
 {
-  static const std::regex pathregex( "root:\\/\\/[a-z.]+\\/(\\/.+)" );
+  static const std::regex pathregex( "root:\\/\\/[a-z.0-9]+\\/(\\/.+)" );
   std::smatch pathmatch;
   if( std::regex_match( remotepath, pathmatch, pathregex ) ){
     if( pathmatch.size() == 2 ){

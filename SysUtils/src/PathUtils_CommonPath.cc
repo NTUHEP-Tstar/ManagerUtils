@@ -5,6 +5,8 @@
 *  Author      : Yi-Mu "Enoch" Chen [ ensc@hep1.phys.ntu.edu.tw ]
 *
 *******************************************************************************/
+#include "ManagerUtils/Common/interface/STLUtils.hpp"
+
 #include <boost/filesystem.hpp>
 #include <string>
 #include <iostream>
@@ -16,13 +18,6 @@ namespace fs = boost::filesystem ;
 /*******************************************************************************
 *   Operator overloading
 *******************************************************************************/
-string
-operator/( const std::string& x ,const std::string& y )
-{
-  return (fs::path(x)/y).string();
-}
-
-
 
 namespace mgr {
 

@@ -8,6 +8,7 @@
 
 #include "ManagerUtils/PlotUtils/interface/Constants.hpp"
 #include "TCanvas.h"
+#include "TGraphAsymmErrors.h"
 #include "TLegend.h"
 #include "TPad.h"
 #include "TPaveText.h"
@@ -105,6 +106,38 @@ NewTextBox( const float x_min,
 }
 
 
+/******************************************************************************/
+
+TGraphAsymmErrors*
+DividedGraph(
+  TGraphAsymmErrors* num,
+  TGraph*            den
+  )
+{
+  TGraphAsymmErrors* ans = new TGraphAsymmErrors( num->GetN() );
+
+  for( int i = 0; i < num->GetN(); ++i ){
+    const double origx  = num->GetX()[i];
+    const double origy  = num->GetY()[i];
+    const double xerrlo = num->GetErrorXlow( i );
+    const double xerrhi = num->GetErrorXhigh( i );
+    const double yerrlo = num->GetErrorYlow( i );
+    const double yerrhi = num->GetErrorYhigh( i );
+
+    const double deny = den->Eval( origx );
+
+    ans->SetPoint( i, origx, origy / deny );
+    ans->SetPointError(
+      i,
+      xerrlo,
+      xerrhi,
+      yerrlo / deny,
+      yerrhi / deny
+      );
+  }
+  ans->SetTitle("");
+  return ans;
+}
 
 
 

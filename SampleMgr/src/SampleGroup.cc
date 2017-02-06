@@ -8,7 +8,7 @@
 #include "ManagerUtils/SampleMgr/interface/SampleGroup.hpp"
 
 #include "ManagerUtils/Common/interface/ConfigReader.hpp"
-#include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
+#include "ManagerUtils/Common/interface/STLUtils.hpp"
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
 #include <exception>
@@ -115,11 +115,20 @@ SampleGroup::ConfigType
 SampleGroup::GetType( const ConfigReader& cfg ) const
 {
   if( !cfg.HasInstance( Name() ) ){
-    if( !cfg.HasStaticTag( "Default Json" ) ){ return ERROR; }
+    if( !cfg.HasStaticTag( "Default Json" ) ){
+      cerr << "Error! Doesn't have instance [" << Name() << "] and doesn't have default json defined!" << endl;
+      return ERROR;
+    }
     return Undef;
   } else if( cfg.HasTag( Name(), "Sample List" ) ){
-    if( cfg.HasTag( Name(), "Subset Json" ) ){ return Standard; }
-    if( cfg.HasStaticTag( "Default Json" ) ){ return Standard; }
+    if( cfg.HasTag( Name(), "Subset Json" ) ){
+      return Standard;
+    }
+    if( cfg.HasStaticTag( "Default Json" ) ){
+      return Standard;
+    }
+    cerr << "Has instance ["<< Name() <<"] with [Sample List]"  << endl
+        << "But doesn't have [Subset Json] or [Default Json] defined!" <<endl;
     return ERROR;
   } else if( cfg.HasTag( Name(), "File List" ) ){
     return FileList;
@@ -275,4 +284,4 @@ SampleGroup::AvgSelectionEfficiency() const
   }
 }
 
-} /* mgr */
+}/* mgr */

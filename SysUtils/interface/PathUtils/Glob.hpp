@@ -57,6 +57,12 @@ extern std::vector<std::string> GlobRemote( const std::string& );
 extern std::string GlobToRegex( const std::string& );
 
 /*******************************************************************************
+*   * IsRemotePath
+*   Boolean check for string format
+*******************************************************************************/
+extern bool IsRemotePath( const std::string& );
+
+/*******************************************************************************
 *   * GetServerURL
 *   For a input of root://<someurl>//<somestring>, returns <someurl>
 *******************************************************************************/

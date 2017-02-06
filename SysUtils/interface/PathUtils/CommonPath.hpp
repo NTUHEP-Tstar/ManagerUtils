@@ -14,7 +14,6 @@
 *   Operator / for strings
 *   Boost filesystem flavour path appendage
 *******************************************************************************/
-extern std::string operator/( const std::string& lhs, const std::string& rhs );
 
 namespace mgr {
 /*******************************************************************************
@@ -54,7 +53,8 @@ extern std::string PackagePath( const std::string& x );
 extern std::string SubPackagePath( const std::string& x, const std::string& y );
 
 /*******************************************************************************
-*   Check If parent directory of file exists, create if doesn't
+*   ** CheckPath
+*   Check if parent directory of file exists, create if doesn't
 *******************************************************************************/
 extern bool CheckPath( const std::string& filename );
 

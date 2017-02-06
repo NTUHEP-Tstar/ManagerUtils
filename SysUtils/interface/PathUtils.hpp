@@ -11,6 +11,11 @@
 #define MANAGERUTILS_SYSUTILS_PATHUTILS
 
 /*******************************************************************************
+*   Automatically including string enhancing libraries
+*******************************************************************************/
+#include "ManagerUtils/Common/interface/STLUtils/StringUtils.hpp"
+
+/*******************************************************************************
 *   Commonly used Paths
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PathUtils/CommonPath.hpp"

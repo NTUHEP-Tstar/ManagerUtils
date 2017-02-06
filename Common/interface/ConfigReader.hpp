@@ -34,8 +34,6 @@
 namespace mgr
 {
 
-extern void PrintPTree( const boost::property_tree::ptree&, unsigned level = 0 );
-
 class ConfigReader
 {
 
@@ -77,16 +75,6 @@ public:
 
 private:
   boost::property_tree::ptree _ptree;
-
-  // Helper member functions
-  static bool                     has_tag( const boost::property_tree::ptree& tree, const std::string& tag );
-  static bool                     get_bool( const boost::property_tree::ptree& tree, const std::string& tag );
-  static std::string              get_string( const boost::property_tree::ptree& tree, const std::string& tag );
-  static double                   get_double( const boost::property_tree::ptree& tree, const std::string& tag );
-  static Parameter                get_parameter( const boost::property_tree::ptree& tree, const std::string& tag );
-  static std::vector<std::string> get_string_list( const boost::property_tree::ptree& tree, const std::string& tag );
-  static std::vector<double>      get_double_list( const boost::property_tree::ptree& tree, const std::string& tag );
-
 };
 
 };

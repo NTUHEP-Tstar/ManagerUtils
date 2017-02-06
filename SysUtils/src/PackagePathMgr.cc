@@ -7,6 +7,7 @@
 *******************************************************************************/
 #include "ManagerUtils/SysUtils/interface/PackagePathMgr.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
+#include "ManagerUtils/Common/interface/STLUtils.hpp"
 
 #include <boost/filesystem.hpp>
 #include <cstdlib>

@@ -6,6 +6,7 @@
 *
 *******************************************************************************/
 #include "ManagerUtils/Common/interface/ConfigReader.hpp"
+#include "ManagerUtils/Common/interface/STLUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/HiggsCombineSubmitter.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"

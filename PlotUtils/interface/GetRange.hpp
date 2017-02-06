@@ -34,22 +34,33 @@ extern double GetYmin( const TGraph* );
 extern double GetYmax( const std::vector<TGraph*>&  );
 extern double GetYmin( const std::vector<TGraph*>&  );
 
-// /*******************************************************************************
-// *   Variadic interface
-// *******************************************************************************/
-// template<typename TF, typename ... TS>
-// double
-// GetYmin( TF x, TS ... arg )
-// {
-//   return GetYmin( MakeVector<TGraph*>( x, arg ... ) );
-// }
-//
-// template<typename T, typename TF, typename ... TS>
-// double
-// GetYmax( TF x, TS ... arg )
-// {
-//   return GetYmax( MakeVector<T*>( x, arg ... ) );
-// }
+/*******************************************************************************
+*   Variadic interface
+*******************************************************************************/
+template<typename ... TS>
+double
+GetYmin( TGraph* x, TS ... arg )
+{
+  return GetYmin( MakeVector<TGraph*>( x, arg ... ) );
+}
+
+/******************************************************************************/
+
+template<typename ... TS>
+double
+GetYmax( TGraph* x, TS ... arg )
+{
+  return GetYmax( MakeVector<TGraph*>( x, arg ... ) );
+}
+
+/******************************************************************************/
+
+template<typename ... TS>
+double
+GetYmax( TH1* x, TS ... arg )
+{
+  return GetYmax( MakeVector<TH1*>( x, arg ... ) );
+}
 
 };
 

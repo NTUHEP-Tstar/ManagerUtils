@@ -1,3 +1,5 @@
 <use name="ManagerUtils/Common"/>
 
+<bin name="config_reader_test" file="config_reader_test.cc" />
+<bin name="ptree_test"    file="ptree_test.cc"   />
 <bin name="variadic_test" file="variadic_test.cc"/>
