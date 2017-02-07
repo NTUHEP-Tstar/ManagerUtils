@@ -15,8 +15,7 @@ def listremote(siteurl, query):
     out, err = proc.communicate()
     if err :
         print "Error detected when calling xrdfs!"
+        print ">>> xrdfs", siteurl, "ls", query
         print "Have you setup your permission? (voms-proxy-init -voms cms -valid 192:0)"
         raise Exception("Error in input!")
     return out.split()
-
-    
