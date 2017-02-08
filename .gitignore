@@ -17,6 +17,7 @@ log*
 # Specific file exclusion
 # [relative/path/to/file]
 html/
+.remote-sync.json
 
 
 # Specific file inclusion
