@@ -66,6 +66,10 @@ extern TGraphAsymmErrors* DividedGraph(
   TGraph*            den
   );
 
+extern TGraphAsymmErrors* PullGraph(
+  TGraph*            numgraph,
+  TGraphAsymmErrors* dengraph
+);
 
 };
 

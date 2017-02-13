@@ -139,6 +139,34 @@ DividedGraph(
   return ans;
 }
 
+/******************************************************************************/
+
+TGraphAsymmErrors*
+PullGraph(
+  TGraph* numgraph,
+  TGraphAsymmErrors* dengraph
+)
+{
+  TGraphAsymmErrors* ans = new TGraphAsymmErrors( dengraph->GetN() );
+
+  for( int i = 0 ; i < dengraph->GetN() ; ++i ){
+    const double x    = dengraph->GetX()[i];
+    const double y    = dengraph->GetY()[i];
+    const double numy = numgraph->Eval( x );
+    const double pull = y == 0   ? 0 :
+                        numy > y ? (numy-y) / dengraph->GetErrorYhigh(i) :
+                                   (numy-y) / dengraph->GetErrorYlow(i) ;
+    ans->SetPoint( i, x, pull );
+    ans->SetPointError(
+      i ,
+      dengraph->GetErrorX(i),
+      dengraph->GetErrorX(i),
+      0,0 // No y error
+    );
+
+  }
+  return ans;
+}
 
 
 
