@@ -11,6 +11,7 @@
 #include "TCanvas.h"
 #include "TLegend.h"
 #include "TPad.h"
+#include "TH1D.h"
 #include "TPaveText.h"
 
 namespace mgr {
@@ -44,6 +45,18 @@ extern TPaveText* NewTextBox(
   );
 
 /*******************************************************************************
+*   * Divide Histogram objects
+*   Creates a new TGraph such that the binning contents of the bin is the
+*   numerical division of the of the numerator histogram and the denominator
+*   histogram. Sets the bins where both are empty to a set value (default to 1)
+*******************************************************************************/
+extern TH1D* DivideHist(
+  TH1D* num,
+  TH1D* den,
+  const double cen = 1.
+);
+
+/*******************************************************************************
 *   * Divide TGraphAsymmErrors
 *   Creating a new TGraph that is the division of two existing TGraphs,
 *   the numerator number of points will be used. The points in between
@@ -61,6 +74,11 @@ extern TPaveText* NewTextBox(
 *   >  NewGraph->GetErrorXhigh(i) = Num->GetErrorXhigh(i)
 *
 *******************************************************************************/
+extern TGraph* DividedGraphSimple(
+  TGraph* num,
+  TGraph* den
+);
+
 extern TGraphAsymmErrors* DividedGraph(
   TGraphAsymmErrors* num,
   TGraph*            den

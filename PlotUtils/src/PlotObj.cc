@@ -9,6 +9,7 @@
 #include "ManagerUtils/PlotUtils/interface/Constants.hpp"
 #include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
+#include "TH1D.h"
 #include "TLegend.h"
 #include "TPad.h"
 #include "TPaveText.h"
@@ -105,6 +106,53 @@ NewTextBox( const float x_min,
   return ans;
 }
 
+/*******************************************************************************
+*   TH1D division functions
+*******************************************************************************/
+TH1D*
+DivideHist(
+  TH1D*        num,
+  TH1D*        den,
+  const double cen
+  )
+{
+  TH1D* ans = (TH1D*)( num->Clone() );
+  ans->Divide( den );
+
+  for( int i = 0; i < num->GetNcells(); ++i ){
+    if( num->GetBinContent( i ) == 0 && den->GetBinContent( i ) == 0 ){
+      ans->SetBinContent( i, cen );
+    }
+  }
+
+  return ans;
+}
+
+/*******************************************************************************
+*   TGraph division functions
+*******************************************************************************/
+TGraph*
+DividedGraphSimple(
+  TGraph* num,
+  TGraph* den
+  )
+{
+  TGraph* ans = new TGraph( num->GetN() );
+
+  for( int i = 0; i < num->GetN(); ++i ){
+    const double origx  = num->GetX()[i];
+    const double origy  = num->GetY()[i];
+    const double deny = den->Eval( origx );
+    if( fabs(deny) > 0.0000001 ){
+      ans->SetPoint( i, origx, origy / deny );
+    } else {
+      ans->SetPoint( i, origx, 0 );
+    }
+  }
+
+  ans->SetTitle( "" );
+  return ans;
+}
 
 /******************************************************************************/
 
@@ -135,7 +183,8 @@ DividedGraph(
       yerrhi / deny
       );
   }
-  ans->SetTitle("");
+
+  ans->SetTitle( "" );
   return ans;
 }
 
@@ -143,28 +192,29 @@ DividedGraph(
 
 TGraphAsymmErrors*
 PullGraph(
-  TGraph* numgraph,
+  TGraph*            numgraph,
   TGraphAsymmErrors* dengraph
-)
+  )
 {
   TGraphAsymmErrors* ans = new TGraphAsymmErrors( dengraph->GetN() );
 
-  for( int i = 0 ; i < dengraph->GetN() ; ++i ){
+  for( int i = 0; i < dengraph->GetN(); ++i ){
     const double x    = dengraph->GetX()[i];
     const double y    = dengraph->GetY()[i];
     const double numy = numgraph->Eval( x );
     const double pull = y == 0   ? 0 :
-                        numy > y ? (numy-y) / dengraph->GetErrorYhigh(i) :
-                                   (numy-y) / dengraph->GetErrorYlow(i) ;
+                        numy > y ? ( numy-y ) / dengraph->GetErrorYhigh( i ) :
+                        ( numy-y ) / dengraph->GetErrorYlow( i );
     ans->SetPoint( i, x, pull );
     ans->SetPointError(
-      i ,
-      dengraph->GetErrorX(i),
-      dengraph->GetErrorX(i),
-      0,0 // No y error
-    );
+      i,
+      dengraph->GetErrorX( i ),
+      dengraph->GetErrorX( i ),
+      0, 0// No y error
+      );
 
   }
+
   return ans;
 }
 
