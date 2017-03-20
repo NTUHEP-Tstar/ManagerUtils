@@ -112,8 +112,8 @@ WaitProcess( const string& x, const string& exclude, const unsigned sleeptime )
 
     if( proc_count == 0 ){ break; }
 
-    boost::format pausemsg( "\r[%s] Still %d instance(s) of process [%s] running..." );
-    cout << pausemsg % time_string % proc_count % x << flush;
+    boost::format pausemsg( "\r[%s|%s] %d instance(s) of [%s]..." );
+    cout << pausemsg % getenv("HOSTNAME") % time_string % proc_count % x << flush;
 
     SleepMillSec( sleeptime );
   }

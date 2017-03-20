@@ -8,11 +8,10 @@
 #include "ManagerUtils/Maths/interface/Parameter.hpp"
 
 #include <iostream>
-#include <stdlib.h>
 
 using namespace std;
 
-namespace mgr{
+namespace mgr {
 
 /*******************************************************************************
 *   Constructor And Destructor
@@ -35,11 +34,15 @@ Parameter::Parameter(
   _error_down( error_down )
 {
   if( _error_up < 0 ){
-    cerr << "Warning! Upper error is small than zero! Assuming flipped sign" << endl;
+    cerr << "Warning! Upper error is small than zero! Assuming flipped sign: "
+         << c << " " << error_up << " " << error_down
+         << endl;
     _error_up = -_error_up;
   }
   if( _error_down < 0 ){
-    cerr << "Warning! Lower error is small than zero! Assuming flipped sign" << endl;
+    cerr << "Warning! Lower error is small than zero! Assuming flipped sign: "
+         << c << " " << error_up << " " << error_down
+         << endl;
     _error_down = -_error_down;
   }
 }
@@ -188,4 +191,4 @@ operator/( const double y, const Parameter& x )
   const double err_dw       = centralValue * x.RelLowerError();
   return Parameter( centralValue, err_up, err_dw );
 }
-} /* mgr */
+}/* mgr */

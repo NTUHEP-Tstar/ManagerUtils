@@ -213,5 +213,17 @@ main( int argc, char const* argv[] )
     cout << FloatingPoint( results , 3 ) << endl;
   }
 
+  cout << "\n>>> Product test" << endl;
+  {
+    Parameter a(1,1.46,0.787);
+    Parameter b(1,0.046,0.046);
+    Parameter c(1,0.03,0.03);
+
+    cout << FloatingPoint( Prod(a,b,c),5 ) << endl;
+    cout << FloatingPoint( Prod(a,b),5 ) << endl;
+    cout << FloatingPoint( Prod(b,c),5 ) << endl;
+    cout << FloatingPoint( Prod(a,c),5 ) << endl;
+  }
+
   return 0;
 }

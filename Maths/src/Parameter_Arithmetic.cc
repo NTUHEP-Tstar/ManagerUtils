@@ -90,7 +90,7 @@ LinearVarianceNLL( double x, const Parameter& parm )
   // product of errors must be a small finite value
   const double sigsq   = std::max( effupper * efflower, minprod );
   const double sigdiff = effupper -  efflower;
-  const double relasym = std::min( sigdiff / sigsq, 10. );
+  const double relasym = std::min( sigdiff / sigsq, 3.2 );
 
   // Original definition as followed
   const double num = ( x- central )* ( x - central );
@@ -154,8 +154,8 @@ SumUncorrelated(
   for( size_t i = 0; i < paramlist.size(); ++i ){
     const Parameter& p = paramlist.at( i );
     gsl_vector_set( initguess,  i, p.CentralValue() );
-    gsl_vector_set( upperguess, i, p.CentralValue() + p.AbsUpperError()/2 );
-    gsl_vector_set( lowerguess, i, p.CentralValue() - p.AbsLowerError()/2 );
+    gsl_vector_set( upperguess, i, p.CentralValue() + p.AbsUpperError()/1.5 );
+    gsl_vector_set( lowerguess, i, p.CentralValue() - p.AbsLowerError()/1.5 );
   }
 
   // Calling MinosError function for acutal computation
@@ -213,10 +213,10 @@ ProdUncorrelated(
   gsl_vector* lowerguess = gsl_vector_alloc( dim );
 
   for( size_t i = 0; i < normlist.size(); ++i ){
-    const Parameter& p = normlist.at( i );
+    const Parameter& p  = normlist.at( i );
     gsl_vector_set( initguess,  i, p.CentralValue() );
-    gsl_vector_set( upperguess, i, p.CentralValue() + p.AbsUpperError()/10 );
-    gsl_vector_set( lowerguess, i, p.CentralValue() - p.AbsLowerError()/10 );
+    gsl_vector_set( upperguess, i, p.CentralValue()+p.AbsUpperError()/1.2 );
+    gsl_vector_set( lowerguess, i, p.CentralValue()-p.AbsLowerError()/1.2 );
   }
 
   // Calling MinosError function for acutal computation
@@ -236,7 +236,5 @@ ProdUncorrelated(
 
   return ans * prod;
 }
-
-
 
 }/* mgr */

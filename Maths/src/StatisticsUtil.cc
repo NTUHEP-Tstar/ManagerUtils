@@ -38,7 +38,6 @@ NormalCDF( const double x )
 double
 GetConfidenceLevel( const double sigmainterval )
 {
-
   return NormalCDF( sigmainterval ) - NormalCDF( -sigmainterval );
 }
 
@@ -133,6 +132,7 @@ MinosError(
   )
 {
   // Minimizing to get central value
+  static const double defaultstep = 0.005;
   const size_t dim                = nllfunction->n;
   gsl_multimin_fminimizer* solver = gsl_multimin_fminimizer_alloc( gsl_multimin_fminimizer_nmsimplex2, dim );
   gsl_vector* step                = gsl_vector_alloc( dim );
@@ -140,15 +140,15 @@ MinosError(
 
   // All steps required setting to 1
   for( size_t i = 0; i < dim; ++i ){
-    double stepsize = 0.005;// Default step size
+    double stepsize = defaultstep;// Default step size
     const double x  = gsl_vector_get( initguess, i );
     if( upperguess ){
       const double y = gsl_vector_get( upperguess, i );
-      stepsize = std::min( stepsize, fabs( y-x )/5 );
+      stepsize = std::min( stepsize, fabs( y-x )*defaultstep );
     }
     if( lowerguess ){
       const double y = gsl_vector_get( upperguess, i );
-      stepsize = std::min( stepsize, fabs( y-x )/5 );
+      stepsize = std::min( stepsize, fabs( y-x )*defaultstep );
     }
     gsl_vector_set( step, i, stepsize );
   }
@@ -207,8 +207,8 @@ MinosError(
   for( size_t i = 0; i < dim; ++i ){
     if( upperguess ){// If upper guess is provided.
       gsl_vector_set( errinitguess, i, gsl_vector_get( upperguess, i ) );
-    } else { // Otherwise stargin for Minimum point
-      gsl_vector_set( errinitguess, i, gsl_vector_get( bestinput, i ) );
+    } else { // Otherwise stargin for Minimum point with small offset
+      gsl_vector_set( errinitguess, i, gsl_vector_get( bestinput, i )+defaultstep );
     }
   }
 
@@ -243,14 +243,6 @@ MinosError(
   }
 
   double boundary2 = varfunction->f( finalinput, varfunction->params );
-
-  // std::cout << std::endl;
-
-  // for( size_t i = 0; i < errsolver->x->size; ++i ){
-  //   std::cout << gsl_vector_get( errsolver->x, i ) << " | " << gsl_vector_get( errsolver->f, i ) << std::endl;
-  // }
-
-  // std::cout << std::endl;
 
   // Storing outputs
   min = std::min( boundary1, boundary2 );

@@ -7,6 +7,7 @@
 *******************************************************************************/
 #include "ManagerUtils/Common/interface/ConfigReader.hpp"
 #include "ManagerUtils/Common/interface/STLUtils.hpp"
+#include "ManagerUtils/Common/interface/Random.hpp"
 #include "ManagerUtils/SysUtils/interface/HiggsCombineSubmitter.hpp"
 #include "ManagerUtils/SysUtils/interface/PathUtils.hpp"
 #include "ManagerUtils/SysUtils/interface/ProcessUtils.hpp"
@@ -204,8 +205,8 @@ HiggsCombineSubmitter::higgs_cmssw_dir() const
 string
 HiggsCombineSubmitter::temp_scriptname( const int masspoint, const string& combine_method ) const
 {
-  boost::format scriptfmt( "%s/.temp_script_m%d_M%s.sh" );
-  string ans = str( scriptfmt % GetEnv( "PWD" ) % masspoint % combine_method );
+  boost::format scriptfmt( "/tmp/.temp_script_m%d_M%s_%s.sh" );
+  string ans = str( scriptfmt % masspoint % combine_method % mgr::RandomString(6) );
   return ans;
 }
 
@@ -240,7 +241,7 @@ HiggsCombineSubmitter::MakeAsymptoticScript( const CombineRequest& x ) const
   scriptfile.close();
 
   system( "sleep 1" );
-  system(         ( "chmod +x "+scriptname ).c_str() );
+  system( ( "chmod +x "+scriptname ).c_str() );
   return scriptname;
 }
 
