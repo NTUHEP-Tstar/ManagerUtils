@@ -27,18 +27,12 @@ FloatingPoint( double x, const int precision, const bool spaceflag )
   static const int max_precision = 8;
   static const int max_digits    = 27;
 
-  boost::format fltfmt;
-  string retstr;
+  boost::format fltfmt =
+    ( precision < 0  || precision >= max_precision ) ?
+    boost::format( boost::str( boost::format( "%%.%dlf" ) % max_precision ) ) :
+    boost::format( boost::str( boost::format( "%%.%df" ) % precision ) );
 
-  // Determining precision format
-  if( precision < 0  || precision >= max_precision ){
-    fltfmt = boost::format( boost::str( boost::format( "%%.%dlf" ) % max_precision ) );
-  } else {
-    fltfmt = boost::format( boost::str( boost::format( "%%.%df" ) % precision ) );
-  }
-
-  // Making first version of string
-  retstr = boost::str( fltfmt % x );
+  string retstr = boost::str( fltfmt % x );
 
   // stripping trailing zero after decimal point
   if( precision < 0 && retstr.find( '.' ) != string::npos ){
@@ -50,7 +44,7 @@ FloatingPoint( double x, const int precision, const bool spaceflag )
   // Add latex "\," spacing every 3 digits away from decimal point
   for( int space = max_digits; space > 0 && spaceflag; space = space-3 ){
     if( retstr.find( '.' ) != string::npos ){
-      // If decimal point exists, expand around this point
+      // If decimal point exists, expand around decimal point
       boost::format bfexp( "(.*\\d)(\\d{%d}\\..*)" );
       boost::format afexp( "(.*\\.\\d{%d})(\\d.*)" );
       const std::regex beforedec( boost::str( bfexp % space ) );
@@ -58,13 +52,12 @@ FloatingPoint( double x, const int precision, const bool spaceflag )
       retstr = std::regex_replace( retstr, beforedec, "$1\\,$2" );
       retstr = std::regex_replace( retstr, afterdec,  "$1\\,$2" );
     } else {
-      // If decimal point doesnt exist, expand around left most side
+      // If decimal point doesnt exist, expand around right most side
       boost::format bfexp( "(.*\\d)(\\d{%d})" );
       const std::regex beforedec( boost::str( bfexp % space ) );
-      std::regex_replace( retstr, beforedec, "$1\\,$2" );
+      retstr = std::regex_replace( retstr, beforedec, "$1\\,$2" );
     }
   }
-
 
   return retstr;
 }
@@ -202,7 +195,7 @@ Scientific( const Parameter& x, const unsigned precision, const bool space )
 /******************************************************************************/
 
 string
-HiggsDataCard( const Parameter& x )
+HiggsDataCard( const Parameter& x, const double scale )
 {
   static const string null = "--";
   boost::format symmfmt( "%lf" );
@@ -213,9 +206,9 @@ HiggsDataCard( const Parameter& x )
       x.AbsLowerError() == 0 ){
     return null;
   } else if( x.AbsUpperError() == x.AbsLowerError() ){
-    return str( symmfmt % ( 1+x.RelAvgError() ) );
+    return str( symmfmt % ( 1+scale*x.RelAvgError() ) );
   } else {
-    return str( asymfmt % ( 1.+ x.RelUpperError() ) %  ( 1.- x.RelLowerError() ) );
+    return str( asymfmt % ( 1.+ scale*x.RelUpperError() ) %  ( 1.- scale*x.RelLowerError() ) );
   }
   return null;
 }

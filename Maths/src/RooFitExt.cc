@@ -31,7 +31,7 @@ KSTest(
 
   RooAbsData* setsubset = dataset.reduce( RooFit::SelectVars( RooArgSet( var ) ), cut );
   TH1* dathist          = setsubset->createHistogram( "dathist", var, RooFit::Binning( bin ) );
-  double ans            = pdfhist->KolmogorovTest( dathist, "D" );
+  double ans            = pdfhist->KolmogorovTest( dathist );
 
   delete pdfhist;
   delete dathist;

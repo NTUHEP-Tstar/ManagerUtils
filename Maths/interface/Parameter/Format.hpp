@@ -67,9 +67,9 @@ extern std::string Scientific(
 
 /*******************************************************************************
 *   Higgs Combine data card format
-*   In the format of 1+relup/1-reldown
+*   In the format of 1+scale*relup/1-scale*reldown
 *******************************************************************************/
-extern std::string HiggsDataCard( const Parameter& );
+extern std::string HiggsDataCard( const Parameter&, const double scale );
 
 } /* mgr */
 

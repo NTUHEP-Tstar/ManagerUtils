@@ -12,6 +12,7 @@
 #include "RooAbsPdf.h"
 #include "RooPlot.h"
 #include "TGraph.h"
+#include "TGraphAsymmErrors.h"
 
 namespace mgr {
 /*******************************************************************************
@@ -39,6 +40,24 @@ PlotOn( RooPlot* frame,
 *   with additional RooPlot specializations.
 *******************************************************************************/
 extern void SetFrame( RooPlot* );// Setting common frame options
+
+/*******************************************************************************
+*   Creating TGraphAsymmErrors represting function with error regions for
+*   objects from RooPlot generated
+*******************************************************************************/
+extern TGraphAsymmErrors* MakeCurveError(
+  TGraph* errorplot,
+  TGraph* centralplot
+  );
+
+extern TGraph* PlotFitErrorOn(
+  RooPlot*      frame,
+  RooAbsPdf*    pdf,
+  RooFitResult* fitres,
+  const RooCmdArg& arg1 = RooCmdArg::none(),
+  const RooCmdArg& arg2 = RooCmdArg::none(),
+  const RooCmdArg& arg3 = RooCmdArg::none()
+  );
 
 };/* plt */
 

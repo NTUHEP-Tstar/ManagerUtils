@@ -18,7 +18,7 @@ main( int argc, char const* argv[] )
 {
    cout << ">>> Regex testing" << endl;
    const std::string  test = "123456789123456.123456789" ;
-   const std::regex   reg("(.*\\d\\d{9})(\\..*)");
+   const std::regex   reg("(.*\\d)(\\d{3})");
    std::smatch       mth;
    std::regex_match( test, mth, reg  );
    for( const auto& sub : mth ){

@@ -16,6 +16,12 @@ namespace mgr{
 extern void DrawCMSLabel( int tag = PRELIMINARY );
 
 /*******************************************************************************
+*   ** DrawCMSLabelOuter
+*   Drawing the CMS Preliminary/Simulation label on top left of canvas
+*******************************************************************************/
+extern void DrawCMSLabelOuter( int tag = PRELIMINARY );
+
+/*******************************************************************************
    ** DrawLuminosity
    Drawing the energy scale and luminosity information on top right of canvas
 *******************************************************************************/

@@ -70,6 +70,8 @@ public:
    double    SelectedEventCount()       const;
    double    KFactor()                  const;
    Parameter CrossSection()             const;
+   Parameter PDFUncertainty()           const;
+   Parameter QCDScaleUncertainty()      const;
    const std::vector<std::string>& FileList() const;
 
    // Manual setting function
@@ -78,6 +80,8 @@ public:
    void SetSelectedEventCount ( const double );
    void SetKFactor            ( const double );
    void SetCrossSection       ( const Parameter& );
+   void SetPDFUncertainty     ( const Parameter& );
+   void SetQCDScaleUncertainty( const Parameter& );
    void SetFileList           ( const std::vector<std::string>& );
 
    // Variable caching functions
@@ -106,6 +110,8 @@ private:
    bool      _isdata;
    double    _kfactor;
    Parameter _xsection;
+   Parameter _pdfunc;
+   Parameter _qcdunc;
    std::vector<std::string> _filelist;
 
    // Data-members that are dependent on analysis details

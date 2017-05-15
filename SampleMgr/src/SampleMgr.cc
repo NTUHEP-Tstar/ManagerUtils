@@ -88,9 +88,22 @@ SampleMgr::InitFromReader( const ConfigReader& cfg )
   if( !IsRealData() ){
     SetCrossSection( cfg.GetParameter(  Name(), "Cross Section" ) );
     SetKFactor( cfg.GetDouble(  Name(), "K Factor"      ) );
+
+    const Parameter pdfunc = cfg.HasTag( Name(), "PDF Uncertainty" ) ?
+                             cfg.GetParameter( Name(), "PDF Uncertainty" ) :
+                               Parameter( 1, 0, 0 );
+
+    const Parameter scaleunc = cfg.HasTag( Name(), "QCD Uncertainty" ) ?
+                               cfg.GetParameter( Name(), "QCD Uncertainty" ) :
+                               Parameter( 1, 0, 0 );
+
+    SetPDFUncertainty( pdfunc );
+    SetQCDScaleUncertainty( scaleunc );
   } else {
     SetCrossSection( Parameter( 0, 0, 0 ) );
     SetKFactor( 0 );
+    SetQCDScaleUncertainty( Parameter( 1, 0, 0 ) );
+    SetPDFUncertainty( Parameter( 1, 0, 0 ) );
   }
 
 }
@@ -119,6 +132,12 @@ SampleMgr::KFactor()             const { return _kfactor; }
 Parameter
 SampleMgr::CrossSection()        const { return _xsection; }
 
+Parameter
+SampleMgr::PDFUncertainty()      const { return _pdfunc; }
+
+Parameter
+SampleMgr::QCDScaleUncertainty() const { return _qcdunc; }
+
 const vector<string>&
 SampleMgr::FileList()            const { return _filelist; }
 
@@ -139,6 +158,12 @@ SampleMgr::SetKFactor( const double x ){ _kfactor = x; }
 
 void
 SampleMgr::SetCrossSection( const Parameter& x ){ _xsection = x;  }
+
+void
+SampleMgr::SetPDFUncertainty( const Parameter& x ) { _pdfunc = x ; }
+
+void
+SampleMgr::SetQCDScaleUncertainty( const Parameter& x ) { _qcdunc = x ; }
 
 void
 SampleMgr::SetFileList( const vector<string>& x ){ _filelist = x; }
@@ -183,7 +208,7 @@ SampleMgr::GlobbedFileList() const
 
   for( const auto& filename : FileList() ){
     const auto globq = FilePrefix().back() == '/' ? FilePrefix() + filename :
-                                                    FilePrefix() + "/" + filename;
+                       FilePrefix() + "/" + filename;
 
     for( const auto& file : Glob( globq ) ){
       ans.push_back( file );
@@ -258,4 +283,4 @@ SampleMgr::StringCache() const
   return _stringcache;
 }
 
-} /* mgr */
+}/* mgr */

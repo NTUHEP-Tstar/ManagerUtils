@@ -49,6 +49,7 @@ public:
   std::vector<std::string> VarNameList() const;
   std::vector<RooRealVar*> VarContains( const std::string& );
   void                     SetConstant( const bool set = kTRUE );
+  void                     RemoveVar( const std::string& );
 
   // DataSet access members
   RooAbsData*              DataSet( const std::string& );
@@ -62,6 +63,7 @@ public:
   RooAbsPdf*               Pdf( const std::string& );
   const RooAbsPdf*         Pdf( const std::string& ) const;
   std::vector<std::string> PdfNameList() const;
+  void                     RemovePdf( const std::string& );
 
   // Function access members
   void                     AddFunc( RooAbsReal* );

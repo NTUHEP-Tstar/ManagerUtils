@@ -140,13 +140,13 @@ DividedGraphSimple(
   TGraph* ans = new TGraph( num->GetN() );
 
   for( int i = 0; i < num->GetN(); ++i ){
-    const double origx  = num->GetX()[i];
-    const double origy  = num->GetY()[i];
-    const double deny = den->Eval( origx );
-    if( fabs(deny) > 0.0000001 ){
+    const double origx = num->GetX()[i];
+    const double origy = num->GetY()[i];
+    const double deny  = den->Eval( origx );
+    if( fabs( deny ) > 0.0000001 ){
       ans->SetPoint( i, origx, origy / deny );
     } else {
-      ans->SetPoint( i, origx, 0 );
+      ans->SetPoint( i, origx, 1 );
     }
   }
 
@@ -174,14 +174,26 @@ DividedGraph(
 
     const double deny = den->Eval( origx );
 
-    ans->SetPoint( i, origx, origy / deny );
-    ans->SetPointError(
-      i,
-      xerrlo,
-      xerrhi,
-      yerrlo / deny,
-      yerrhi / deny
-      );
+    if( deny > 0.0000001 ){
+      ans->SetPoint( i, origx, origy / deny );
+      ans->SetPointError(
+        i,
+        xerrlo,
+        xerrhi,
+        yerrlo / deny,
+        yerrhi / deny
+        );
+    } else {
+      ans->SetPoint( i, origx, 1 );
+      ans->SetPointError(
+        i,
+        xerrlo,
+        xerrhi,
+        0,
+        0
+        );
+
+    }
   }
 
   ans->SetTitle( "" );

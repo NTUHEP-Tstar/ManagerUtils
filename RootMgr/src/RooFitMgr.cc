@@ -165,6 +165,13 @@ RooFitMgr::SetConstant( const bool state )
   }
 }
 
+/******************************************************************************/
+
+void RooFitMgr::RemoveVar( const std::string& name )
+{
+  _varmgr.RemoveObj(name);
+}
+
 /*******************************************************************************
 *   RooAbsData access functions
 *******************************************************************************/
@@ -174,11 +181,15 @@ RooFitMgr::DataSet( const std::string& name )
   return _setmgr.GetObj( name );
 }
 
+/******************************************************************************/
+
 const RooAbsData*
 RooFitMgr::DataSet( const std::string& name ) const
 {
   return _setmgr.GetObj( name );
 }
+
+/******************************************************************************/
 
 vector<std::string>
 RooFitMgr::SetNameList() const
@@ -186,11 +197,15 @@ RooFitMgr::SetNameList() const
   return _setmgr.ObjNameList();
 }
 
+/******************************************************************************/
+
 void
 RooFitMgr::AddDataSet( RooAbsData* set )
 {
   _setmgr.AddObj( set );
 }
+
+/******************************************************************************/
 
 void
 RooFitMgr::RemoveDataSet( const std::string& name )
@@ -207,11 +222,15 @@ RooFitMgr::AddPdf( RooAbsPdf* pdf )
   _pdfmgr.AddObj( pdf );
 }
 
+/******************************************************************************/
+
 RooAbsPdf*
 RooFitMgr::Pdf( const std::string& name )
 {
   return _pdfmgr.GetObj( name );
 }
+
+/******************************************************************************/
 
 const RooAbsPdf*
 RooFitMgr::Pdf( const std::string& name ) const
@@ -219,10 +238,20 @@ RooFitMgr::Pdf( const std::string& name ) const
   return _pdfmgr.GetObj( name );
 }
 
+/******************************************************************************/
+
 vector<std::string>
 RooFitMgr::PdfNameList() const
 {
   return _pdfmgr.ObjNameList();
+}
+
+/******************************************************************************/
+
+void
+RooFitMgr::RemovePdf( const std::string& name )
+{
+  _pdfmgr.RemoveObj(name);
 }
 
 /*******************************************************************************
