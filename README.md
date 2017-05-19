@@ -38,3 +38,4 @@ System interaction utility functions and classes.
 * Functions should have inline detailed documentation in their own header files.
 * Classes should have detailed documentations in a separate markdown file in each supackages `doc` directory (under construction)
 * No comment is the best comment! Try and keep the control flow intuitive, try and keep all comment at the beginning of the function and avoid inline comments as much as possible.
+# ManagerUtils
